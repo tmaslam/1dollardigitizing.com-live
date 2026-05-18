@@ -30,7 +30,7 @@
 
                 <div style="margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid #e2e8f0; text-align:center;">
                     <p class="muted" style="margin-bottom:10px; font-size:0.85rem;">Looking for the old portal?</p>
-                    <a class="button ghost" href="#" id="legacy-login-btn">Legacy Sign In</a>
+                    <a class="button ghost" href="https://legacy.1dollardigitizing.com/login.php" id="legacy-login-btn">Legacy Sign In</a>
                 </div>
 
                 @if (session('success'))
