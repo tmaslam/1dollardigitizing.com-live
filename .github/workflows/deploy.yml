@@ -64,6 +64,8 @@ jobs:
           server-dir: 1dollardigitizing_v2/
           protocol: ftp
           port: 21
+          log-level: verbose
+          dry-run: true
           exclude: |
             **/.git*
             **/.env*
