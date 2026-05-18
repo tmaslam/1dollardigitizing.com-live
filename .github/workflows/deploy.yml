@@ -61,11 +61,10 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: 1dollardigitizing_v2/
+          server-dir: /
           protocol: ftp
           port: 21
-          log-level: verbose
-          dry-run: true
+          log-level: standard
           exclude: |
             **/.git*
             **/.env*
