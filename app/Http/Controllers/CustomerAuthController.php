@@ -131,7 +131,7 @@ class CustomerAuthController extends Controller
 
             $message = CustomerApprovalQueue::stateForCustomer($customer) === CustomerApprovalQueue::STATE_PENDING_ADMIN_APPROVAL
                 ? 'This account is waiting for admin approval. Your email is already verified, and you can sign in as soon as the approval is completed.'
-                : 'This account is not active yet. Please use the verification link we emailed you. If it is not in your inbox, check spam or junk, or request a new verification email.';
+                : 'Existing users: Access your account via the Legacy Sign In button. Upgrade options are available inside your account.';
 
             return back()->withErrors([
                 'auth' => $message,
