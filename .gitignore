@@ -1,0 +1,47 @@
+# Environment files
+/.env
+/.env.backup
+/.env.production
+/.env.staging
+
+# Dependencies
+/node_modules
+/vendor
+
+# Laravel storage & cache
+/storage/*.key
+/storage/logs/*.log
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/bootstrap/cache/*.php
+
+# Uploads (user content — do not version control)
+/uploads/*
+!/uploads/.gitkeep
+
+# IDE & OS
+/.idea
+/.vscode
+/.fleet
+/.phpunit.result.cache
+.phpunit.result.cache
+.DS_Store
+Thumbs.db
+
+# GitHub Actions & CI
+/.github/workflows/*.local.yml
+
+# Claude / AI settings
+/.claude
+
+# Misc
+*.log
+*.swp
+*.swo
+*~

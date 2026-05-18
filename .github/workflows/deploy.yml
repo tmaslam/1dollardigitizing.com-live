@@ -1,0 +1,71 @@
+name: 🚀 Deploy to Live Server
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    name: Build & Deploy via FTP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐘 Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, openssl, pdo, pdo_mysql, zip, exif, pcntl, bcmath, gd, intl
+          coverage: none
+
+      - name: 📦 Install Composer dependencies
+        run: |
+          composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+      - name: 🗑️ Clean files not meant for production
+        run: |
+          rm -rf .git
+          rm -rf .github
+          rm -rf .claude
+          rm -f .env
+          rm -f .env.example
+          rm -f .gitignore
+          rm -rf node_modules
+          rm -rf storage/logs/*.log
+          rm -rf storage/framework/cache/data/*
+          rm -rf storage/framework/sessions/*
+          rm -rf storage/framework/views/*
+          rm -rf storage/framework/testing/*
+          rm -f bootstrap/cache/*.php
+          rm -rf tests
+          rm -f phpunit.xml
+          rm -f security-audit-report.md
+          rm -f PRE_LAUNCH_AUDIT_REPORT.md
+          rm -f temp_check_*.php
+
+      - name: 🚀 Deploy to FTP server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: public_html/
+          protocol: ftp
+          port: 21
+          exclude: |
+            **/.git*
+            **/.env*
+            **/node_modules/**
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
+            **/storage/framework/testing/**
+            **/bootstrap/cache/**
+            **/tests/**
+            **/uploads/**
+            **/.claude/**
