@@ -69,11 +69,11 @@ jobs:
             **/.git*
             **/.env*
             **/node_modules/**
-            **/storage/logs/**
-            **/storage/framework/cache/**
-            **/storage/framework/sessions/**
-            **/storage/framework/views/**
-            **/storage/framework/testing/**
+            **/storage/logs/*.log
+            **/storage/framework/cache/data/*
+            **/storage/framework/sessions/*
+            **/storage/framework/views/*
+            **/storage/framework/testing/*
             **/tests/**
             **/uploads/**
             **/.claude/**
