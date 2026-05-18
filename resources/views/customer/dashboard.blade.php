@@ -6,7 +6,7 @@
 @section('hero_text', 'Track your orders, quotes, billing, downloads, and account details in one streamlined workspace.')
 
 @section('before_hero')
-    <div style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #fff; padding: 18px 24px; border-radius: 14px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(234, 88, 12, 0.25);">
+    <div id="upgrade-alert" data-orders="{{ $metrics['orders'] }}" data-quotes="{{ $metrics['quotes'] }}" data-billing="{{ $metrics['billing_total'] }}" style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #fff; padding: 18px 24px; border-radius: 14px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(234, 88, 12, 0.25);">
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
             <div style="display: flex; align-items: flex-start; gap: 14px;">
                 <span style="font-size: 28px; line-height: 1;">⚡</span>
@@ -15,9 +15,29 @@
                     <span style="opacity: 0.95; font-size: 0.95rem;">Please update your account to continue using your customer dashboard.</span>
                 </div>
             </div>
-            <a href="/account-upgrade.php" class="button" style="background: #fff; color: #c2410c; font-weight: 700; white-space: nowrap; padding: 10px 22px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.12);">Upgrade your account</a>
+            <button type="button" id="btn-upgrade" class="button" style="background: #fff; color: #c2410c; font-weight: 700; white-space: nowrap; padding: 10px 22px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: none; cursor: pointer;">Upgrade your account</button>
         </div>
     </div>
+    <script>
+        document.getElementById('btn-upgrade').addEventListener('click', function() {
+            var alertBox = document.getElementById('upgrade-alert');
+            var orders = parseInt(alertBox.dataset.orders) || 0;
+            var quotes = parseInt(alertBox.dataset.quotes) || 0;
+            var billing = parseFloat(alertBox.dataset.billing) || 0;
+
+            if (orders === 0 && quotes === 0 && billing === 0) {
+                if (confirm('Are you confirm to switch your account on upgrade mode?')) {
+                    window.location.href = '/account-upgrade.php';
+                }
+            } else {
+                var issues = [];
+                if (orders > 0) issues.push('orders');
+                if (quotes > 0) issues.push('quotes');
+                if (billing > 0) issues.push('billings');
+                alert('First you need to clear your ' + issues.join(' / ') + ' then you will be able to switch your account.');
+            }
+        });
+    </script>
 @endsection
 
 @section('content')
