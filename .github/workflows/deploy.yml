@@ -22,6 +22,14 @@ jobs:
           extensions: mbstring, openssl, pdo, pdo_mysql, zip, exif, pcntl, bcmath, gd, intl
           coverage: none
 
+      - name: 📁 Prepare Laravel directories
+        run: |
+          mkdir -p bootstrap/cache
+          mkdir -p storage/framework/views
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/cache/data
+          mkdir -p storage/logs
+
       - name: 📦 Install Composer dependencies
         run: |
           composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
