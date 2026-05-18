@@ -8,41 +8,41 @@
     @php
         $legacyAssetBase = rtrim(request()->getSchemeAndHttpHost(), '/');
         $publicMenu = [
-            ['label' => 'Home', 'href' => '/'],
-            ['label' => 'Work Process', 'href' => '/work-process.php'],
-            ['label' => 'Our Services', 'href' => '#', 'children' => [
-                ['label' => 'Vector Art', 'href' => '/vector-art.php'],
-                ['label' => 'Photo Digitizing', 'href' => '/photo-digitizing.php'],
-                ['label' => 'Embroidery Digitizing', 'href' => '/embroidery-digitizing.php'],
-                ['label' => '3D / Puff Embroidery', 'href' => '/3d-puff-embroidery-digitizing.php'],
-                ['label' => 'Applique Embroidery', 'href' => '/applique-embroidery-digitizing.php'],
-                ['label' => 'Chain Stitch Embroidery', 'href' => '/chain-stitch-embroidery-digitizing.php'],
+            ['label' => 'Home', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Work Process', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Our Services', 'href' => 'https://1dollardigitizing.com/', 'children' => [
+                ['label' => 'Vector Art', 'href' => 'https://1dollardigitizing.com/'],
+                ['label' => 'Photo Digitizing', 'href' => 'https://1dollardigitizing.com/'],
+                ['label' => 'Embroidery Digitizing', 'href' => 'https://1dollardigitizing.com/'],
+                ['label' => '3D / Puff Embroidery', 'href' => 'https://1dollardigitizing.com/'],
+                ['label' => 'Applique Embroidery', 'href' => 'https://1dollardigitizing.com/'],
+                ['label' => 'Chain Stitch Embroidery', 'href' => 'https://1dollardigitizing.com/'],
             ]],
-            ['label' => 'Formats', 'href' => '/formats.php', 'children' => [
-                ['label' => 'Machine Embroidery', 'href' => '/machine-embroidery-formats.php'],
-                ['label' => 'Vector File', 'href' => '/vector-file-formats.php'],
+            ['label' => 'Formats', 'href' => 'https://1dollardigitizing.com/', 'children' => [
+                ['label' => 'Machine Embroidery', 'href' => 'https://1dollardigitizing.com/'],
+                ['label' => 'Vector File', 'href' => 'https://1dollardigitizing.com/'],
             ]],
-            ['label' => 'Our Prices', 'href' => '/price-plan.php'],
-            ['label' => 'Contact Us', 'href' => '/contact-us.php'],
+            ['label' => 'Our Prices', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Contact Us', 'href' => 'https://1dollardigitizing.com/'],
         ];
         $serviceLinks = [
-            ['label' => 'Embroidery Digitizing', 'href' => url('/embroidery-digitizing.php')],
-            ['label' => '3D / Puff Embroidery', 'href' => url('/3d-puff-embroidery-digitizing.php')],
-            ['label' => 'Applique Embroidery', 'href' => url('/applique-embroidery-digitizing.php')],
-            ['label' => 'Chain Stitch Embroidery', 'href' => url('/chain-stitch-embroidery-digitizing.php')],
-            ['label' => 'Photo Digitizing', 'href' => url('/photo-digitizing.php')],
-            ['label' => 'Vector Art', 'href' => url('/vector-art.php')],
+            ['label' => 'Embroidery Digitizing', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => '3D / Puff Embroidery', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Applique Embroidery', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Chain Stitch Embroidery', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Photo Digitizing', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Vector Art', 'href' => 'https://1dollardigitizing.com/'],
         ];
         $companyLinks = [
-            ['label' => 'About Us', 'href' => url('/about-us.php')],
-            ['label' => 'Our Quality', 'href' => url('/our-quality.php')],
-            ['label' => 'Contact Us', 'href' => url('/contact-us.php')],
+            ['label' => 'About Us', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Our Quality', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Contact Us', 'href' => 'https://1dollardigitizing.com/'],
         ];
         $resourceLinks = [
-            ['label' => 'Our Prices', 'href' => url('/price-plan.php')],
-            ['label' => 'Formats', 'href' => url('/formats.php')],
-            ['label' => 'Privacy Policy', 'href' => url('/privacy-policy.php')],
-            ['label' => 'Terms and Conditions', 'href' => url('/terms.php')],
+            ['label' => 'Our Prices', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Formats', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Privacy Policy', 'href' => 'https://1dollardigitizing.com/'],
+            ['label' => 'Terms and Conditions', 'href' => 'https://1dollardigitizing.com/'],
         ];
     @endphp
     <style>
@@ -1744,7 +1744,7 @@
 
         <header class="site-header">
             <div class="container nav-shell">
-                <a class="brand" href="/">
+                <a class="brand" href="https://1dollardigitizing.com/">
                     <img src="{{ $legacyAssetBase }}/images/logo.png" alt="1 Dollar Digitizing">
                 </a>
 
@@ -1875,7 +1875,7 @@
                         </div>
                         <div class="footer-contact-item">
                             <span>Need Help?</span>
-                            <a class="footer-link" href="/contact-us.php">Contact Our Team</a>
+                            <a class="footer-link" href="https://1dollardigitizing.com/">Contact Our Team</a>
                         </div>
                     </div>
                 </div>
