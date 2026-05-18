@@ -18,7 +18,56 @@
             <button type="button" id="btn-upgrade" class="button" style="background: #fff; color: #c2410c; font-weight: 700; white-space: nowrap; padding: 10px 22px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: none; cursor: pointer;">Upgrade your account</button>
         </div>
     </div>
+    <!-- Custom Modals -->
+    <div id="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center;">
+        
+        <!-- Error Modal -->
+        <div id="modal-error" style="display:none; background:#fff; border-radius:16px; padding:32px 28px; max-width:420px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.25); text-align:center; animation:modalIn 0.3s ease;">
+            <div style="width:56px; height:56px; background:#fee2e2; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h3 style="margin:0 0 10px; font-size:1.25rem; color:#111;">Account Upgrade Unavailable</h3>
+            <p style="margin:0 0 24px; color:#64748b; line-height:1.6; font-size:0.95rem;">To switch your account, please ensure all outstanding billing is cleared first.</p>
+            <button type="button" onclick="closeModal('modal-error')" style="background:#dc2626; color:#fff; border:none; padding:10px 28px; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem;">Got it</button>
+        </div>
+
+        <!-- Confirm Modal -->
+        <div id="modal-confirm" style="display:none; background:#fff; border-radius:16px; padding:32px 28px; max-width:420px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.25); text-align:center; animation:modalIn 0.3s ease;">
+            <div style="width:56px; height:56px; background:#dbeafe; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <h3 style="margin:0 0 10px; font-size:1.25rem; color:#111;">Confirm Account Upgrade</h3>
+            <p style="margin:0 0 24px; color:#64748b; line-height:1.6; font-size:0.95rem;">Are you confirm to switch your account on upgrade mode?</p>
+            <div style="display:flex; gap:12px; justify-content:center;">
+                <button type="button" onclick="closeModal('modal-confirm')" style="background:#f3f4f6; color:#374151; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem;">Cancel</button>
+                <button type="button" onclick="window.location.href='/account-upgrade.php'" style="background:#2563eb; color:#fff; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem;">Confirm Upgrade</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes modalIn {
+            from { opacity:0; transform:scale(0.92) translateY(10px); }
+            to   { opacity:1; transform:scale(1) translateY(0); }
+        }
+    </style>
+
     <script>
+        function openModal(id) {
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.getElementById(id).style.display = 'block';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+        document.getElementById('modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal('modal-error');
+                closeModal('modal-confirm');
+            }
+        });
+
         document.getElementById('btn-upgrade').addEventListener('click', function() {
             var alertBox = document.getElementById('upgrade-alert');
             var orders = parseInt(alertBox.dataset.orders) || 0;
@@ -26,11 +75,9 @@
             var billing = parseFloat(alertBox.dataset.billing) || 0;
 
             if (orders === 0 && quotes === 0 && billing === 0) {
-                if (confirm('Are you confirm to switch your account on upgrade mode?')) {
-                    window.location.href = '/account-upgrade.php';
-                }
+                openModal('modal-confirm');
             } else {
-                alert('To switch your account, please ensure all outstanding billing is cleared first.');
+                openModal('modal-error');
             }
         });
     </script>
