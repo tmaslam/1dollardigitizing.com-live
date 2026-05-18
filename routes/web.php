@@ -149,6 +149,7 @@ Route::middleware('detect.site')->group(function () use ($adminPrefix, $internal
     Route::get('/reset-password.php', [CustomerPasswordController::class, 'showReset']);
     Route::post('/reset-password.php', [CustomerPasswordController::class, 'reset']);
     Route::get('/logout.php', [CustomerAuthController::class, 'logout']);
+    Route::post('/process-account-upgrade', [CustomerPortalController::class, 'processAccountUpgrade'])->middleware('customer.auth');
 
     Route::get('/'.$adminPrefix, [AdminAuthController::class, 'showLogin']);
     Route::get('/'.$adminPrefix.'/login', [AdminAuthController::class, 'showLogin']);

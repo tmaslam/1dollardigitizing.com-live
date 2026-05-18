@@ -207,14 +207,20 @@
 
         <!-- Confirm Modal -->
         <div id="modal-confirm" style="display:none; background:#fff; border-radius:16px; padding:32px 28px; max-width:420px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.25); text-align:center; animation:modalIn 0.3s ease;">
-            <div style="width:56px; height:56px; background:#dbeafe; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <div id="confirm-content">
+                <div style="width:56px; height:56px; background:#dbeafe; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <h3 style="margin:0 0 10px; font-size:1.25rem; color:#111;">Confirm Account Upgrade</h3>
+                <p style="margin:0 0 24px; color:#64748b; line-height:1.6; font-size:0.95rem;">This action is irreversible. Your account will be upgraded, and an order migration request will be sent to the admin.</p>
+                <div id="confirm-buttons" style="display:flex; gap:12px; justify-content:center;">
+                    <button type="button" onclick="closeModal('modal-confirm')" style="background:#f3f4f6; color:#374151; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem;">Cancel</button>
+                    <button type="button" id="btn-confirm-upgrade" style="background:#2563eb; color:#fff; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem;">Confirm Upgrade</button>
+                </div>
             </div>
-            <h3 style="margin:0 0 10px; font-size:1.25rem; color:#111;">Confirm Account Upgrade</h3>
-            <p style="margin:0 0 24px; color:#64748b; line-height:1.6; font-size:0.95rem;">This action is irreversible. Your account will be upgraded, and an order migration request will be sent to the admin.</p>
-            <div style="display:flex; gap:12px; justify-content:center;">
-                <button type="button" onclick="closeModal('modal-confirm')" style="background:#f3f4f6; color:#374151; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem;">Cancel</button>
-                <button type="button" onclick="window.location.href='/account-upgrade.php'" style="background:#2563eb; color:#fff; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem;">Confirm Upgrade</button>
+            <div id="confirm-loader" style="display:none; padding:20px 0;">
+                <div style="width:40px; height:40px; border:3px solid #dbeafe; border-top-color:#2563eb; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px;"></div>
+                <p style="color:#64748b; font-size:0.95rem; margin:0;">Processing your upgrade...</p>
             </div>
         </div>
     </div>
@@ -223,6 +229,9 @@
         @keyframes modalIn {
             from { opacity:0; transform:scale(0.92) translateY(10px); }
             to   { opacity:1; transform:scale(1) translateY(0); }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 
@@ -234,6 +243,9 @@
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
             document.getElementById('modal-overlay').style.display = 'none';
+            // Reset confirm modal state
+            document.getElementById('confirm-buttons').style.display = 'flex';
+            document.getElementById('confirm-loader').style.display = 'none';
         }
         document.getElementById('modal-overlay').addEventListener('click', function(e) {
             if (e.target === this) {
@@ -253,6 +265,35 @@
             } else {
                 openModal('modal-error');
             }
+        });
+
+        document.getElementById('btn-confirm-upgrade').addEventListener('click', function() {
+            document.getElementById('confirm-buttons').style.display = 'none';
+            document.getElementById('confirm-loader').style.display = 'block';
+
+            var startTime = Date.now();
+
+            fetch('/process-account-upgrade', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    'Accept': 'application/json',
+                },
+                credentials: 'same-origin'
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                var elapsed = Date.now() - startTime;
+                var delay = Math.max(500 - elapsed, 0);
+                setTimeout(function() {
+                    window.location.href = data.redirect || 'https://1dollardigitizing.com/dashboard.php';
+                }, delay);
+            })
+            .catch(function() {
+                setTimeout(function() {
+                    window.location.href = 'https://1dollardigitizing.com/dashboard.php';
+                }, 500);
+            });
         });
     </script>
 @endsection

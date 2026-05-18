@@ -276,6 +276,24 @@ class CustomerPortalController extends Controller
         return redirect('/view-billing.php')->with('success', $paidCount . ' invoice(s) paid successfully using your deposit balance.');
     }
 
+    public function processAccountUpgrade(Request $request)
+    {
+        $customer = $this->customer($request);
+
+        // Clear customer session (effectively making account inactive on this portal)
+        CustomerRememberLogin::clearCurrent($request);
+        $request->session()->forget([
+            'customer_user_id',
+            'customer_user_name',
+            'customer_site_key',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'redirect' => 'https://1dollardigitizing.com/dashboard.php',
+        ]);
+    }
+
     public function archive(Request $request)
     {
         $customer = $this->customer($request);
