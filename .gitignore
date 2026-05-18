@@ -25,6 +25,10 @@
 /uploads/*
 !/uploads/.gitkeep
 
+# SQLite databases
+*.sqlite
+*.sqlite3
+
 # IDE & OS
 /.idea
 /.vscode
