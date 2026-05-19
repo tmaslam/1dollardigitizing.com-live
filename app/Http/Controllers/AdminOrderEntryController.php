@@ -114,7 +114,6 @@ class AdminOrderEntryController extends Controller
             'stitches' => ['nullable', 'string', 'max:255'],
             'submitted_at' => ['nullable', 'date'],
             'completed_at' => ['nullable', 'date', 'required_if:entry_stage,completed_unpaid,completed_paid'],
-            'order_credit_limit' => ['nullable', 'numeric', 'min:0'],
             'delivery_override' => ['nullable', 'in:auto,preview_only'],
             'source_files.*' => ['nullable', 'file', 'max:30720'],
             'completed_files.*' => ['nullable', 'file', 'max:30720'],
@@ -149,7 +148,6 @@ class AdminOrderEntryController extends Controller
             'stitches' => 'stitches or hours',
             'submitted_at' => 'submitted date',
             'completed_at' => 'completed / delivered date',
-            'order_credit_limit' => 'order credit limit',
             'delivery_override' => 'customer file access',
             'source_files.*' => 'source file',
             'completed_files.*' => 'completed file',
@@ -323,7 +321,6 @@ class AdminOrderEntryController extends Controller
             'historical_backfill' => $isCompletedEntry ? 1 : 0,
             'suppress_customer_notifications' => $isCompletedEntry ? 1 : 0,
             'delivery_override' => $isCompletedPaidEntry ? 'auto' : (string) ($validated['delivery_override'] ?? 'auto'),
-            'order_credit_limit' => $request->filled('order_credit_limit') ? round((float) $validated['order_credit_limit'], 2) : null,
             'created_by_user_id' => $adminUser?->user_id,
             'created_by_name' => $adminUser?->user_name ?: 'admin',
         ]);

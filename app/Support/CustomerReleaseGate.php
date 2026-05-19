@@ -48,22 +48,17 @@ class CustomerReleaseGate
             ->where('approved', 'yes')
             ->where('payment', 'no')
             ->sum(\Illuminate\Support\Facades\DB::raw('CAST(amount AS DECIMAL(12,2))'));
-        $singleLimit = self::toMoney($meta?->order_credit_limit);
         $previewOnlyOverride = (string) ($meta?->delivery_override ?: 'auto') === 'preview_only';
-        $adminOrderCreditAllowed = $singleLimit > 0
-            && $amount <= $singleLimit + 0.0001;
         $fullReleaseAllowed = $paid
             || $amount <= 0
-            || ($availableBalance + $prepaidAmount + 0.0001 >= $amount)
-            || $adminOrderCreditAllowed;
+            || ($prepaidAmount + 0.0001 >= $amount);
         $fullReleaseAllowed = $previewOnlyOverride ? false : $fullReleaseAllowed;
 
         $reason = match (true) {
             $previewOnlyOverride => 'Preview-only delivery is enforced for this order.',
             $paid => 'Payment is already recorded, so released production files can be shared with the customer.',
             $amount <= 0 => 'This order currently has no charge, so released production files can be shared with the customer.',
-            $availableBalance + $prepaidAmount + 0.0001 >= $amount => 'Available customer credit covers this order, so released production files can be shared with the customer.',
-            $adminOrderCreditAllowed => 'This order is within the explicit release limit set by admin, so released production files can be shared.',
+            $prepaidAmount + 0.0001 >= $amount => 'Available customer credit covers this order, so released production files can be shared with the customer.',
             default => 'Only preview-safe files should be available until payment or approved credit covers the order.',
         };
 
@@ -72,11 +67,10 @@ class CustomerReleaseGate
             'paid' => $paid,
             'available_balance' => $availableBalance,
             'prepaid_amount' => $prepaidAmount,
-            'single_limit' => $singleLimit,
             'current_unpaid_amount' => $currentApprovedUnpaidAmount,
             'outstanding_due' => $outstandingDue,
             'delivery_override' => (string) ($meta?->delivery_override ?: 'auto'),
-            'order_credit_limit' => $singleLimit,
+            'order_credit_limit' => 0,
             'full_release_allowed' => $fullReleaseAllowed,
             'mode_label' => $fullReleaseAllowed ? 'Ready for Full Release' : 'Preview Files Only',
             'reason' => $reason,

@@ -771,13 +771,11 @@ class AdminOrderDetailController extends Controller
             'order_id' => ['required', 'integer'],
             'page' => ['required', 'string'],
             'back' => ['nullable', 'string'],
-            'order_credit_limit' => ['nullable', 'numeric', 'min:0'],
             'delivery_override' => ['required', 'in:auto,preview_only'],
         ], [], [
             'order_id' => 'order',
             'page' => 'page',
             'back' => 'return page',
-            'order_credit_limit' => 'order credit limit',
             'delivery_override' => 'customer file access',
         ]);
 
@@ -790,7 +788,6 @@ class AdminOrderDetailController extends Controller
 
         OrderWorkflowMetaManager::ensure($order, [
             'delivery_override' => (string) $validated['delivery_override'],
-            'order_credit_limit' => $request->filled('order_credit_limit') ? round((float) $validated['order_credit_limit'], 2) : null,
         ]);
 
         return $this->redirectToDetail($order->order_id, (string) $validated['page'], $validated['back'] ?? null)

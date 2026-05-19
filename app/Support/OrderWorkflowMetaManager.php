@@ -42,7 +42,7 @@ class OrderWorkflowMetaManager
                 'historical_backfill' => 0,
                 'suppress_customer_notifications' => 0,
                 'delivery_override' => 'auto',
-                'order_credit_limit' => null,
+
                 'date_added' => now()->format('Y-m-d H:i:s'),
                 'end_date' => null,
                 'deleted_by' => null,

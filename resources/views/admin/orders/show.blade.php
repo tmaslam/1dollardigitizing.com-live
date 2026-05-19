@@ -711,8 +711,7 @@
                             <input type="hidden" name="page" value="{{ $page }}">
                             <input type="hidden" name="back" value="{{ $backQueue }}">
                             <div class="field">
-                                <label for="order_credit_limit">Per-Order Release Limit</label>
-                                <input id="order_credit_limit" type="number" step="0.01" min="0" name="order_credit_limit" value="{{ old('order_credit_limit', $workflowMeta?->order_credit_limit) }}">
+
                             </div>
                             <div class="field">
                                 <label for="delivery_override">Delivery Rule</label>

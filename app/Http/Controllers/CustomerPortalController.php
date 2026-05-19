@@ -811,6 +811,13 @@ class CustomerPortalController extends Controller
             'response_comment' => ['nullable', 'string', 'max:5000'],
         ]);
 
+        $quoteAmount = $this->orderAmount($quote);
+        $availableCredit = CustomerBalance::deposit($customer->topup);
+
+        if ($quoteAmount > 0.001 && $availableCredit + 0.0001 < $quoteAmount) {
+            return back()->withErrors(['workflow' => 'You do not have enough credit to convert this quote. The order price is $'.number_format($quoteAmount, 2).' and your available credit is $'.number_format($availableCredit, 2).'. Please add credit to continue.']);
+        }
+
         $placement = $this->placementState($customer, $site);
         if (! $placement['can_place']) {
             return back()->withErrors(['workflow' => $placement['warning']]);
@@ -1221,23 +1228,21 @@ class CustomerPortalController extends Controller
             })
             ->sum(\Illuminate\Support\Facades\DB::raw('CAST(amount AS DECIMAL(12,2))'));
 
-        $creditLimit = $this->money($customer->customer_approval_limit);
+        $availableCredit = CustomerBalance::deposit($customer->topup);
         $pendingLimit = max(0, (int) $customer->customer_pending_order_limit);
 
         $warning = null;
         $canPlace = true;
 
-        if ($creditLimit > 0 && $pendingAmount >= $creditLimit) {
+        if ($pendingLimit > 0 && $pendingOrders >= $pendingLimit) {
             $canPlace = false;
-            $warning = 'You have exceeded your credit limit of US$'.number_format($creditLimit, 2).'. Please clear billing or contact support to continue.';
-        } elseif ($pendingLimit > 0 && $pendingOrders >= $pendingLimit) {
             $warning = "You already have {$pendingLimit} orders waiting for approval. The oldest approval-waiting order will be automatically pushed to billing when you submit new work.";
         }
 
-        // Block placement if any unpaid billing exists.
-        if ($canPlace && $pendingAmount > 0.001) {
+        // Block placement if outstanding bills exceed available credit.
+        if ($canPlace && $availableCredit + 0.0001 < $pendingAmount) {
             $canPlace = false;
-            $warning  = 'You have $'.number_format($pendingAmount, 2).' in outstanding billing. Please clear your billing balance before placing new orders or quotes.';
+            $warning  = 'You have $'.number_format($pendingAmount, 2).' in outstanding billing and $'.number_format($availableCredit, 2).' in available credit. Please add credit to continue placing orders or quotes.';
         }
 
         return [

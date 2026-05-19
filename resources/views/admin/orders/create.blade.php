@@ -318,8 +318,7 @@
                         <h3>Delivery And Credit Control</h3>
                         <div class="toolbar">
                             <div class="field">
-                                <label for="order_credit_limit">Per-Order Credit Limit</label>
-                                <input id="order_credit_limit" type="number" step="0.01" min="0" name="order_credit_limit" value="{{ old('order_credit_limit') }}" @disabled(! $hasWorkflowMetaTable)>
+
                             </div>
                             <div class="field">
                                 <label for="delivery_override">Customer File Access</label>
