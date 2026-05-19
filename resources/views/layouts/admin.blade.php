@@ -369,15 +369,14 @@
             position: relative;
         }
         .table-wrap::before {
-            content: '🚀 scroll';
-            position: absolute;
-            top: 10px;
-            right: 14px;
+            content: '🚀 scroll right →';
+            display: block;
+            text-align: right;
+            padding: 6px 14px 2px;
             font-size: 0.72rem;
             color: var(--muted);
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0.7;
+            opacity: 0.75;
+            letter-spacing: 0.03em;
         }
         table {
             width: 100%;
