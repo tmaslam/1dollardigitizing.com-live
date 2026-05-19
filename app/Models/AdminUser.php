@@ -69,6 +69,7 @@ class AdminUser extends Model
         'stripe_customer_id',
         'flash_fee',
         'team_group',
+        'legacy_migrated_at',
     ];
 
     protected static array $columnPresence = [];

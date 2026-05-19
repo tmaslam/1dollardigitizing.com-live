@@ -217,13 +217,13 @@ class CustomerPortalController extends Controller
 
             // If we still cannot determine the amount, let the webhook handle it.
             if ($creditAmount <= 0) {
-                $isSignup = (bool) ($existingPayload['is_signup'] ?? false);
-                if ($isSignup && (int) $customer->is_active !== 1) {
+                if ((int) $customer->is_active !== 1) {
                     $customer->update([
                         'is_active' => 1,
                         'user_term' => 'active',
                         'exist_customer' => '1',
                     ]);
+                    \App\Support\LegacyCustomerMigration::migrate($customer);
                 }
 
                 $request->session()->forget('signup_selected_plan');
@@ -236,14 +236,14 @@ class CustomerPortalController extends Controller
 
         CustomerBalance::incrementDeposit((int) $transaction->user_id, $creditAmount);
 
-        // If this was a signup purchase, activate the account.
-        $isSignup = (bool) ($existingPayload['is_signup'] ?? false);
-        if ($isSignup && (int) $customer->is_active !== 1) {
+        // Activate the account if not yet active (covers both new signups and legacy upgrades).
+        if ((int) $customer->is_active !== 1) {
             $customer->update([
                 'is_active' => 1,
                 'user_term' => 'active',
                 'exist_customer' => '1',
             ]);
+            \App\Support\LegacyCustomerMigration::migrate($customer);
         }
 
         // Auto-set subscription plan and renewal date for subscription purchases.
