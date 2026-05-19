@@ -201,7 +201,7 @@
             width: 100%;
             height: 520px;
             object-fit: cover;
-            object-position: top center;
+            object-position: center center;
             display: block;
         }
         .blog-post-layout {
