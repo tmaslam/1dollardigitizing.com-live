@@ -636,13 +636,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-        // Horizontal scroll buttons for every .table-wrap
+        // Horizontal scroll buttons for every .table-wrap (placed as sibling BEFORE the wrap)
         document.querySelectorAll('.table-wrap').forEach(function(wrap) {
             var btn = document.createElement('button');
             btn.className = 'table-scroll-btn';
             btn.type = 'button';
             btn.textContent = '🚀 Scroll right →';
-            wrap.insertBefore(btn, wrap.firstChild);
+            wrap.parentNode.insertBefore(btn, wrap);
 
             btn.addEventListener('click', function() {
                 var atEnd = wrap.scrollLeft + wrap.clientWidth >= wrap.scrollWidth - 5;
