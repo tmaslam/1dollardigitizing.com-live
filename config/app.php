@@ -58,6 +58,8 @@ return [
 
     'shared_uploads_path' => env('SHARED_UPLOADS_PATH', ''),
 
+    'legacy_migration_secret' => env('LEGACY_MIGRATION_SECRET', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

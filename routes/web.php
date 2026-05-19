@@ -85,7 +85,7 @@ Route::middleware('detect.site')->group(function () use ($adminPrefix, $internal
     Route::get('/blog/{slug}', [BlogController::class, 'show']);
     Route::get('/simulate-2checkout/{transaction}/checkout', [CustomerPaymentController::class, 'showTwocheckoutSimulator'])->middleware('customer.auth');
     Route::match(['get', 'post'], '/simulate-2checkout/{transaction}', [CustomerPaymentController::class, 'simulateTwocheckout'])->middleware('customer.auth');
-    Route::get('/dashboard.php', [CustomerPortalController::class, 'dashboard'])->middleware('customer.auth');
+    Route::get('/dashboard.php', [CustomerPortalController::class, 'dashboard'])->middleware(['legacy.upgrade', 'customer.auth']);
     Route::post('/select-plan.php', [CustomerPortalController::class, 'selectPlan'])->middleware('customer.auth');
     Route::get('/stripe-return.php', [CustomerPortalController::class, 'stripeReturn'])->middleware('customer.auth');
     Route::get('/payment-success.php', [CustomerPortalController::class, 'paymentSuccess'])->middleware('customer.auth');

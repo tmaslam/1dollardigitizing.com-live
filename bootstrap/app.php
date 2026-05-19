@@ -5,6 +5,7 @@ use App\Http\Middleware\EnsureAdminAuthenticated;
 use App\Http\Middleware\EnsureCustomerAuthenticated;
 use App\Http\Middleware\EnsureSupervisorAuthenticated;
 use App\Http\Middleware\EnsureTeamAuthenticated;
+use App\Http\Middleware\HandleLegacyUpgrade;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'customer.auth' => EnsureCustomerAuthenticated::class,
             'team.auth' => EnsureTeamAuthenticated::class,
             'supervisor.auth' => EnsureSupervisorAuthenticated::class,
+            'legacy.upgrade' => HandleLegacyUpgrade::class,
         ]);
 
         // Payment providers must be able to call back into the application without a browser CSRF token.
