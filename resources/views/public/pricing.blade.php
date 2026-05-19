@@ -1258,17 +1258,18 @@
         }
 
         @media (max-width: 1100px) {
-            .sub-card { flex: 0 0 calc(50% - 10px); min-width: auto; }
+            .sub-card { flex: 0 0 calc(50% - 10px); min-width: 0; }
         }
 
         @media (max-width: 768px) {
-            .sub-card { flex: 0 0 calc(100% - 8px); min-width: auto; }
-            .sub-nav  { display: none; }
+            .credits-carousel-wrap { align-items: stretch; }
+            .sub-card { flex: 0 0 calc(100% - 8px); min-width: 0; width: calc(100% - 8px); scroll-snap-align: start; }
+            .sub-nav  { display: none !important; }
         }
 
         @media (max-width: 640px) {
-            .sub-card { flex: 0 0 calc(100% - 8px); min-width: auto; width: auto; scroll-snap-align: start; }
-            .sub-nav  { display: none; }
+            .sub-card { flex: 0 0 calc(100% - 8px); min-width: 0; width: calc(100% - 8px); scroll-snap-align: start; }
+            .sub-nav  { display: none !important; }
         }
     </style>
 
