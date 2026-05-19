@@ -63,11 +63,11 @@ class AdminBlogController extends Controller
 
         $slug = $validated['slug'] ?: Blog::generateSlug($validated['title']);
 
-        $heroPath = $request->file('hero_image')->store('blog-images', 'public');
+        $heroPath = $request->file('hero_image')->store('blog-images', 'public_storage');
 
         $ogPath = null;
         if ($request->hasFile('og_image')) {
-            $ogPath = $request->file('og_image')->store('blog-images', 'public');
+            $ogPath = $request->file('og_image')->store('blog-images', 'public_storage');
         }
 
         $publishedAt = $validated['published_at'] ?? null;
@@ -131,17 +131,17 @@ class AdminBlogController extends Controller
         $heroPath = $blog->hero_image;
         if ($request->hasFile('hero_image')) {
             if ($blog->hero_image) {
-                Storage::disk('public')->delete($blog->hero_image);
+                Storage::disk('public_storage')->delete($blog->hero_image);
             }
-            $heroPath = $request->file('hero_image')->store('blog-images', 'public');
+            $heroPath = $request->file('hero_image')->store('blog-images', 'public_storage');
         }
 
         $ogPath = $blog->og_image;
         if ($request->hasFile('og_image')) {
             if ($blog->og_image) {
-                Storage::disk('public')->delete($blog->og_image);
+                Storage::disk('public_storage')->delete($blog->og_image);
             }
-            $ogPath = $request->file('og_image')->store('blog-images', 'public');
+            $ogPath = $request->file('og_image')->store('blog-images', 'public_storage');
         }
 
         $publishedAt = $validated['published_at'] ?? $blog->published_at;
@@ -211,10 +211,10 @@ class AdminBlogController extends Controller
             'file' => 'required|file|mimes:jpg,jpeg,png,webp,gif|max:5120',
         ]);
 
-        $path = $request->file('file')->store('blog-images', 'public');
+        $path = $request->file('file')->store('blog-images', 'public_storage');
 
         return response()->json([
-            'location' => Storage::disk('public')->url($path),
+            'location' => Storage::disk('public_storage')->url($path),
         ]);
     }
 }

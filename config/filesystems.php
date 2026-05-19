@@ -47,6 +47,17 @@ return [
             'report' => false,
         ],
 
+        // Writes directly into public/storage/ so files are web-accessible on
+        // shared hosting without needing a storage:link symlink.
+        'public_storage' => [
+            'driver' => 'local',
+            'root' => public_path('storage'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
