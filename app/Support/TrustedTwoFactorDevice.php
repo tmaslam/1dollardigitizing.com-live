@@ -157,12 +157,14 @@ class TrustedTwoFactorDevice
 
     private static function queueCookie(Request $request, string $portal, ?string $siteLegacyKey, string $selector, string $validator): void
     {
+        $cookieDomain = self::resolveCookieDomain();
+
         Cookie::queue(cookie(
             self::cookieName($portal, $siteLegacyKey),
             $selector.'|'.$validator,
             self::LIFETIME_DAYS * 24 * 60,
             '/',
-            null,
+            $cookieDomain,
             $request->isSecure(),
             true,
             false,
@@ -172,7 +174,24 @@ class TrustedTwoFactorDevice
 
     private static function forgetCookie(string $portal, ?string $siteLegacyKey): void
     {
-        Cookie::queue(Cookie::forget(self::cookieName($portal, $siteLegacyKey), '/'));
+        $cookieDomain = self::resolveCookieDomain();
+        Cookie::queue(Cookie::forget(self::cookieName($portal, $siteLegacyKey), '/', $cookieDomain));
+    }
+
+    private static function resolveCookieDomain(): ?string
+    {
+        $url = parse_url((string) config('app.url', ''));
+        $host = $url['host'] ?? null;
+
+        if ($host === null || $host === '' || $host === 'localhost') {
+            return null;
+        }
+
+        // Strip www. prefix so cookie works on both www and non-www
+        $host = preg_replace('/^www\./i', '', $host);
+
+        // Prepend dot so cookie is shared across subdomains
+        return '.' . $host;
     }
 
     private static function cookieParts(Request $request, string $portal, ?string $siteLegacyKey): array
