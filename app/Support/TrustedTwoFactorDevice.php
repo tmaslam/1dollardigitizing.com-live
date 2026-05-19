@@ -17,12 +17,14 @@ class TrustedTwoFactorDevice
     public static function shouldSkipChallenge(Request $request, string $portal, AdminUser $user, ?string $siteLegacyKey = null): bool
     {
         if (! Schema::hasTable(self::TABLE)) {
+            \Illuminate\Support\Facades\Log::warning('TrustedDevice: table missing');
             return false;
         }
 
         [$selector, $validator] = self::cookieParts($request, $portal, $siteLegacyKey);
 
         if ($selector === null || $validator === null) {
+            \Illuminate\Support\Facades\Log::warning('TrustedDevice: cookie missing', ['cookie_name' => self::cookieName($portal, $siteLegacyKey)]);
             return false;
         }
 
@@ -41,19 +43,27 @@ class TrustedTwoFactorDevice
         $record = $query->first();
 
         if (! $record) {
+            \Illuminate\Support\Facades\Log::warning('TrustedDevice: no DB record', ['selector' => $selector]);
             self::forgetCookie($portal, $siteLegacyKey);
-
             return false;
         }
 
-        $valid = hash_equals((string) $record->token_hash, hash('sha256', $validator))
-            && hash_equals((string) $record->user_agent_hash, self::userAgentHash($request))
-            && hash_equals((string) $record->password_signature, self::passwordSignature($user));
+        $tokenValid = hash_equals((string) $record->token_hash, hash('sha256', $validator));
+        $uaValid = hash_equals((string) $record->user_agent_hash, self::userAgentHash($request));
+        $pwValid = hash_equals((string) $record->password_signature, self::passwordSignature($user));
 
-        if (! $valid) {
+        if (! $tokenValid || ! $uaValid || ! $pwValid) {
+            \Illuminate\Support\Facades\Log::warning('TrustedDevice: validation failed', [
+                'token_ok' => $tokenValid,
+                'ua_ok' => $uaValid,
+                'pw_ok' => $pwValid,
+                'stored_ua' => substr((string) $record->user_agent_hash, 0, 16),
+                'current_ua' => substr(self::userAgentHash($request), 0, 16),
+                'stored_pw' => substr((string) $record->password_signature, 0, 16),
+                'current_pw' => substr(self::passwordSignature($user), 0, 16),
+            ]);
             DB::table(self::TABLE)->where('id', $record->id)->delete();
             self::forgetCookie($portal, $siteLegacyKey);
-
             return false;
         }
 
