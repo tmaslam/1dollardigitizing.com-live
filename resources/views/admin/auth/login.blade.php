@@ -171,7 +171,7 @@
         <div class="card">
             <h2>Admin Login</h2>
             <p class="muted">Use your admin username and password.</p>
-            <form method="post" action="{{ url('/v/login') }}" class="stack">
+            <form method="post" action="{{ url('/v/login') }}" class="stack" onsubmit="const btn=this.querySelector('button[type=submit]');if(btn.dataset.submitting)return false;btn.dataset.submitting='1';btn.disabled=true;btn.textContent='Signing in…';return true;">
                 @csrf
                 <div>
                     <label for="txtLogin">Username</label>
