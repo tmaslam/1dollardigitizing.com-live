@@ -45,6 +45,8 @@ class TrustedTwoFactorDevice
         if (! $record) {
             \Illuminate\Support\Facades\Log::warning('TrustedDevice: no DB record', ['selector' => $selector]);
             self::forgetCookie($portal, $siteLegacyKey);
+            // Also clear legacy cookie without domain
+            Cookie::queue(Cookie::forget(self::cookieName($portal, $siteLegacyKey), '/', null));
             return false;
         }
 
@@ -91,6 +93,10 @@ class TrustedTwoFactorDevice
         }
 
         self::revokeCurrent($request, $portal, $siteLegacyKey);
+
+        // Also delete any legacy cookie that was set without a domain attribute
+        // before we added explicit cookie domains.
+        Cookie::queue(Cookie::forget(self::cookieName($portal, $siteLegacyKey), '/', null));
 
         $selector = bin2hex(random_bytes(8));
         $validator = bin2hex(random_bytes(32));
