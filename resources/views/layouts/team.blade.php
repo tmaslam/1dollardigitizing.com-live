@@ -250,18 +250,22 @@
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
             position: relative;
         }
-        .table-wrap::before {
-            content: '🚀 Scroll right to see more →';
+        .table-scroll-btn {
             display: block;
+            width: 100%;
             text-align: right;
             padding: 8px 16px;
             font-size: 0.75rem;
             font-weight: 600;
             color: #0f5f66;
             background: rgba(15,95,102,0.07);
+            border: none;
             border-bottom: 1px solid rgba(15,95,102,0.12);
             border-radius: 18px 18px 0 0;
+            cursor: pointer;
+            transition: background 0.15s;
         }
+        .table-scroll-btn:hover { background: rgba(15,95,102,0.14); }
         table {
             width: 100%;
             min-width: 720px;
@@ -631,6 +635,25 @@ document.addEventListener('DOMContentLoaded', function () {
         element.addEventListener(eventName, persistSidebarScroll);
     });
 });
+
+        // Horizontal scroll buttons for every .table-wrap
+        document.querySelectorAll('.table-wrap').forEach(function(wrap) {
+            var btn = document.createElement('button');
+            btn.className = 'table-scroll-btn';
+            btn.type = 'button';
+            btn.textContent = '🚀 Scroll right →';
+            wrap.insertBefore(btn, wrap.firstChild);
+
+            btn.addEventListener('click', function() {
+                var atEnd = wrap.scrollLeft + wrap.clientWidth >= wrap.scrollWidth - 5;
+                wrap.scrollTo({ left: atEnd ? 0 : wrap.scrollWidth, behavior: 'smooth' });
+            });
+
+            wrap.addEventListener('scroll', function() {
+                var atEnd = wrap.scrollLeft + wrap.clientWidth >= wrap.scrollWidth - 5;
+                btn.textContent = atEnd ? '← Scroll left 🚀' : '🚀 Scroll right →';
+            }, { passive: true });
+        });
 </script>
 @include('shared.file-preview-script')
 </body>
