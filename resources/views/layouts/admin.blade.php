@@ -248,6 +248,7 @@
             border-radius: 26px;
             box-shadow: var(--shadow);
             backdrop-filter: blur(14px);
+            min-width: 0;
         }
         .card-body { padding: clamp(16px, 2vw, 22px); }
         .card-body > h3,
