@@ -1,6 +1,6 @@
 @extends('public.layout')
 
-@section('title', 'Embroidery Digitizing Services from $1 | '.$siteContext->displayLabel())
+@section('title', 'Embroidery Digitizing Services | '.$siteContext->displayLabel())
 @section('meta_description', 'Embroidery digitizing services from $1: logo digitizing, 3D puff, applique, chain stitch, vector art and more. All machine formats, free revisions included.')
 
 @section('content')
@@ -206,4 +206,31 @@
             </div>
         </div>
     </section>
+@endsection
+
+@section('structured_data')
+@php
+$serviceListSchema = [
+    '@context'        => 'https://schema.org',
+    '@type'           => 'ItemList',
+    'name'            => 'Embroidery Digitizing Services',
+    'itemListElement' => array_values(array_map(function ($svc, $i) {
+        return [
+            '@type'    => 'ListItem',
+            'position' => $i + 1,
+            'item'     => [
+                '@type'       => 'Service',
+                'name'        => strip_tags($svc['title']),
+                'description' => strip_tags($svc['summary']),
+                'offers'      => [
+                    '@type'       => 'Offer',
+                    'description' => $svc['price'],
+                ],
+                'url'         => $svc['href'],
+            ],
+        ];
+    }, $serviceCards, array_keys($serviceCards))),
+];
+echo json_encode($serviceListSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+@endphp
 @endsection

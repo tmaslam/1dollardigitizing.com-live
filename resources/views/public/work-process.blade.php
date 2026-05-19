@@ -1,7 +1,7 @@
 @extends('public.layout')
 
-@section('title', 'How It Works — Embroidery Digitizing Process | '.$siteContext->displayLabel())
-@section('meta_description', 'Create a free account — no card needed. Add credits when you are ready, submit artwork, we build and quality-test your file, you approve. Credits deducted only on approval.')
+@section('title', 'How Embroidery Digitizing Works | '.$siteContext->displayLabel())
+@section('meta_description', 'Create a free account — no card required. Submit artwork, we build and quality-test your file, you approve it. Credits only deduct on your final approval.')
 
 @section('content')
     @php
@@ -376,4 +376,24 @@
             }
         }
     </style>
+@endsection
+
+@section('structured_data')
+@php
+$howToSchema = [
+    '@context'    => 'https://schema.org',
+    '@type'       => 'HowTo',
+    'name'        => 'How Embroidery Digitizing Works',
+    'description' => 'Create a free account, submit artwork, we build and quality-test your file, you approve. Credits only deducted on final approval.',
+    'step'        => array_values(array_map(function ($s, $i) {
+        return [
+            '@type'    => 'HowToStep',
+            'position' => $i + 1,
+            'name'     => strip_tags($s['title']),
+            'text'     => strip_tags($s['body']),
+        ];
+    }, $steps, array_keys($steps))),
+];
+echo json_encode($howToSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+@endphp
 @endsection

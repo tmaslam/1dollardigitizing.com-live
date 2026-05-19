@@ -1,7 +1,7 @@
 @extends('public.layout')
 
-@section('title', 'Flexible Payment Options for Embroidery Digitizing | '.$siteContext->displayLabel())
-@section('meta_description', 'Pay securely by card or PayPal through Stripe and 2Checkout. No stored card data, invoice-based billing, customer credit system, and full payment history for your account.')
+@section('title', 'Embroidery Digitizing Payment Options | '.$siteContext->displayLabel())
+@section('meta_description', 'Pay securely by card or PayPal via Stripe and 2Checkout. No stored card data, invoice-based billing, customer credit system, and full payment history.')
 
 @section('content')
     @php

@@ -1,7 +1,7 @@
 @extends('public.layout')
 
 @section('title', 'About 1 Dollar Digitizing | Embroidery Digitizing Experts Since 2005')
-@section('meta_description', 'Founded by Tariq Aslam with 20+ years in garment manufacturing. 1 Million+ designs digitized, 10,000+ customers, offices in US, UK & Pakistan. From $1 per 1,000 stitches.')
+@section('meta_description', 'Founded by Tariq Aslam with 20+ years in embroidery. 1 Million+ designs digitized, 10,000+ customers, US, UK & Pakistan offices. From $1 per 1,000 stitches.')
 
 @section('content')
     @php

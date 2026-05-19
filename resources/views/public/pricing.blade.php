@@ -1306,3 +1306,38 @@
     </script>
 
 @endsection
+
+@section('structured_data')
+@php
+$aggregateOfferSchema = [
+    '@context'    => 'https://schema.org',
+    '@type'       => 'Product',
+    'name'        => 'Embroidery Digitizing Service',
+    'description' => 'Professional embroidery digitizing from $1 per 1,000 stitches. Standard, Priority, and Super Rush turnaround options.',
+    'brand'       => ['@type' => 'Brand', 'name' => '1 Dollar Digitizing'],
+    'offers'      => [
+        '@type'       => 'AggregateOffer',
+        'lowPrice'    => '1.00',
+        'highPrice'   => '2.00',
+        'priceCurrency' => 'USD',
+        'offerCount'  => count($plans),
+        'offers'      => array_values(array_map(function ($plan) {
+            return [
+                '@type'         => 'Offer',
+                'name'          => $plan['title'],
+                'description'   => strip_tags($plan['turnaround']),
+                'price'         => ltrim($plan['amount'], '$'),
+                'priceCurrency' => 'USD',
+                'priceSpecification' => [
+                    '@type'             => 'UnitPriceSpecification',
+                    'price'             => ltrim($plan['amount'], '$'),
+                    'priceCurrency'     => 'USD',
+                    'referenceQuantity' => ['@type' => 'QuantitativeValue', 'value' => '1000', 'unitText' => 'stitches'],
+                ],
+            ];
+        }, $plans)),
+    ],
+];
+echo json_encode($aggregateOfferSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+@endphp
+@endsection
