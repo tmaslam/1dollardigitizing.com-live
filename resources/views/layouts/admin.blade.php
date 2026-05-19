@@ -369,14 +369,16 @@
             position: relative;
         }
         .table-wrap::before {
-            content: '🚀 scroll right →';
+            content: '🚀 Scroll right to see more →';
             display: block;
             text-align: right;
-            padding: 6px 14px 2px;
-            font-size: 0.72rem;
-            color: var(--muted);
-            opacity: 0.75;
-            letter-spacing: 0.03em;
+            padding: 8px 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #0f5f66;
+            background: rgba(15,95,102,0.07);
+            border-bottom: 1px solid rgba(15,95,102,0.12);
+            border-radius: 18px 18px 0 0;
         }
         table {
             width: 100%;
