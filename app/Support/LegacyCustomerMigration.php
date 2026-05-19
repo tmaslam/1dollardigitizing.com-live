@@ -101,6 +101,14 @@ class LegacyCustomerMigration
         $legacyUploadsPath = rtrim((string) env('LEGACY_UPLOADS_PATH', '/home/digixjhl/legacy.1dollardigitizing.com/uploads'), '/');
         $v2UploadsPath     = rtrim((string) env('SHARED_UPLOADS_PATH', ''), '/');
 
+        // Safety guard: refuse to copy if the paths are the same — that would
+        // overwrite or pollute the legacy directory with v2 data.
+        if ($v2UploadsPath !== '' && $v2UploadsPath === $legacyUploadsPath) {
+            throw new \RuntimeException(
+                'SHARED_UPLOADS_PATH and LEGACY_UPLOADS_PATH must not point to the same directory.'
+            );
+        }
+
         foreach ($legacyAttachments as $attachment) {
             if ($v2UploadsPath !== '' && $attachment->file_source !== null) {
                 $relPath = ltrim((string) $attachment->file_source, '/');
