@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use App\Models\AdminUser;
-use App\Support\LegacyCustomerMigration;
 use App\Support\SiteContext;
 use Closure;
 use Illuminate\Http\Request;
@@ -77,9 +76,6 @@ class HandleLegacyUpgrade
             ]);
             $customer->refresh();
         }
-
-        // Copy orders, billing, and files from the legacy database.
-        LegacyCustomerMigration::migrate($customer->fresh());
 
         // Establish the customer session (same variables as normal login).
         $request->session()->forget([

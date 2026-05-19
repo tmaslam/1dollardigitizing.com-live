@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('payment_transactions', function (Blueprint $table) {
+        Schema::createIfNotExists('payment_transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id')->nullable()->index();
             $table->unsignedInteger('user_id')->index();
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->timestamp('updated_at')->nullable();
         });
 
-        Schema::create('payment_transaction_items', function (Blueprint $table) {
+        Schema::createIfNotExists('payment_transaction_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('payment_transaction_id')->index();
             $table->unsignedBigInteger('billing_id')->nullable()->index();

@@ -223,7 +223,6 @@ class CustomerPortalController extends Controller
                         'user_term' => 'active',
                         'exist_customer' => '1',
                     ]);
-                    \App\Support\LegacyCustomerMigration::migrate($customer);
                 }
 
                 $request->session()->forget('signup_selected_plan');
@@ -243,7 +242,6 @@ class CustomerPortalController extends Controller
                 'user_term' => 'active',
                 'exist_customer' => '1',
             ]);
-            \App\Support\LegacyCustomerMigration::migrate($customer);
         }
 
         // Auto-set subscription plan and renewal date for subscription purchases.

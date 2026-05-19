@@ -46,56 +46,6 @@ Artisan::command('passwords:backfill-secure-hashes {--keep-legacy : Keep the old
     return self::SUCCESS;
 })->purpose('Backfill secure password hashes for legacy accounts');
 
-Artisan::command('customer:migrate-from-legacy {identifier : v2 user_id or email address}', function () {
-    $identifier = trim((string) $this->argument('identifier'));
-
-    $customer = is_numeric($identifier)
-        ? AdminUser::find((int) $identifier)
-        : AdminUser::where('user_email', $identifier)->first();
-
-    if (! $customer) {
-        $this->error('No v2 customer found for: '.$identifier);
-        return self::FAILURE;
-    }
-
-    $this->line('Customer found: #'.$customer->user_id.' — '.$customer->user_email);
-    $this->line('Current status: is_active='.$customer->is_active.', exist_customer='.$customer->exist_customer);
-
-    if ($customer->legacy_migrated_at !== null) {
-        $this->warn('Already migrated at: '.$customer->legacy_migrated_at);
-        if (! $this->confirm('Run migration again?', false)) {
-            return self::SUCCESS;
-        }
-        // Reset so LegacyCustomerMigration will run
-        $customer->update(['legacy_migrated_at' => null]);
-        $customer->refresh();
-    }
-
-    // Activate the account if not already active
-    if ((int) $customer->is_active !== 1) {
-        $customer->update([
-            'is_active'       => 1,
-            'user_term'       => 'active',
-            'exist_customer'  => '1',
-        ]);
-        $this->info('Account activated.');
-    } else {
-        $this->line('Account was already active.');
-    }
-
-    $this->line('Running legacy data migration...');
-    \App\Support\LegacyCustomerMigration::migrateOrFail($customer->fresh());
-
-    $customer->refresh();
-    if ($customer->legacy_migrated_at !== null) {
-        $this->info('Migration complete. legacy_migrated_at = '.$customer->legacy_migrated_at);
-    } else {
-        $this->warn('Migration ran but legacy_migrated_at was not set — customer may not exist in the legacy database, or an error was logged.');
-    }
-
-    return self::SUCCESS;
-})->purpose('Activate a legacy customer in v2 and copy their orders, billing, and files');
-
 Artisan::command('release:check {--strict : Fail when any required release item is missing}', function () {
     $requiredTables = [
         'sites',
