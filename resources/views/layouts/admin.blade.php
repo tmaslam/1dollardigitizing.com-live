@@ -248,7 +248,6 @@
             border-radius: 26px;
             box-shadow: var(--shadow);
             backdrop-filter: blur(14px);
-            overflow: hidden;
         }
         .card-body { padding: clamp(16px, 2vw, 22px); }
         .card-body > h3,
