@@ -1078,12 +1078,20 @@
         }
 
         @media (max-width: 1100px) {
-            .credit-card { flex: 0 0 calc(50% - 10px); }
+            .credit-card { flex: 0 0 calc(50% - 10px); min-width: auto; }
+        }
+
+        @media (max-width: 768px) {
+            .credit-card { flex: 0 0 calc(100% - 8px); min-width: auto; }
+            .credits-nav { display: none; }
+            .credits-dots { display: flex !important; }
         }
 
         @media (max-width: 640px) {
-            .credit-card { flex: 0 0 85%; min-width: auto; }
+            .credits-carousel { overflow-x: auto; scroll-snap-type: x mandatory; flex-direction: row; gap: 12px; padding: 8px 4px 16px; }
+            .credit-card { flex: 0 0 calc(100% - 8px); min-width: auto; width: auto; scroll-snap-align: start; }
             .credits-nav { display: none; }
+            .credits-dots { display: flex; }
         }
 
         /* ── Subscription Plans Carousel ── */
@@ -1250,11 +1258,16 @@
         }
 
         @media (max-width: 1100px) {
-            .sub-card { flex: 0 0 calc(50% - 10px); }
+            .sub-card { flex: 0 0 calc(50% - 10px); min-width: auto; }
+        }
+
+        @media (max-width: 768px) {
+            .sub-card { flex: 0 0 calc(100% - 8px); min-width: auto; }
+            .sub-nav  { display: none; }
         }
 
         @media (max-width: 640px) {
-            .sub-card { flex: 0 0 85%; min-width: auto; }
+            .sub-card { flex: 0 0 calc(100% - 8px); min-width: auto; width: auto; scroll-snap-align: start; }
             .sub-nav  { display: none; }
         }
     </style>

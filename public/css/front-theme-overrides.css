@@ -6463,13 +6463,24 @@ body.front-theme.public-theme .about-page-header p {
 
 /* ── ≤768px: Tablet portrait — single columns, compact hero ── */
 @media (max-width: 768px) {
-    /* About stats row keep 3-col at 768px but compact padding */
+    /* About stats row → 1-column stacked on mobile */
+    body.front-theme.public-theme .about-stats-row {
+        grid-template-columns: 1fr !important;
+    }
+
     body.front-theme.public-theme .about-stats-row .stat-card {
-        padding: 1.1rem 0.75rem;
+        padding: 1.25rem 1.5rem;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+        text-align: left;
+    }
+
+    body.front-theme.public-theme .about-stats-row .stat-card:last-child {
+        border-bottom: 0;
     }
 
     body.front-theme.public-theme .about-stats-row .stat-number {
-        font-size: 1.75rem;
+        font-size: 2rem;
     }
 
     /* Page header vertical padding */
@@ -6500,20 +6511,6 @@ body.front-theme.public-theme .about-page-header p {
 
 /* ── ≤680px: Mobile — single column everything, compact text ── */
 @media (max-width: 680px) {
-    /* About stats row → vertical stack */
-    body.front-theme.public-theme .about-stats-row {
-        grid-template-columns: 1fr !important;
-    }
-
-    body.front-theme.public-theme .about-stats-row .stat-card {
-        border-right: none !important;
-        border-bottom: 1px solid rgba(226, 232, 240, 0.9) !important;
-    }
-
-    body.front-theme.public-theme .about-stats-row .stat-card:last-child {
-        border-bottom: 0 !important;
-    }
-
     /* Software cards → 2 col on mobile */
     body.front-theme.public-theme .sw-cards {
         grid-template-columns: repeat(2, 1fr) !important;
