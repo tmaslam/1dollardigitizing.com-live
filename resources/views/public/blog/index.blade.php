@@ -137,6 +137,7 @@
             width: 100%;
             aspect-ratio: 16/9;
             object-fit: cover;
+            object-position: top center;
             display: block;
             transition: transform 0.3s ease;
         }
