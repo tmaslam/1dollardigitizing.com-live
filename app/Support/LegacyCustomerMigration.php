@@ -17,13 +17,23 @@ class LegacyCustomerMigration
         try {
             self::run($v2Customer);
         } catch (Throwable $e) {
-            // Log but don't block the payment success flow
             \Illuminate\Support\Facades\Log::error('LegacyCustomerMigration failed', [
                 'user_id' => $v2Customer->user_id,
                 'email'   => $v2Customer->user_email,
                 'error'   => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
             ]);
         }
+    }
+
+    // Same as migrate() but re-throws so the Artisan command can surface errors.
+    public static function migrateOrFail(AdminUser $v2Customer): void
+    {
+        if ($v2Customer->legacy_migrated_at !== null) {
+            return;
+        }
+
+        self::run($v2Customer);
     }
 
     private static function run(AdminUser $v2Customer): void
