@@ -15,8 +15,7 @@
         <div class="blog-post-hero">
             <img src="{{ $post->heroImageUrl() }}"
                  alt="{{ $post->hero_image_alt }}"
-                 class="blog-post-hero-img"
-                 width="1200" height="600">
+                 class="blog-post-hero-img">
         </div>
     @endif
 
@@ -194,14 +193,10 @@
     <style>
         .blog-post-hero {
             width: 100%;
-            max-height: 520px;
-            overflow: hidden;
         }
         .blog-post-hero-img {
             width: 100%;
-            height: 520px;
-            object-fit: cover;
-            object-position: center center;
+            height: auto;
             display: block;
         }
         .blog-post-layout {
@@ -319,7 +314,6 @@
             .blog-post-sidebar { display: none; }
         }
         @media (max-width: 640px) {
-            .blog-post-hero-img { height: 260px; }
             .blog-post-cta { flex-direction: column; align-items: flex-start; }
         }
     </style>
