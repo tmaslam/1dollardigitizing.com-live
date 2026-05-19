@@ -13,8 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class HandleLegacyUpgrade
 {
-    // Token is valid for 15 minutes to limit replay risk.
-    private const TOKEN_TTL_SECONDS = 900;
+    // Token is valid for 1 hour.
+    private const TOKEN_TTL_SECONDS = 3600;
 
     public function handle(Request $request, Closure $next): Response
     {
@@ -107,14 +107,6 @@ class HandleLegacyUpgrade
 
     private function decrypt(string $token): ?int
     {
-        $secret = (string) config('app.legacy_migration_secret');
-
-        if ($secret === '') {
-            Log::error('LegacyUpgrade: LEGACY_MIGRATION_SECRET is not configured');
-            return null;
-        }
-
-        // Restore standard base64 from URL-safe encoding.
         $padding = str_repeat('=', (4 - strlen($token) % 4) % 4);
         $raw = base64_decode(strtr($token, '-_', '+/') . $padding);
 
@@ -124,24 +116,33 @@ class HandleLegacyUpgrade
 
         $iv         = substr($raw, 0, 16);
         $ciphertext = substr($raw, 16);
-        $key        = hash('sha256', $secret, true); // 32-byte key
 
-        $plain = openssl_decrypt($ciphertext, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        $keys = [];
+        $explicitSecret = (string) config('app.legacy_migration_secret');
+        if ($explicitSecret !== '') {
+            $keys[] = hash('sha256', $explicitSecret, true);
+        }
+        $appKey = (string) config('app.key');
+        if (str_starts_with($appKey, 'base64:')) {
+            $appKey = base64_decode(substr($appKey, 7));
+        }
+        $keys[] = hash('sha256', $appKey . ':legacy_upgrade', true);
 
-        if ($plain === false) {
-            return null;
+        foreach ($keys as $key) {
+            $plain = openssl_decrypt($ciphertext, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+            if ($plain === false) {
+                continue;
+            }
+            $parts = explode(':', $plain, 2);
+            if (count($parts) !== 2 || ! ctype_digit($parts[0]) || ! ctype_digit($parts[1])) {
+                continue;
+            }
+            if (time() - (int) $parts[1] > self::TOKEN_TTL_SECONDS) {
+                return null;
+            }
+            return (int) $parts[0];
         }
 
-        // Payload format: "user_id:unix_timestamp"
-        $parts = explode(':', $plain, 2);
-        if (count($parts) !== 2 || ! ctype_digit($parts[0]) || ! ctype_digit($parts[1])) {
-            return null;
-        }
-
-        if (time() - (int) $parts[1] > self::TOKEN_TTL_SECONDS) {
-            return null;
-        }
-
-        return (int) $parts[0];
+        return null;
     }
 }

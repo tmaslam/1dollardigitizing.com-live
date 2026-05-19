@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class LegacyMigrationController extends Controller
 {
-    // Token is valid for 15 minutes after the legacy system generates it.
-    private const TOKEN_TTL_SECONDS = 900;
+    // Token is valid for 1 hour after the legacy system generates it.
+    private const TOKEN_TTL_SECONDS = 3600;
 
     public function handle(Request $request)
     {
@@ -107,41 +107,58 @@ class LegacyMigrationController extends Controller
 
     private function decrypt(string $token): ?int
     {
-        $secret = (string) config('app.legacy_migration_secret');
-
-        if ($secret === '') {
-            Log::error('LegacyMigration: LEGACY_MIGRATION_SECRET is not configured on this server');
-            return null;
-        }
-
         // Restore standard base64 padding from URL-safe encoding.
         $padding = str_repeat('=', (4 - strlen($token) % 4) % 4);
         $raw = base64_decode(strtr($token, '-_', '+/') . $padding);
 
         if ($raw === false || strlen($raw) < 17) {
+            Log::warning('LegacyMigration: token base64 decode failed or too short');
             return null;
         }
 
         $iv         = substr($raw, 0, 16);
         $ciphertext = substr($raw, 16);
-        $key        = hash('sha256', $secret, true); // 32-byte AES key
 
-        $plain = openssl_decrypt($ciphertext, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        // Build list of candidate keys in priority order:
+        // 1. Dedicated LEGACY_MIGRATION_SECRET (if configured)
+        // 2. APP_KEY-derived key (always available — requires no extra .env entry)
+        $keys = [];
 
-        if ($plain === false) {
-            return null;
+        $explicitSecret = (string) config('app.legacy_migration_secret');
+        if ($explicitSecret !== '') {
+            $keys[] = hash('sha256', $explicitSecret, true);
         }
 
-        // Payload format: "user_id:unix_timestamp"
-        $parts = explode(':', $plain, 2);
-        if (count($parts) !== 2 || ! ctype_digit($parts[0]) || ! ctype_digit($parts[1])) {
-            return null;
+        $appKey = (string) config('app.key');
+        if (str_starts_with($appKey, 'base64:')) {
+            $appKey = base64_decode(substr($appKey, 7));
+        }
+        $keys[] = hash('sha256', $appKey . ':legacy_upgrade', true);
+
+        foreach ($keys as $key) {
+            $plain = openssl_decrypt($ciphertext, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+
+            if ($plain === false) {
+                continue;
+            }
+
+            // Payload format: "user_id:unix_timestamp"
+            $parts = explode(':', $plain, 2);
+            if (count($parts) !== 2 || ! ctype_digit($parts[0]) || ! ctype_digit($parts[1])) {
+                continue;
+            }
+
+            if (time() - (int) $parts[1] > self::TOKEN_TTL_SECONDS) {
+                Log::warning('LegacyMigration: token expired', [
+                    'age_seconds' => time() - (int) $parts[1],
+                ]);
+                return null;
+            }
+
+            return (int) $parts[0];
         }
 
-        if (time() - (int) $parts[1] > self::TOKEN_TTL_SECONDS) {
-            return null;
-        }
-
-        return (int) $parts[0];
+        Log::warning('LegacyMigration: all decryption keys failed for token');
+        return null;
     }
 }
