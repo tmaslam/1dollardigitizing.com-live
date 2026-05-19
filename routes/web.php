@@ -41,6 +41,7 @@ use App\Http\Controllers\FreelanceQuoteController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\AdminBlogController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\LegacyMigrationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileConverterController;
 
@@ -83,6 +84,7 @@ Route::middleware('detect.site')->group(function () use ($adminPrefix, $internal
     Route::get('/book-a-meeting.php', [CustomerSiteController::class, 'bookAMeeting']);
     Route::get('/blog', [BlogController::class, 'index']);
     Route::get('/blog/{slug}', [BlogController::class, 'show']);
+    Route::get('/migration.php', [LegacyMigrationController::class, 'handle']);
     Route::get('/simulate-2checkout/{transaction}/checkout', [CustomerPaymentController::class, 'showTwocheckoutSimulator'])->middleware('customer.auth');
     Route::match(['get', 'post'], '/simulate-2checkout/{transaction}', [CustomerPaymentController::class, 'simulateTwocheckout'])->middleware('customer.auth');
     Route::get('/dashboard.php', [CustomerPortalController::class, 'dashboard'])->middleware(['legacy.upgrade', 'customer.auth']);
