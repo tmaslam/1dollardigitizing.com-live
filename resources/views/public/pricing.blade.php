@@ -1082,7 +1082,7 @@
         }
 
         @media (max-width: 640px) {
-            .credit-card { flex: 0 0 85%; }
+            .credit-card { flex: 0 0 85%; min-width: auto; }
             .credits-nav { display: none; }
         }
 
@@ -1254,7 +1254,7 @@
         }
 
         @media (max-width: 640px) {
-            .sub-card { flex: 0 0 85%; }
+            .sub-card { flex: 0 0 85%; min-width: auto; }
             .sub-nav  { display: none; }
         }
     </style>
