@@ -7,6 +7,7 @@ use App\Models\Attachment;
 use App\Models\Billing;
 use App\Models\Order;
 use App\Models\OrderComment;
+use App\Support\CustomerBalance;
 use App\Support\CustomerUploadPolicy;
 use App\Support\OrderAutomation;
 use App\Support\OrderWorkflowMetaManager;
@@ -55,30 +56,39 @@ class CustomerOrderEntryController extends Controller
 
     public function create(Request $request)
     {
-        $customer = $this->customer($request);
-        $site = $this->site($request);
-        $flow = $this->flowConfig($request);
-        OrderAutomation::syncCustomer($customer, $site);
-        $placement = $this->placementState($customer, $site);
+        try {
+            $customer = $this->customer($request);
+            $site = $this->site($request);
+            $flow = $this->flowConfig($request);
+            OrderAutomation::syncCustomer($customer, $site);
+            $placement = $this->placementState($customer, $site);
 
-        return view('customer.orders.form', [
-            'pageTitle' => $flow['page_title'],
-            'customer' => $customer,
-            'site' => $site,
-            'flow' => $flow,
-            'order' => null,
-            'mode' => 'create',
-            'formAction' => $flow['submit_path'],
-            'submitLabel' => $flow['submit_label'],
-            'placement' => $placement,
-            'fabricTypeOptions' => self::FABRIC_TYPE_OPTIONS,
-            'turnaroundOptions' => $this->turnaroundOptionsForCustomer($customer),
-            'turnaroundOptionLabels' => $this->turnaroundOptionLabels($customer, $site, $flow['work_type']),
-            'measurementOptions' => self::MEASUREMENT_OPTIONS,
-            'preferredFormat' => $this->preferredFormatForFlow($customer, $flow['work_type']),
-            'formatOptions' => $this->formatOptionsForFlow($flow['work_type'], $this->preferredFormatForFlow($customer, $flow['work_type'])),
-            'sourceFileAccept' => CustomerUploadPolicy::customerSourceAcceptAttribute(),
-        ]);
+            return view('customer.orders.form', [
+                'pageTitle' => $flow['page_title'],
+                'customer' => $customer,
+                'site' => $site,
+                'flow' => $flow,
+                'order' => null,
+                'mode' => 'create',
+                'formAction' => $flow['submit_path'],
+                'submitLabel' => $flow['submit_label'],
+                'placement' => $placement,
+                'fabricTypeOptions' => self::FABRIC_TYPE_OPTIONS,
+                'turnaroundOptions' => $this->turnaroundOptionsForCustomer($customer),
+                'turnaroundOptionLabels' => $this->turnaroundOptionLabels($customer, $site, $flow['work_type']),
+                'measurementOptions' => self::MEASUREMENT_OPTIONS,
+                'preferredFormat' => $this->preferredFormatForFlow($customer, $flow['work_type']),
+                'formatOptions' => $this->formatOptionsForFlow($flow['work_type'], $this->preferredFormatForFlow($customer, $flow['work_type'])),
+                'sourceFileAccept' => CustomerUploadPolicy::customerSourceAcceptAttribute(),
+            ]);
+        } catch (\Throwable $e) {
+            error_log(
+                '[' . now()->format('Y-m-d H:i:s') . '] CustomerOrderEntryController::create ERROR: ' . get_class($e) . ' - ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine() . "\n" . $e->getTraceAsString() . "\n",
+                3,
+                storage_path('logs/order-form-debug.log')
+            );
+            throw $e;
+        }
     }
 
     public function store(Request $request)
