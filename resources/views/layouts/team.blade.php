@@ -248,6 +248,18 @@
             border-radius: 18px;
             background: rgba(255,255,255,0.62);
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+            position: relative;
+        }
+        .table-wrap::before {
+            content: '🚀 scroll';
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            font-size: 0.72rem;
+            color: var(--muted);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.7;
         }
         table {
             width: 100%;
