@@ -597,11 +597,15 @@
             toggle.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dpExpand(); }
             });
-            if (window.location.hash === '#credits-plans') {
+            function openCreditsSection() {
                 toggle.setAttribute('aria-expanded', 'true');
                 body.style.display = 'block';
                 document.getElementById('credits-plans').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+            if (window.location.hash === '#credits-plans') { openCreditsSection(); }
+            window.addEventListener('hashchange', function () {
+                if (window.location.hash === '#credits-plans') { openCreditsSection(); }
+            });
         })();
 
         (function () {
