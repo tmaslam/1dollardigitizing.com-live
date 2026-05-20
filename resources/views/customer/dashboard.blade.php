@@ -235,7 +235,7 @@
                             type="number"
                             id="dpCustomAmount"
                             name="custom_amount"
-                            min="1"
+                            min="10"
                             max="50000"
                             step="1"
                             placeholder="Enter amount"
@@ -243,7 +243,7 @@
                             style="flex:1;font-size:1.1rem;font-weight:600;border:1.5px solid #d0d5dd;border-radius:8px;padding:8px 12px;outline:none;max-width:200px;"
                         >
                     </div>
-                    <span class="dp-card-rate" style="margin-top:2px;">Minimum $1</span>
+                    <span class="dp-card-rate" style="margin-top:2px;">Minimum $10</span>
                 </label>
             </div>
 
@@ -661,7 +661,7 @@
                         idInput.value = customCard.getAttribute('data-dp-id');
                     }
                     var amtVal = parseFloat(document.getElementById('dpCustomAmount').value);
-                    if (amtVal >= 1) {
+                    if (amtVal >= 10) {
                         setReady(true, 'Ready to proceed');
                     } else {
                         setReady(false, 'Enter an amount to continue');
@@ -686,7 +686,7 @@
                     if (radio) radio.checked = true;
                     if (typeInput.value === 'custom') {
                         var amtVal = parseFloat(document.getElementById('dpCustomAmount').value);
-                        if (amtVal >= 1) {
+                        if (amtVal >= 10) {
                             setReady(true, 'Ready to proceed');
                         } else {
                             setReady(false, 'Enter an amount to continue');
@@ -705,7 +705,7 @@
                     if (val >= 1) {
                         setReady(true, 'Ready to proceed');
                     } else {
-                        setReady(false, val > 0 ? 'Minimum amount is $1' : 'Enter an amount to continue');
+                        setReady(false, val > 0 ? 'Minimum amount is $10' : 'Enter an amount to continue');
                     }
                 });
             }
