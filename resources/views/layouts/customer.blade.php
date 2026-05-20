@@ -2509,7 +2509,7 @@
                             @endforeach
                         </div>
                         <div class="customer-nav-actions">
-                            <a class="customer-action secondary" href="{{ url('/dashboard.php#credits-plans') }}">Buy Credits</a>
+                            <a class="customer-action" style="background:rgba(212,175,55,0.12);color:#9a7a10;border-color:rgba(212,175,55,0.35);" href="{{ url('/dashboard.php#credits-plans') }}">Buy Credits</a>
                             <details class="customer-action-menu">
                                 <summary class="customer-action primary">New Order</summary>
                                 <div class="customer-action-list">
