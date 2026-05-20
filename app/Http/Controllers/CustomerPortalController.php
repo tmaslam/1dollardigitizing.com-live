@@ -613,11 +613,13 @@ class CustomerPortalController extends Controller
             $released = CustomerAttachmentAccess::releasedAttachments($order);
             $sources  = CustomerAttachmentAccess::sourceAttachments($order);
 
+            $orderRef = $order->order_num ?: $order->order_id;
+
             foreach ($released as $attachment) {
                 $fullPath = CustomerAttachmentAccess::absolutePath($attachment);
                 if (is_file($fullPath)) {
                     $fileName = (string) ($attachment->file_name ?: basename($fullPath));
-                    $zip->addFile($fullPath, 'order_' . $order->order_id . '/' . $fileName);
+                    $zip->addFile($fullPath, 'order_' . $orderRef . '/' . $fileName);
                 }
             }
 
@@ -625,7 +627,7 @@ class CustomerPortalController extends Controller
                 $fullPath = CustomerAttachmentAccess::absolutePath($attachment);
                 if (is_file($fullPath)) {
                     $fileName = (string) ($attachment->file_name ?: basename($fullPath));
-                    $zip->addFile($fullPath, 'order_' . $order->order_id . '/source file - ' . $fileName);
+                    $zip->addFile($fullPath, 'order_' . $orderRef . '/source file - ' . $fileName);
                 }
             }
         }
