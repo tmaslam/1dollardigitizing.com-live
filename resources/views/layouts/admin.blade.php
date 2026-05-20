@@ -372,18 +372,18 @@
             display: block;
             width: 100%;
             text-align: right;
-            padding: 8px 16px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #0f5f66;
-            background: rgba(15,95,102,0.07);
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            background: #0f5f66;
             border: none;
-            border-bottom: 1px solid rgba(15,95,102,0.12);
-            border-radius: 18px 18px 0 0;
+            border-radius: 10px 10px 0 0;
             cursor: pointer;
+            letter-spacing: 0.02em;
             transition: background 0.15s;
         }
-        .table-scroll-btn:hover { background: rgba(15,95,102,0.14); }
+        .table-scroll-btn:hover { background: #0a4a50; }
         table {
             width: 100%;
             min-width: 720px;
