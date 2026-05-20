@@ -86,6 +86,11 @@
                 <strong>Request Vector Quote</strong>
                 <p>Ask for vector pricing first before placing a vector order.</p>
             </a>
+            <a class="action-card" href="{{ url('/dashboard.php#credits-plans') }}" id="buyCreditsCard">
+                <span>Credits</span>
+                <strong>Buy Credits</strong>
+                <p>Top up your account, buy a credit pack, or subscribe monthly.</p>
+            </a>
         </div>
     </section>
 
@@ -161,7 +166,7 @@
         $dashPlans = \App\Http\Controllers\CustomerRegistrationController::signupPlans();
     @endphp
 
-    <section class="content-card dp-plans-card">
+    <section class="content-card dp-plans-card" id="credits-plans">
         <div class="section-head dp-collapse-toggle" id="dpToggle" role="button" tabindex="0" aria-expanded="false" aria-controls="dpPlansBody">
             <div>
                 <h3>Credits &amp; Plans</h3>
@@ -597,6 +602,11 @@
             toggle.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dpExpand(); }
             });
+            if (window.location.hash === '#credits-plans') {
+                toggle.setAttribute('aria-expanded', 'true');
+                body.style.display = 'block';
+                document.getElementById('credits-plans').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         })();
 
         (function () {
