@@ -485,12 +485,12 @@ class CustomerRegistrationController extends Controller
     {
         return [
             'credit' => [
-                ['id' => 'credit-100',  'label' => 'Starter',    'stitches' => '100,000',   'price' => 95,  'full_price' => 100,  'saving' => 5,   'discount' => '5% off',  'per_k' => '$0.95', 'payment_link' => 'https://buy.stripe.com/test_7sYaEWfONaVR8ERfLy4Ja0c'],
-                ['id' => 'credit-200',  'label' => 'Basic',      'stitches' => '200,000',   'price' => 186, 'full_price' => 200,  'saving' => 14,  'discount' => '7% off',  'per_k' => '$0.93', 'payment_link' => 'https://buy.stripe.com/test_8x2bJ0dGFfc7aMZeHu4Ja0d'],
-                ['id' => 'credit-300',  'label' => 'Value',      'stitches' => '300,000',   'price' => 270, 'full_price' => 300,  'saving' => 30,  'discount' => '10% off', 'per_k' => '$0.90', 'payment_link' => 'https://buy.stripe.com/test_aFa6oG1XX9RN5sF9na4Ja0e'],
-                ['id' => 'credit-400',  'label' => 'Studio',     'stitches' => '400,000',   'price' => 352, 'full_price' => 400,  'saving' => 48,  'discount' => '12% off', 'per_k' => '$0.88', 'payment_link' => 'https://buy.stripe.com/test_14A3cu5a91lhbR3gPC4Ja0f'],
-                ['id' => 'credit-500',  'label' => 'Production', 'stitches' => '500,000',   'price' => 425, 'full_price' => 500,  'saving' => 75,  'discount' => '15% off', 'per_k' => '$0.85', 'payment_link' => 'https://buy.stripe.com/test_4gMfZgeKJbZV4oB0QE4Ja0g'],
-                ['id' => 'credit-1000', 'label' => 'Enterprise', 'stitches' => '1,000,000', 'price' => 800, 'full_price' => 1000, 'saving' => 200, 'discount' => '20% off', 'per_k' => '$0.80', 'payment_link' => 'https://buy.stripe.com/test_5kQeVc0TT6FB2gt7f24Ja0h'],
+                ['id' => 'credit-100',  'label' => 'Starter',    'stitches' => '100,000',   'price' => 95,  'full_price' => 100,  'saving' => 5,   'discount' => '5% off',  'per_k' => '$0.95', 'payment_link' => 'https://buy.stripe.com/aFa6oG1XX9RN5sF9na4Ja0e'],
+                ['id' => 'credit-200',  'label' => 'Basic',      'stitches' => '200,000',   'price' => 186, 'full_price' => 200,  'saving' => 14,  'discount' => '7% off',  'per_k' => '$0.93', 'payment_link' => 'https://buy.stripe.com/14A3cu5a91lhbR3gPC4Ja0f'],
+                ['id' => 'credit-300',  'label' => 'Value',      'stitches' => '300,000',   'price' => 270, 'full_price' => 300,  'saving' => 30,  'discount' => '10% off', 'per_k' => '$0.90', 'payment_link' => 'https://buy.stripe.com/4gMfZgeKJbZV4oB0QE4Ja0g'],
+                ['id' => 'credit-400',  'label' => 'Studio',     'stitches' => '400,000',   'price' => 352, 'full_price' => 400,  'saving' => 48,  'discount' => '12% off', 'per_k' => '$0.88', 'payment_link' => 'https://buy.stripe.com/5kQeVc0TT6FB2gt7f24Ja0h'],
+                ['id' => 'credit-500',  'label' => 'Production', 'stitches' => '500,000',   'price' => 425, 'full_price' => 500,  'saving' => 75,  'discount' => '15% off', 'per_k' => '$0.85', 'payment_link' => 'https://buy.stripe.com/28E28qdGF6FB08l8j64Ja0i'],
+                ['id' => 'credit-1000', 'label' => 'Enterprise', 'stitches' => '1,000,000', 'price' => 800, 'full_price' => 1000, 'saving' => 200, 'discount' => '20% off', 'per_k' => '$0.80', 'payment_link' => 'https://buy.stripe.com/cNifZg8ml1lh3kxbvi4Ja0j'],
             ],
             'subscription' => [
                 ['id' => 'sub-growth',     'label' => 'Starter',    'price' => 90,   'credits' => 100,  'turnaround' => '⏰ 24-Hour Standard', 'rate' => '$0.90', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/cNi4gyeKJ9RN5sFdDq4Ja09'],
