@@ -52,7 +52,7 @@
                     <tbody>
                     @foreach ($quotes as $quote)
                         <tr>
-                            <td data-label="Quote ID">{{ $quote->order_id }}</td>
+                            <td data-label="Quote ID">{{ $quote->order_num ?: $quote->order_id }}</td>
                             <td data-label="Type">
                                 @php
                                     $quoteType = in_array((string) $quote->order_type, ['q-vector', 'qcolor'], true) ? 'Vector' : 'Digitizing';

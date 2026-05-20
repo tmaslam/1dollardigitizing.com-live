@@ -51,7 +51,7 @@
                     <tbody>
                     @foreach ($orders as $order)
                         <tr>
-                            <td data-label="Order ID"><a class="inline-link" href="{{ url('/view-order-detail.php?order_id=' . $order->order_id . '&origin=orders') }}">{{ $order->order_id }}</a></td>
+                            <td data-label="Order ID"><a class="inline-link" href="{{ url('/view-order-detail.php?order_id=' . $order->order_id . '&origin=orders') }}">{{ $order->order_num ?: $order->order_id }}</a></td>
                             <td data-label="Design Name">
                                 <strong><a class="inline-link" href="{{ url('/view-order-detail.php?order_id=' . $order->order_id . '&origin=orders') }}">{{ $order->design_name }}</a></strong>
                                 <span class="table-note">{{ \App\Support\CustomerWorkflowStatus::actionHint($order) }}</span>

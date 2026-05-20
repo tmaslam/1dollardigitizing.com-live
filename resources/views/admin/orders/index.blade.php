@@ -95,7 +95,12 @@
                             };
                         @endphp
                         <tr class="{{ $order->work_type_label === 'Vector' ? 'row-vector' : 'row-digitizing' }}">
-                            <td><a href="{{ $detailUrl }}" style="font-weight:700;">{{ $order->order_id }}</a></td>
+                            <td>
+                                <a href="{{ $detailUrl }}" style="font-weight:700;">{{ $order->order_num ?: $order->order_id }}</a>
+                                @if ($order->order_num)
+                                    <span style="display:block;font-size:0.75rem;color:#888;">#{{ $order->order_id }}</span>
+                                @endif
+                            </td>
                             <td>{{ $order->work_type_label }}</td>
                             <td>{{ $order->customer_name }}</td>
                             <td>{{ $order->design_name ?: '-' }}</td>
