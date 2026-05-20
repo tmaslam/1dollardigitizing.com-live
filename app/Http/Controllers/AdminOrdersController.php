@@ -390,19 +390,7 @@ class AdminOrdersController extends Controller
             return false;
         }
 
-        if (! $this->isDeleteEligibleWorkflowType($order)) {
-            return false;
-        }
-
-        return ! Billing::query()
-            ->active()
-            ->where('order_id', $order->order_id)
-            ->where(function ($query) {
-                $query->where('payment', 'yes')
-                    ->orWhere('is_paid', 1)
-                    ->orWhere('is_advance', 1);
-            })
-            ->exists();
+        return $this->isDeleteEligibleWorkflowType($order);
     }
 
     public function canMarkPaidOrder(Order $order): bool
