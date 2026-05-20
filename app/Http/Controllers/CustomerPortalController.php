@@ -118,6 +118,28 @@ class CustomerPortalController extends Controller
             'updated_at'         => $now,
         ]);
 
+        if ($type === 'custom' && $price > 0) {
+            try {
+                $session = \App\Support\StripeHostedCheckout::createSession(
+                    $transaction,
+                    collect([['title' => 'Custom Fund Top-Up', 'amount' => $price]]),
+                    url('/stripe-return.php') . '?session_id={CHECKOUT_SESSION_ID}',
+                    url('/dashboard.php'),
+                    (string) $customer->user_email
+                );
+                if ($session['ok']) {
+                    $transaction->update([
+                        'provider'                => 'stripe_checkout_session',
+                        'provider_transaction_id' => $session['session_id'] ?? '',
+                        'updated_at'              => now()->format('Y-m-d H:i:s'),
+                    ]);
+                    return redirect($session['redirect_url']);
+                }
+            } catch (\Exception $e) {
+                // Fall through to payment link below
+            }
+        }
+
         $stripeUrl = $paymentLink
             . '?client_reference_id=' . urlencode($merchantReference)
             . '&prefilled_email=' . urlencode((string) $customer->user_email);
