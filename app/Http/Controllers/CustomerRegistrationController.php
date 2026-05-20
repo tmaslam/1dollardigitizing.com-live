@@ -493,11 +493,11 @@ class CustomerRegistrationController extends Controller
                 ['id' => 'credit-1000', 'label' => 'Enterprise', 'stitches' => '1,000,000', 'price' => 800, 'full_price' => 1000, 'saving' => 200, 'discount' => '20% off', 'per_k' => '$0.80', 'payment_link' => 'https://buy.stripe.com/test_5kQeVc0TT6FB2gt7f24Ja0h'],
             ],
             'subscription' => [
-                ['id' => 'sub-growth',     'label' => 'Starter',    'price' => 90,   'credits' => 100,  'turnaround' => '⏰ 24-Hour Standard', 'rate' => '$0.90', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/test_9B66oG465bZVaMZ42Q4Ja02'],
-                ['id' => 'sub-studio',     'label' => 'Growth',     'price' => 170,  'credits' => 200,  'turnaround' => '⏰ 24-Hour Standard', 'rate' => '$0.85', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/test_4gMbJ0byx2pl08lare4Ja03'],
-                ['id' => 'sub-production', 'label' => 'Studio',     'price' => 320,  'credits' => 400,  'turnaround' => '⚡ 12-Hour Priority', 'rate' => '$0.80', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/test_aFadR88ml5Bx1cpfLy4Ja04'],
-                ['id' => 'sub-enterprise', 'label' => 'Production', 'price' => 700,  'credits' => 1000, 'turnaround' => '⚡ 12-Hour Priority', 'rate' => '$0.70', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/test_bJe9AS3213tp2gt8j64Ja05'],
-                ['id' => 'sub-corporate',  'label' => 'Enterprise', 'price' => 1200, 'credits' => 2000, 'turnaround' => '🏆 8-Hour Super Rush', 'rate' => '$0.60', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/test_fZufZg465fc7cV7czm4Ja06'],
+                ['id' => 'sub-growth',     'label' => 'Starter',    'price' => 90,   'credits' => 100,  'turnaround' => '⏰ 24-Hour Standard', 'rate' => '$0.90', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/cNi4gyeKJ9RN5sFdDq4Ja09'],
+                ['id' => 'sub-studio',     'label' => 'Growth',     'price' => 170,  'credits' => 200,  'turnaround' => '⏰ 24-Hour Standard', 'rate' => '$0.85', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/cNi00iaut3tp5sFare4Ja0a'],
+                ['id' => 'sub-production', 'label' => 'Studio',     'price' => 320,  'credits' => 400,  'turnaround' => '⚡ 12-Hour Priority', 'rate' => '$0.80', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/3cIfZgeKJ7JF4oBeHu4Ja0b'],
+                ['id' => 'sub-enterprise', 'label' => 'Production', 'price' => 700,  'credits' => 1000, 'turnaround' => '⚡ 12-Hour Priority', 'rate' => '$0.70', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/7sYaEWfONaVR8ERfLy4Ja0c'],
+                ['id' => 'sub-corporate',  'label' => 'Enterprise', 'price' => 1200, 'credits' => 2000, 'turnaround' => '🏆 8-Hour Super Rush', 'rate' => '$0.60', 'billing' => '/month', 'payment_link' => 'https://buy.stripe.com/8x2bJ0dGFfc7aMZeHu4Ja0d'],
             ],
         ];
     }
