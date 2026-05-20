@@ -11,6 +11,7 @@ use App\Support\EmailValidation;
 use App\Support\PasswordManager;
 use App\Support\SiteResolver;
 use App\Support\SiteContext;
+use App\Support\PortalMailer;
 use App\Support\SignupOfferService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -170,6 +171,8 @@ class AdminPeopleController extends Controller
         if ($isManualApprovalSignup) {
             SignupOfferService::completeManualApprovalClaim($customer, $adminName);
         }
+
+        $this->sendApprovalEmail($customer);
 
         return redirect()->to($this->withQuery('/v/customer-approvals.php', $request->except('_token')))
             ->with('success', $welcomePaymentPending
@@ -466,5 +469,24 @@ class AdminPeopleController extends Controller
                 $query->where('site_legacy_key', trim((string) $customer->website));
             })
             ->delete();
+    }
+
+    private function sendApprovalEmail(AdminUser $customer): void
+    {
+        $email = trim((string) ($customer->user_email ?? ''));
+        if ($email === '') {
+            return;
+        }
+
+        $customerName = htmlspecialchars($customer->display_name, ENT_QUOTES);
+        $subject = 'Your account has been approved — Welcome to 1 Dollar Digitizing';
+
+        $body = '<p>Hi '.$customerName.',</p>
+<p>Great news! Your account has been successfully reviewed and approved, and you are all set up in our system.</p>
+<p>You can now log in and start placing new embroidery digitizing orders whenever you are ready.</p>
+<p>If you need any assistance submitting your first design or have any questions about the workflow, please don\'t hesitate to reach out. We look forward to working with you!</p>
+<p>Best regards,<br>1 Dollar Digitizing</p>';
+
+        PortalMailer::sendHtml($email, $subject, $body);
     }
 }
