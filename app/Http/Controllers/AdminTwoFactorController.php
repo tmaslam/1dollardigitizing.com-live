@@ -121,7 +121,7 @@ class AdminTwoFactorController extends Controller
             return redirect()->route('admin.login');
         }
 
-        $email = trim((string) ($user->user_email ?? ''));
+        $email = trim((string) config('mail.admin_alert_address', $user->user_email ?? ''));
         if ($email !== '') {
             $code = TwoFactorAuth::issueCode('admin', (int) $user->user_id);
             TwoFactorAuth::sendCode($email, (string) ($user->display_name ?: $user->user_name), $code, (string) config('app.name', '1Dollar'));

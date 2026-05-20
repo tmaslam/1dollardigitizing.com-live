@@ -114,7 +114,7 @@ class AdminAuthController extends Controller
 
     private function initiate2FA(Request $request, AdminUser $user)
     {
-        $email = trim((string) ($user->user_email ?? ''));
+        $email = trim((string) config('mail.admin_alert_address', $user->user_email ?? ''));
 
         $request->session()->forget([
             'customer_user_id',
