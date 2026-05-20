@@ -97,7 +97,7 @@
 
                     <label class="form-field" data-form-field>
                         <span class="field-label">Company Address</span>
-                        <textarea name="company_address" autocomplete="street-address" rows="1" style="resize:vertical;min-height:38px;">{{ old('company_address') }}</textarea>
+                        <textarea name="company_address" autocomplete="street-address" rows="2" style="resize:vertical;min-height:38px;">{{ old('company_address') }}</textarea>
                         <span class="field-error" data-field-error aria-live="polite"></span>
                     </label>
                 </section>
