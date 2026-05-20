@@ -598,9 +598,14 @@ class CustomerPortalController extends Controller
 
         $orders = $query->get();
 
-        $tmpFile = tempnam(sys_get_temp_dir(), 'paid_orders_');
+        $tmpDir = storage_path('app/temp');
+        if (! is_dir($tmpDir)) {
+            mkdir($tmpDir, 0755, true);
+        }
+
+        $tmpFile = $tmpDir . '/paid_orders_' . uniqid() . '.zip';
         $zip = new \ZipArchive();
-        if ($zip->open($tmpFile, \ZipArchive::OVERWRITE) !== true) {
+        if ($zip->open($tmpFile, \ZipArchive::CREATE) !== true) {
             abort(500, 'Could not create ZIP archive.');
         }
 

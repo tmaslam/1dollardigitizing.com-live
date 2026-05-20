@@ -14,7 +14,7 @@ class AdminNavigation
     {
         return [
             'new_orders' => Order::query()->active()->orderManagement()->where('status', 'Underprocess')
-                ->whereNotIn('order_id', Billing::query()->select('order_id')->where('payment', 'yes'))
+                ->whereNotIn('order_id', Billing::query()->active()->select('order_id')->where('payment', 'yes'))
                 ->unassigned()
                 ->where(fn ($q) => $q->whereNull('assigned_group')->orWhere('assigned_group', ''))
                 ->count(),
@@ -22,7 +22,7 @@ class AdminNavigation
                 ->orderManagement()
                 ->whereIn('status', ['Underprocess', 'disapprove', 'disapproved', 'Ready', 'done', 'approved'])
                 ->count(),
-            'disapproved_orders' => Order::query()->active()->orderManagement()->where('status', 'disapproved')->count(),
+            'disapproved_orders' => Order::query()->active()->orderManagement()->whereIn('status', ['disapprove', 'disapproved'])->count(),
             'designer_orders' => Order::query()->active()->orderManagement()->whereIn('status', ['Underprocess', 'disapprove'])
                 ->where(function ($q) {
                     $q->assigned()
@@ -30,10 +30,10 @@ class AdminNavigation
                           $q2->whereNotNull('assigned_group')->where('assigned_group', '!=', '');
                       });
                 })->count(),
-            'designer_completed_orders' => Order::query()->active()->orderManagement()->where('status', 'Ready')->assigned()->count(),
+            'designer_completed_orders' => Order::query()->active()->orderManagement()->where('status', 'Ready')->count(),
             'approval_waiting_orders' => Order::query()->active()->orderManagement()->where('status', 'done')->count(),
             'approved_orders' => Order::query()->active()->orderManagement()->where('status', 'approved')
-                ->whereNotIn('order_id', Billing::query()->select('order_id')->where(function ($query) {
+                ->whereNotIn('order_id', Billing::query()->active()->select('order_id')->where(function ($query) {
                     $query->where('payment', 'yes')
                         ->orWhere('is_paid', 1);
                 }))

@@ -7,11 +7,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement('ALTER TABLE orders AUTO_INCREMENT = 1000001');
+        DB::statement('ALTER TABLE orders AUTO_INCREMENT = 1');
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE orders AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE orders AUTO_INCREMENT = 1000001');
     }
 };
