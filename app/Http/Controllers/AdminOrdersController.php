@@ -269,8 +269,8 @@ class AdminOrdersController extends Controller
 
         Attachment::query()->where('order_id', $order->order_id)->delete();
 
-        // Soft-delete the order and its comments
-        $order->update(['end_date' => $timestamp, 'deleted_by' => $deletedBy]);
+        // Soft-delete the order and its comments (row preserved to keep order_id reserved)
+        $order->update(['status' => 'deleted', 'modified_date' => $timestamp, 'end_date' => $timestamp, 'deleted_by' => $deletedBy]);
 
         OrderComment::query()
             ->where('order_id', $order->order_id)

@@ -1264,7 +1264,7 @@ class AdminToolsController extends Controller
         $userName = $request->attributes->get('adminUser')?->user_name ?: 'admin';
         $timestamp = now()->format('Y-m-d H:i:s');
 
-        Order::query()->whereIn('order_id', $ids)->update(['end_date' => $timestamp, 'deleted_by' => $userName]);
+        Order::query()->whereIn('order_id', $ids)->update(['status' => 'deleted', 'modified_date' => $timestamp, 'end_date' => $timestamp, 'deleted_by' => $userName]);
         OrderComment::query()->whereIn('order_id', $ids)->update(['end_date' => $timestamp, 'deleted_by' => $userName]);
         DB::table('team_comments')->whereIn('order_id', $ids)->update(['end_date' => $timestamp, 'deleted_by' => $userName]);
         Attachment::query()->whereIn('order_id', $ids)->update(['end_date' => $timestamp, 'deleted_by' => $userName]);
