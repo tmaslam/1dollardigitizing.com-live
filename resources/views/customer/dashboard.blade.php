@@ -164,7 +164,7 @@
     <section class="content-card dp-plans-card" id="credits-plans">
         <div class="section-head dp-collapse-toggle" id="dpToggle" role="button" tabindex="0" aria-expanded="false" aria-controls="dpPlansBody">
             <div>
-                <h3>Credits &amp; Plans</h3>
+                <h3 style="color:#9a7a10;">Credits &amp; Plans</h3>
                 <p>Buy a credit pack, subscribe monthly, or top up your account with a custom amount.</p>
             </div>
             <span class="dp-chevron" aria-hidden="true">&#8964;</span>
