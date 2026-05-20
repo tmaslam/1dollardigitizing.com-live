@@ -149,7 +149,7 @@
                                     <span class="muted">-</span>
                                 @endif
                             </td>
-                            <td>{{ $billing->order_id }}</td>
+                            <td>{{ $billing->order?->order_num ?: $billing->order_id }}</td>
                             <td>{{ $billing->order?->design_name ?: '-' }}</td>
                             <td>{{ $billing->customer?->display_name ?: '-' }}</td>
                             @if ($mode === 'due')

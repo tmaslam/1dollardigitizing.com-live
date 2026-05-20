@@ -30,8 +30,8 @@
                     @foreach ($orders as $order)
                         <tr>
                             <td><a class="button secondary" href="{{ url('/view-orderpaid-details.php?order_id=' . $order->order_id  . '') }}}">View</a></td>
-                            <td>{{ $order->order_id }}</td>
-                            <td>{{ $order->design_name ?: 'Order #'.$order->order_id }}</td>
+                            <td>{{ $order->order_num ?: $order->order_id }}</td>
+                            <td>{{ $order->design_name ?: 'Order #'.($order->order_num ?: $order->order_id) }}</td>
                             <td>{{ $order->completion_date ?: '-' }}</td>
                             <td><span class="status success">{{ $order->status ?: 'done' }}</span></td>
                             <td><span class="status success">Paid</span></td>

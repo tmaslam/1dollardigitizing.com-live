@@ -421,15 +421,20 @@
                                                 >
                                             </td>
                                         @endif
-                                        <td><a href="{{ url('/v/attachments/'.$attachment->id.'/download') }}">{{ $attachment->file_name_with_order_id ?: $attachment->file_name }}</a></td>
+                                        @php
+                                            $rawFileName = (string) ($attachment->file_name_with_order_id ?: $attachment->file_name);
+                                            $displayRef  = $order->order_num ?: $order->order_id;
+                                            $displayFileName = preg_replace('/^\(\d+\)/', '('.$displayRef.')', $rawFileName) ?: $rawFileName;
+                                        @endphp
+                                        <td><a href="{{ url('/v/attachments/'.$attachment->id.'/download') }}">{{ $displayFileName }}</a></td>
                                         <td>{{ $attachment->file_source }}</td>
                                         <td>{{ $attachment->date_added ?: '-' }}</td>
                                         <td>
                                             <div style="display:flex;gap:8px;flex-wrap:wrap;">
                                                 @if (\App\Support\AttachmentPreview::isSupported((string) ($attachment->file_name ?: $attachment->file_name_with_order_id)))
                                                     @php
-                                                        $previewName = (string) ($attachment->file_name_with_order_id ?: $attachment->file_name);
-                                                        $previewKind = \App\Support\AttachmentPreview::kindForFileName($previewName);
+                                                        $previewName = $displayFileName;
+                                                        $previewKind = \App\Support\AttachmentPreview::kindForFileName($rawFileName);
                                                     @endphp
                                                     <button
                                                         type="button"
