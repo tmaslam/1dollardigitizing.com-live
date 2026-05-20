@@ -281,7 +281,7 @@
 
             <form
                 method="post"
-                action="{{ url('/quotes/' . $order->order_id  . '/feedback') }}}"
+                action="{{ url('/quotes/' . $order->order_id  . '/feedback') }}"
                 class="form-grid"
                 data-reject-quote-panel
                 @if (! ($errors->has('reason_code') || $errors->has('reason_text') || $errors->has('target_amount')))
