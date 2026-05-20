@@ -225,14 +225,25 @@
 
             {{-- Custom payment --}}
             <div id="dpTabCustom" class="dp-cards-wrap" style="display:block">
-                <label class="dp-card" data-dp-id="custom" data-dp-tab-group="custom">
+                <label class="dp-card" data-dp-id="custom" data-dp-tab-group="custom" style="gap:10px;">
                     <input type="radio" name="_dp_custom" value="custom" style="position:absolute;opacity:0;pointer-events:none">
                     <span class="dp-card-name">Custom Payment</span>
-                    <span class="dp-card-sub">Enter any amount on the checkout page</span>
-                    <span class="dp-card-price">
-                        <strong>Any amount</strong>
-                    </span>
-                    <span class="dp-card-rate">$1 / 1K stitches</span>
+                    <span class="dp-card-sub">Top up any amount — $1 / 1K stitches</span>
+                    <div id="dpCustomAmountWrap" style="display:flex;align-items:center;gap:6px;margin-top:4px;width:100%;">
+                        <span style="font-size:1.15rem;font-weight:700;color:#333;">$</span>
+                        <input
+                            type="number"
+                            id="dpCustomAmount"
+                            name="custom_amount"
+                            min="1"
+                            max="50000"
+                            step="1"
+                            placeholder="Enter amount"
+                            onclick="event.stopPropagation()"
+                            style="flex:1;font-size:1.1rem;font-weight:600;border:1.5px solid #d0d5dd;border-radius:8px;padding:8px 12px;outline:none;max-width:200px;"
+                        >
+                    </div>
+                    <span class="dp-card-rate" style="margin-top:2px;">Minimum $1</span>
                 </label>
             </div>
 
@@ -649,7 +660,12 @@
                         if (radio) radio.checked = true;
                         idInput.value = customCard.getAttribute('data-dp-id');
                     }
-                    setReady(true, 'Ready to proceed');
+                    var amtVal = parseFloat(document.getElementById('dpCustomAmount').value);
+                    if (amtVal >= 1) {
+                        setReady(true, 'Ready to proceed');
+                    } else {
+                        setReady(false, 'Enter an amount to continue');
+                    }
                 } else {
                     setReady(false, 'Select a plan above to continue');
                 }
@@ -668,10 +684,31 @@
                     idInput.value = card.getAttribute('data-dp-id');
                     var radio = card.querySelector('input[type="radio"]');
                     if (radio) radio.checked = true;
-                    setReady(true, 'Ready to proceed');
+                    if (typeInput.value === 'custom') {
+                        var amtVal = parseFloat(document.getElementById('dpCustomAmount').value);
+                        if (amtVal >= 1) {
+                            setReady(true, 'Ready to proceed');
+                        } else {
+                            setReady(false, 'Enter an amount to continue');
+                        }
+                    } else {
+                        setReady(true, 'Ready to proceed');
+                    }
                 });
             });
 
+            var customAmountInput = document.getElementById('dpCustomAmount');
+            if (customAmountInput) {
+                customAmountInput.addEventListener('input', function () {
+                    if (typeInput.value !== 'custom') return;
+                    var val = parseFloat(this.value);
+                    if (val >= 1) {
+                        setReady(true, 'Ready to proceed');
+                    } else {
+                        setReady(false, val > 0 ? 'Minimum amount is $1' : 'Enter an amount to continue');
+                    }
+                });
+            }
 
         })();
     </script>
