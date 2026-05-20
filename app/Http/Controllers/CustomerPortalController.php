@@ -50,7 +50,7 @@ class CustomerPortalController extends Controller
                     'id'           => 'custom',
                     'label'        => 'Custom Fund Top-Up',
                     'price'        => $amount,
-                    'payment_link' => 'https://buy.stripe.com/test_28E7sK6ed4xt5sFare4Ja01',
+                    'payment_link' => 'https://buy.stripe.com/5kQaEWautd3Z08lare4Ja08',
                 ],
             ];
         } else {
@@ -146,6 +146,10 @@ class CustomerPortalController extends Controller
         $stripeUrl = $paymentLink
             . '?client_reference_id=' . urlencode($merchantReference)
             . '&prefilled_email=' . urlencode((string) $customer->user_email);
+
+        if ($type === 'custom' && $price > 0) {
+            $stripeUrl .= '&__prefilled_amount=' . (int) round($price * 100);
+        }
 
         return redirect($stripeUrl);
     }
