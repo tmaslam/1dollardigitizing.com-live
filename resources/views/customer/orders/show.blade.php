@@ -1,7 +1,7 @@
 @extends('layouts.customer')
 
-@section('title', 'Order Detail - '.$order->order_id)
-@section('hero_title', 'Order Detail #'.$order->order_id)
+@section('title', 'Order Detail - '.($order->order_num ?: $order->order_id))
+@section('hero_title', 'Order Detail #'.($order->order_num ?: $order->order_id))
 @section('hero_text', 'Review your order files, pricing, and comments in one place.')
 
 @section('content')

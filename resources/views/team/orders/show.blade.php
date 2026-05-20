@@ -1,7 +1,7 @@
 @extends('layouts.team')
 
-@section('title', ($mode === 'quote' ? 'Quotation' : 'Order').' Detail #'.$order->order_id.' | 1Dollar Team Portal')
-@section('page_heading', ($mode === 'quote' ? 'Quotation' : 'Order').' Detail #'.$order->order_id)
+@section('title', ($mode === 'quote' ? 'Quotation' : 'Order').' Detail #'.($order->order_num ?: $order->order_id).' | 1Dollar Team Portal')
+@section('page_heading', ($mode === 'quote' ? 'Quotation' : 'Order').' Detail #'.($order->order_num ?: $order->order_id))
 @section('page_subheading', 'Assigned job details, files, notes, and completion.')
 
 @section('content')

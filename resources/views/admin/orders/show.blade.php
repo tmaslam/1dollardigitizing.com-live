@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', ($page === 'quote' ? 'Quote' : 'Order').' Detail | 1Dollar Admin')
-@section('page_heading', ($page === 'quote' ? 'Quote' : 'Order').' Detail '.$order->order_id)
+@section('page_heading', ($page === 'quote' ? 'Quote' : 'Order').' Detail '.($order->order_num ?: $order->order_id))
 @section('page_subheading', 'Review files, comments, pricing, and completion details for this job.')
 
 @section('content')
