@@ -631,24 +631,7 @@ class CustomerOrderEntryController extends Controller
 
     private function nextOrderNumber(AdminUser $customer, SiteContext $site): string
     {
-        $prefix = $customer->user_id . '-';
-
-        $max = Order::query()
-            ->active()
-            ->forWebsite($site->legacyKey)
-            ->where('user_id', $customer->user_id)
-            ->get()
-            ->map(function (Order $order) use ($prefix) {
-                $num = (string) $order->order_num;
-                if (str_starts_with($num, $prefix)) {
-                    $seq = substr($num, strlen($prefix));
-                    return is_numeric($seq) ? (int) $seq : 0;
-                }
-                return is_numeric($num) ? (int) $num : 0;
-            })
-            ->max();
-
-        return $prefix . (((int) $max) + 1);
+        return Order::nextCustomerOrderNumber($customer->user_id, $site->legacyKey);
     }
 
     private function completionDate(string $turnaround, \Illuminate\Support\Carbon $submittedAt): string

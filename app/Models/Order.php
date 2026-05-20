@@ -155,6 +155,28 @@ class Order extends Model
         });
     }
 
+    public static function nextCustomerOrderNumber(int $userId, string $websiteKey): string
+    {
+        $prefix = $userId . '-';
+
+        $max = static::query()
+            ->active()
+            ->forWebsite($websiteKey)
+            ->where('user_id', $userId)
+            ->get()
+            ->map(function (self $order) use ($prefix) {
+                $num = (string) $order->order_num;
+                if (str_starts_with($num, $prefix)) {
+                    $seq = substr($num, strlen($prefix));
+                    return is_numeric($seq) ? (int) $seq : 0;
+                }
+                return is_numeric($num) ? (int) $num : 0;
+            })
+            ->max();
+
+        return $prefix . (((int) $max) + 1);
+    }
+
     public function getLegacyTypeLabelAttribute(): string
     {
         return $this->work_type_label;

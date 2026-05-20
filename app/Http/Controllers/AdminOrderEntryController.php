@@ -223,7 +223,7 @@ class AdminOrderEntryController extends Controller
 
         $order = Order::query()->create([
             'user_id' => $customer->user_id,
-            'order_num' => 'ADM-'.now()->format('YmdHis').'-'.strtoupper(Str::random(4)),
+            'order_num' => Order::nextCustomerOrderNumber((int) $customer->user_id, (string) $validated['website']),
             'design_name' => $validated['design_name'],
             'format' => $validated['format'] ?? '',
             'fabric_type' => $validated['fabric_type'] ?? '',
