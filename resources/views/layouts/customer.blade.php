@@ -295,7 +295,7 @@
         html { scroll-behavior: smooth; font-size: 15px; }
         body {
             margin: 0;
-            font-family: "Roboto", "Segoe UI", sans-serif;
+            font-family: "Inter", "Segoe UI", sans-serif;
             color: var(--ink);
             background: #f0f4f8;
             line-height: 1.6;
