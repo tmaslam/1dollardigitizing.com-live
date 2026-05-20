@@ -11,6 +11,7 @@ use App\Models\QuoteNegotiation;
 use App\Support\AdminNavigation;
 use App\Support\AdminOrderQueues;
 use App\Support\ApprovedBillingSync;
+use App\Support\CustomerAttachmentAccess;
 use App\Support\OrderAutomation;
 use App\Support\OrderWorkflow;
 
@@ -255,31 +256,32 @@ class AdminOrdersController extends Controller
         $timestamp = now()->format('Y-m-d H:i:s');
         $deletedBy = $adminUser?->user_name ?: 'admin';
 
-        $order->update([
-            'end_date' => $timestamp,
-            'deleted_by' => $deletedBy,
-        ]);
+        // Delete physical files from disk then hard-delete attachment records
+        Attachment::query()
+            ->where('order_id', $order->order_id)
+            ->get()
+            ->each(function (Attachment $attachment) {
+                $path = CustomerAttachmentAccess::absolutePath($attachment);
+                if (is_file($path)) {
+                    @unlink($path);
+                }
+            });
+
+        Attachment::query()->where('order_id', $order->order_id)->delete();
+
+        // Soft-delete the order and its comments
+        $order->update(['end_date' => $timestamp, 'deleted_by' => $deletedBy]);
 
         OrderComment::query()
             ->where('order_id', $order->order_id)
-            ->update([
-                'end_date' => $timestamp,
-                'deleted_by' => $deletedBy,
-            ]);
+            ->update(['end_date' => $timestamp, 'deleted_by' => $deletedBy]);
 
-        Attachment::query()
-            ->where('order_id', $order->order_id)
-            ->update([
-                'end_date' => $timestamp,
-                'deleted_by' => $deletedBy,
-            ]);
-
+        // Keep paid billing records for invoice history; remove unpaid ones only
         Billing::query()
             ->where('order_id', $order->order_id)
-            ->update([
-                'end_date' => $timestamp,
-                'deleted_by' => $deletedBy,
-            ]);
+            ->where('payment', '!=', 'yes')
+            ->where('is_paid', '!=', 1)
+            ->update(['end_date' => $timestamp, 'deleted_by' => $deletedBy]);
 
         AdvancePayment::query()
             ->where('order_id', $order->order_id)
