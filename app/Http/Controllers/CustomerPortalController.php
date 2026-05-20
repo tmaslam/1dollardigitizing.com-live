@@ -118,31 +118,6 @@ class CustomerPortalController extends Controller
             'updated_at'         => $now,
         ]);
 
-        // For custom payments, try to use Stripe Checkout Session so the amount is locked in upfront.
-        // If the server cannot reach Stripe (e.g. localhost SSL issues), fall back to the Payment Link.
-        if ($type === 'custom' && $price > 0) {
-            try {
-                $session = \App\Support\StripeHostedCheckout::createSession(
-                    $transaction,
-                    collect([['title' => 'Custom Fund Top-Up', 'amount' => $price]]),
-                    url('/stripe-return.php').'?session_id={CHECKOUT_SESSION_ID}',
-                    url('/dashboard.php'),
-                    $customer->user_email
-                );
-
-                if ($session['ok']) {
-                    $transaction->update([
-                        'provider_transaction_id' => $session['session_id'] ?? '',
-                    ]);
-
-                    return redirect($session['redirect_url']);
-                }
-            } catch (\Exception $e) {
-                // Stripe API unreachable (common on localhost with missing CA bundle).
-                // Silently fall back to Payment Link below.
-            }
-        }
-
         $stripeUrl = $paymentLink
             . '?client_reference_id=' . urlencode($merchantReference)
             . '&prefilled_email=' . urlencode((string) $customer->user_email);
