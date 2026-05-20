@@ -2509,6 +2509,7 @@
                             @endforeach
                         </div>
                         <div class="customer-nav-actions">
+                            <a class="customer-action secondary" href="{{ url('/dashboard.php#credits-plans') }}">Buy Credits</a>
                             <details class="customer-action-menu">
                                 <summary class="customer-action primary">New Order</summary>
                                 <div class="customer-action-list">

@@ -86,11 +86,6 @@
                 <strong>Request Vector Quote</strong>
                 <p>Ask for vector pricing first before placing a vector order.</p>
             </a>
-            <a class="action-card" href="{{ url('/dashboard.php#credits-plans') }}" id="buyCreditsCard">
-                <span>Credits</span>
-                <strong>Buy Credits</strong>
-                <p>Top up your account, buy a credit pack, or subscribe monthly.</p>
-            </a>
         </div>
     </section>
 
