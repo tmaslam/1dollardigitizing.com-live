@@ -25,12 +25,29 @@ class TrustedTwoFactorDevice
         $cookieName = self::cookieName($portal, $siteLegacyKey);
         $cookieValue = $request->cookie($cookieName);
 
+        Log::debug('TrustedTwoFactorDevice::shouldSkipChallenge', [
+            'portal' => $portal,
+            'user_id' => $user->user_id,
+            'cookie_name' => $cookieName,
+            'cookie_present' => ! empty($cookieValue),
+            'cookie_length' => $cookieValue ? strlen($cookieValue) : 0,
+        ]);
+
         if (empty($cookieValue) || ! str_contains($cookieValue, '|')) {
+            Log::debug('TrustedTwoFactorDevice: no cookie or invalid format.', [
+                'portal' => $portal,
+                'user_id' => $user->user_id,
+            ]);
             return false;
         }
 
         $parts = explode('|', $cookieValue, 4);
         if (count($parts) !== 4) {
+            Log::debug('TrustedTwoFactorDevice: cookie has wrong segment count.', [
+                'portal' => $portal,
+                'user_id' => $user->user_id,
+                'segments' => count($parts),
+            ]);
             self::forgetCookie($portal, $siteLegacyKey);
             return false;
         }
@@ -38,16 +55,36 @@ class TrustedTwoFactorDevice
         [$cookieUserId, $cookiePortal, $expiresAt, $signature] = $parts;
 
         if ($cookiePortal !== $portal || (int) $cookieUserId !== (int) $user->user_id) {
+            Log::debug('TrustedTwoFactorDevice: portal or user_id mismatch.', [
+                'portal' => $portal,
+                'cookie_portal' => $cookiePortal,
+                'user_id' => $user->user_id,
+                'cookie_user_id' => $cookieUserId,
+            ]);
             return false;
         }
 
         $payload = $cookieUserId . '|' . $cookiePortal . '|' . $expiresAt;
-        if (! hash_equals(hash_hmac('sha256', $payload, config('app.key')), $signature)) {
+        $expectedSignature = hash_hmac('sha256', $payload, config('app.key'));
+        if (! hash_equals($expectedSignature, $signature)) {
+            Log::debug('TrustedTwoFactorDevice: signature mismatch.', [
+                'portal' => $portal,
+                'user_id' => $user->user_id,
+                'payload' => $payload,
+                'expected_sig_prefix' => substr($expectedSignature, 0, 16),
+                'actual_sig_prefix' => substr($signature, 0, 16),
+            ]);
             self::forgetCookie($portal, $siteLegacyKey);
             return false;
         }
 
         if (now()->timestamp > (int) $expiresAt) {
+            Log::debug('TrustedTwoFactorDevice: cookie expired.', [
+                'portal' => $portal,
+                'user_id' => $user->user_id,
+                'expires_at' => $expiresAt,
+                'now' => now()->timestamp,
+            ]);
             self::forgetCookie($portal, $siteLegacyKey);
             return false;
         }
@@ -64,10 +101,21 @@ class TrustedTwoFactorDevice
         $expiresAt = now()->addDays(self::LIFETIME_DAYS)->timestamp;
         $payload   = (int) $user->user_id . '|' . $portal . '|' . $expiresAt;
         $signature = hash_hmac('sha256', $payload, config('app.key'));
+        $cookieName = self::cookieName($portal, $siteLegacyKey);
+        $cookieValue = $payload . '|' . $signature;
+
+        Log::debug('TrustedTwoFactorDevice::issue', [
+            'portal' => $portal,
+            'user_id' => $user->user_id,
+            'cookie_name' => $cookieName,
+            'cookie_value_length' => strlen($cookieValue),
+            'expires_at' => $expiresAt,
+            'is_secure' => $request->isSecure(),
+        ]);
 
         Cookie::queue(cookie(
-            self::cookieName($portal, $siteLegacyKey),
-            $payload . '|' . $signature,
+            $cookieName,
+            $cookieValue,
             self::LIFETIME_DAYS * 24 * 60,
             '/',
             null,
