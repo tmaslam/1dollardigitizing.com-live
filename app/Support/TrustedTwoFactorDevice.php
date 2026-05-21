@@ -35,7 +35,9 @@ class TrustedTwoFactorDevice
         if ($portal === 'customer') {
             $query->where('site_legacy_key', (string) ($siteLegacyKey ?? ''));
         } else {
-            $query->whereNull('site_legacy_key');
+            $query->where(function ($q) {
+                $q->whereNull('site_legacy_key')->orWhere('site_legacy_key', '');
+            });
         }
 
         $record = $query->first();
@@ -88,7 +90,7 @@ class TrustedTwoFactorDevice
 
         DB::table(self::TABLE)->insert([
             'portal' => $portal,
-            'site_legacy_key' => $portal === 'customer' ? (string) ($siteLegacyKey ?? '') : null,
+            'site_legacy_key' => $portal === 'customer' ? (string) ($siteLegacyKey ?? '') : '',
             'user_id' => (int) $user->user_id,
             'selector' => $selector,
             'token_hash' => hash('sha256', $validator),
