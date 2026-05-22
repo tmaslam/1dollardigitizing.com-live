@@ -672,19 +672,7 @@
                         <button type="submit" style="width:100%;">Vendor Complete</button>
                     </div>
 
-                    <div class="field" style="grid-column:1 / -1;">
-                        <label for="customer_email_template_id">Customer Email Template</label>
-                        <select id="customer_email_template_id" name="customer_email_template_id">
-                            <option value="">Use Standard Template</option>
-                            @foreach ($completionEmailTemplateOptions as $templateOption)
-                                <option value="{{ $templateOption['id'] }}" @selected((string) old('customer_email_template_id') === (string) $templateOption['id'])>{{ $templateOption['label'] }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div style="grid-column:1 / -1;padding-top:2px;">
-                        <span class="muted">Review the status before saving this update.</span>
-                    </div>
+                    <input type="hidden" name="customer_email_template_id" value="">
                 </form>
 
                 @if ($advancePayment)
