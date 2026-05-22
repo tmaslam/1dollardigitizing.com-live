@@ -65,7 +65,7 @@
                 </svg>
                 <div>
                     <h3>Paid Orders</h3>
-                    <p>Need an edit? Email your Order ID to 1dollardigitizing@gmail.com.</p>
+                    <p>Need an edit? Email your Order ID to support@1dollardigitizing.com or 1dollardigitizing@gmail.com.</p>
                 </div>
             </div>
             <button class="button ghost" onclick="document.getElementById('dlPaidOrdersModal').showModal()">Download Paid Orders</button>
