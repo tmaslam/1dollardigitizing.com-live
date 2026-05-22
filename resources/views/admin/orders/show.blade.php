@@ -667,7 +667,8 @@
                         </select>
                     </div>
 
-                    <div class="field" style="display:flex;align-items:flex-end;">
+                    <div class="field">
+                        <label>&nbsp;</label>
                         <button type="submit" style="width:100%;">Vendor Complete</button>
                     </div>
 
