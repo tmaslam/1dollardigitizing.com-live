@@ -220,6 +220,7 @@
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
         @endforeach
         <input type="hidden" name="return_to" value="received">
+        <p style="margin:0 0 16px;font-size:0.875rem;font-weight:600;color:#92400e;">Are you sure you want to set this order unpaid?</p>
         <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button type="button" class="button secondary" onclick="document.getElementById('unpayModal').close()">Cancel</button>
             <button type="submit" style="background:linear-gradient(135deg,#c47a20,#8f520d);">Confirm Unpay</button>
