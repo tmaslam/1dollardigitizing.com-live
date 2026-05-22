@@ -9,7 +9,7 @@
         <div class="section-head">
             <div>
                 <h3>Paid Orders</h3>
-                <p>Orders appear here after payment is recorded or a no-charge order is approved.</p>
+                <p>All paid orders are backed by our quality guarantee. To request an edit, please email 1dollardigitizing@gmail.com with your Order ID.</p>
             </div>
             <button class="button ghost" onclick="document.getElementById('dlPaidOrdersModal').showModal()">Download Paid Orders</button>
         </div>
