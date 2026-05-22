@@ -39,14 +39,6 @@ class AdminOrderQueues
             'chip' => 'Assigned Orders',
             'count_key' => 'designer_orders',
         ],
-        'designer-completed' => [
-            'label' => 'Designer Complete',
-            'category' => 'designer_completed_orders',
-            'group' => 'orders',
-            'summary' => 'Work returned by production and ready for admin review.',
-            'chip' => 'Review Ready',
-            'count_key' => 'designer_completed_orders',
-        ],
         'pending-qa' => [
             'label' => 'Pending QA',
             'category' => 'pending_qa_orders',
@@ -54,6 +46,14 @@ class AdminOrderQueues
             'summary' => 'Orders completed by production and awaiting supervisor QA review.',
             'chip' => 'Awaiting QA',
             'count_key' => 'pending_qa_orders',
+        ],
+        'designer-completed' => [
+            'label' => 'Designer Complete',
+            'category' => 'designer_completed_orders',
+            'group' => 'orders',
+            'summary' => 'Work returned by production and ready for admin review.',
+            'chip' => 'Review Ready',
+            'count_key' => 'designer_completed_orders',
         ],
         'approval-waiting' => [
             'label' => 'Vendor Complete',
