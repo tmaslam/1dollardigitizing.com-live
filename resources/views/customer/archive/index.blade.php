@@ -7,9 +7,26 @@
 @section('content')
     <section class="content-card">
         <div class="section-head">
-            <div>
-                <h3>Paid Orders</h3>
-                <p>All paid orders are backed by our quality guarantee. To request an edit, please email 1dollardigitizing@gmail.com with your Order ID.</p>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" width="72" height="72" style="flex-shrink:0;" aria-label="Quality Guarantee Seal">
+                    <defs>
+                        <linearGradient id="sealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#169fe6;stop-opacity:1"/>
+                            <stop offset="100%" style="stop-color:#0d6ea3;stop-opacity:1"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Starburst points -->
+                    <polygon points="45,4 49,20 55,8 56,24 64,14 62,30 72,23 67,38 79,34 70,47 83,47 72,57 84,61 70,67 80,75 65,77 71,87 57,85 59,90 47,84 45,90 43,84 31,90 33,85 19,87 25,77 10,75 20,67 6,61 18,57 7,47 20,47 11,34 23,38 18,23 28,30 26,14 34,24 35,8 41,20" fill="url(#sealGrad)"/>
+                    <!-- Inner circle -->
+                    <circle cx="45" cy="47" r="24" fill="#fff" fill-opacity="0.18"/>
+                    <circle cx="45" cy="47" r="22" fill="none" stroke="#fff" stroke-width="1.2" stroke-opacity="0.5"/>
+                    <!-- Check mark -->
+                    <polyline points="34,47 42,55 57,38" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div>
+                    <h3>Paid Orders</h3>
+                    <p>All paid orders are backed by our quality guarantee. To request an edit, please email 1dollardigitizing@gmail.com with your Order ID.</p>
+                </div>
             </div>
             <button class="button ghost" onclick="document.getElementById('dlPaidOrdersModal').showModal()">Download Paid Orders</button>
         </div>
