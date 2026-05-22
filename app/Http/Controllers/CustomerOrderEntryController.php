@@ -586,7 +586,12 @@ class CustomerOrderEntryController extends Controller
         $warning = null;
         $canPlace = true;
 
-        if ($pendingLimit > 0 && $pendingOrders >= $pendingLimit) {
+        if ($canPlace && $availableCredit < 10.0) {
+            $canPlace = false;
+            $warning  = 'A minimum credit balance of $10.00 is required to place orders or quotes. Your current balance is $'.number_format($availableCredit, 2).'. Please top up to continue.';
+        }
+
+        if ($canPlace && $pendingLimit > 0 && $pendingOrders >= $pendingLimit) {
             $canPlace = false;
             $warning = "You already have {$pendingLimit} orders waiting for approval. The oldest approval-waiting order will be automatically pushed to billing when you submit new work.";
         }
