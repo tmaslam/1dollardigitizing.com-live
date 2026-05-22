@@ -14,7 +14,7 @@ class AdminNavigation
     {
         return [
             'new_orders' => Order::query()->active()->orderManagement()->where('status', 'Underprocess')
-                ->whereNotIn('order_id', Billing::query()->select('order_id')->where('payment', 'yes'))
+                ->whereNotIn('order_id', Billing::query()->active()->select('order_id')->where('payment', 'yes'))
                 ->unassigned()
                 ->count(),
             'all_orders' => Order::query()->active()
@@ -23,19 +23,24 @@ class AdminNavigation
                     $query->whereIn('status', ['Underprocess', 'disapprove', 'disapproved', 'Ready', 'done'])
                         ->orWhere(function ($approvedQuery) {
                             $approvedQuery->where('status', 'approved')
-                                ->whereNotIn('order_id', Billing::query()->select('order_id')->where(function ($billingQuery) {
+                                ->whereNotIn('order_id', Billing::query()->active()->select('order_id')->where(function ($billingQuery) {
                                     $billingQuery->where('payment', 'yes')
                                         ->orWhere('is_paid', 1);
                                 }));
                         });
                 })
                 ->count(),
-            'disapproved_orders' => Order::query()->active()->orderManagement()->where('status', 'disapproved')->count(),
+            'disapproved_orders' => Order::query()->active()->orderManagement()->whereIn('status', ['disapprove', 'disapproved'])->count(),
             'designer_orders' => Order::query()->active()->orderManagement()->whereIn('status', ['Underprocess', 'disapprove'])->assigned()->count(),
-            'designer_completed_orders' => Order::query()->active()->orderManagement()->where('status', 'Ready')->assigned()->count(),
+            'designer_completed_orders' => Order::query()->active()->orderManagement()->where('status', 'Ready')
+                ->whereIn('order_id', \App\Models\OrderComment::query()->where('comment_source', 'supervisorReview')->select('order_id'))
+                ->count(),
+            'pending_qa_orders' => Order::query()->active()->orderManagement()->where('status', 'Ready')
+                ->whereNotIn('order_id', \App\Models\OrderComment::query()->where('comment_source', 'supervisorReview')->select('order_id'))
+                ->count(),
             'approval_waiting_orders' => Order::query()->active()->orderManagement()->where('status', 'done')->count(),
             'approved_orders' => Order::query()->active()->orderManagement()->where('status', 'approved')
-                ->whereNotIn('order_id', Billing::query()->select('order_id')->where(function ($query) {
+                ->whereNotIn('order_id', Billing::query()->active()->select('order_id')->where(function ($query) {
                     $query->where('payment', 'yes')
                         ->orWhere('is_paid', 1);
                 }))

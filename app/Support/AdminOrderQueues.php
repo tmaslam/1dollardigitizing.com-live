@@ -47,6 +47,14 @@ class AdminOrderQueues
             'chip' => 'Review Ready',
             'count_key' => 'designer_completed_orders',
         ],
+        'pending-qa' => [
+            'label' => 'Pending QA',
+            'category' => 'pending_qa_orders',
+            'group' => 'orders',
+            'summary' => 'Orders completed by production and awaiting supervisor QA review.',
+            'chip' => 'Awaiting QA',
+            'count_key' => 'pending_qa_orders',
+        ],
         'approval-waiting' => [
             'label' => 'Customer Approval Waiting',
             'category' => 'approval_waiting_orders',

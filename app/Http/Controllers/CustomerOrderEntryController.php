@@ -14,6 +14,7 @@ use App\Support\PortalMailer;
 use App\Support\SecurityAudit;
 use App\Support\SharedUploads;
 use App\Support\SitePricing;
+use App\Support\CustomerBalance;
 use App\Support\SiteContext;
 use App\Support\SystemEmailTemplates;
 use App\Support\UploadSecurity;
@@ -544,6 +545,11 @@ class CustomerOrderEntryController extends Controller
 
         $creditLimit = $this->money($customer->customer_approval_limit);
         $pendingLimit = max(0, (int) $customer->customer_pending_order_limit);
+        $availableCredits = round(
+            CustomerBalance::available((int) $customer->user_id, $site->legacyKey)
+            + CustomerBalance::deposit($customer->topup),
+            2
+        );
 
         $warning = null;
         $canPlace = true;
@@ -551,6 +557,9 @@ class CustomerOrderEntryController extends Controller
         if (trim((string) ($customer->user_term ?? '')) === 'upgraded') {
             $canPlace = false;
             $warning = 'Your account has been upgraded. You can no longer place new orders or quotes on the legacy portal, but you can still download your previously paid orders.';
+        } elseif ($availableCredits < 10) {
+            $canPlace = false;
+            $warning = 'You need at least $10.00 in credits to place a new order. Please add credits to your account to continue.';
         } elseif ($creditLimit > 0 && $pendingAmount >= $creditLimit) {
             $canPlace = false;
             $warning = "You have exceeded your credit limit of US$".number_format($creditLimit, 2).". Please clear billing or contact support to continue.";

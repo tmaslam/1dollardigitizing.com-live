@@ -13,7 +13,7 @@
             </div>
             <div class="invoice-detail-actions">
                 <a class="button secondary" href="/view-invoices.php">Back to Invoices</a>
-                <a class="button secondary" href="/view-invoice-detail.php?transid={{ urlencode($transactionId) }}&download=pdf">Download Invoice</a>
+                <a class="button secondary" href="/view-invoice-detail.php?transid={{ urlencode($transactionId) }}&download=pdf" download target="_blank" rel="noopener">Download Invoice</a>
                 <span class="status success">Total ${{ number_format($invoiceTotal, 2) }}</span>
             </div>
         </div>

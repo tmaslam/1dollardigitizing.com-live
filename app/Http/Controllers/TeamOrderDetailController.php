@@ -409,6 +409,20 @@ class TeamOrderDetailController extends Controller
             'vender_complete_date' => $submitDate,
         ]));
 
+        if ($teamUser->is_supervisor) {
+            \App\Models\OrderComment::updateOrCreate(
+                [
+                    'order_id' => $order->order_id,
+                    'comment_source' => 'supervisorReview',
+                ],
+                [
+                    'source_page' => 'supervisorReview',
+                    'comments' => 'Auto-verified: completed directly by supervisor '.$teamUser->user_name.' on '.now()->format('Y-m-d H:i'),
+                    'date_modified' => now()->format('Y-m-d H:i:s'),
+                ]
+            );
+        }
+
         $subject = $mode === 'quote'
             ? 'Quotation completed by '.$teamUser->user_name
             : 'Order completed by '.$teamUser->user_name;

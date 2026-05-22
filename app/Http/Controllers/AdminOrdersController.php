@@ -303,12 +303,12 @@ class AdminOrdersController extends Controller
                 ->active()
                 ->orderManagement()
                 ->where('status', 'Underprocess')
-                ->whereNotIn('order_id', Billing::query()->select('order_id')->where('payment', 'yes'))
+                ->whereNotIn('order_id', Billing::query()->active()->select('order_id')->where('payment', 'yes'))
                 ->unassigned(),
             'disapproved_orders' => Order::query()
                 ->active()
                 ->orderManagement()
-                ->where('status', 'disapproved'),
+                ->whereIn('status', ['disapprove', 'disapproved']),
             'designer_orders' => Order::query()
                 ->active()
                 ->orderManagement()
@@ -318,7 +318,16 @@ class AdminOrdersController extends Controller
                 ->active()
                 ->orderManagement()
                 ->where('status', 'Ready')
-                ->assigned(),
+                ->whereIn('order_id', OrderComment::query()
+                    ->where('comment_source', 'supervisorReview')
+                    ->select('order_id')),
+            'pending_qa_orders' => Order::query()
+                ->active()
+                ->orderManagement()
+                ->where('status', 'Ready')
+                ->whereNotIn('order_id', OrderComment::query()
+                    ->where('comment_source', 'supervisorReview')
+                    ->select('order_id')),
             'approval_waiting_orders' => Order::query()
                 ->active()
                 ->orderManagement()
@@ -327,7 +336,7 @@ class AdminOrdersController extends Controller
                 ->active()
                 ->orderManagement()
                 ->where('status', 'approved')
-                ->whereNotIn('order_id', Billing::query()->select('order_id')->where(function ($query) {
+                ->whereNotIn('order_id', Billing::query()->active()->select('order_id')->where(function ($query) {
                     $query->where('payment', 'yes')
                         ->orWhere('is_paid', 1);
                 })),
@@ -367,7 +376,7 @@ class AdminOrdersController extends Controller
                     $query->whereIn('status', ['Underprocess', 'disapprove', 'disapproved', 'Ready', 'done'])
                         ->orWhere(function ($approvedQuery) {
                             $approvedQuery->where('status', 'approved')
-                                ->whereNotIn('order_id', Billing::query()->select('order_id')->where(function ($billingQuery) {
+                                ->whereNotIn('order_id', Billing::query()->active()->select('order_id')->where(function ($billingQuery) {
                                     $billingQuery->where('payment', 'yes')
                                         ->orWhere('is_paid', 1);
                                 }));

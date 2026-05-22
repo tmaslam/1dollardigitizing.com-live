@@ -252,7 +252,10 @@ class CustomerAccountController extends Controller
 
             return response($pdf, Response::HTTP_OK, [
                 'Content-Type' => 'application/pdf',
+                'Content-Length' => \strlen($pdf),
                 'Content-Disposition' => 'attachment; filename="'.$invoiceFileName.'"',
+                'X-Content-Type-Options' => 'nosniff',
+                'Cache-Control' => 'private, no-store, max-age=0, must-revalidate',
             ]);
         }
 
