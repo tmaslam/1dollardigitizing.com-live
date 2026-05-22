@@ -76,7 +76,37 @@ jobs:
           PHPEOF
           sed -i "s/__DEPLOY_TOKEN__/$TOKEN/" public/deploy-hook.php
 
-      - name: 🚀 Deploy to FTP server
+      - name: 🚀 Deploy to FTP server (attempt 1 — implicit FTPS port 990)
+        id: ftp_attempt1
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /
+          protocol: ftps
+          port: 990
+          timeout: 60000
+          log-level: standard
+          exclude: |
+            **/.git*
+            **/.env*
+            **/node_modules/**
+            **/storage/logs/*.log
+            **/storage/framework/cache/data/*
+            **/storage/framework/sessions/*
+            **/storage/framework/views/*
+            **/storage/framework/testing/*
+            **/tests/**
+            **/uploads/**
+            **/public/storage/**
+            **/.claude/**
+
+      - name: 🚀 Deploy to FTP server (attempt 2 — explicit FTPS port 21)
+        id: ftp_attempt2
+        if: steps.ftp_attempt1.outcome == 'failure'
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -101,7 +131,35 @@ jobs:
             **/public/storage/**
             **/.claude/**
 
+      - name: 🚀 Deploy to FTP server (attempt 3 — plain FTP port 21)
+        id: ftp_attempt3
+        if: steps.ftp_attempt1.outcome == 'failure' && steps.ftp_attempt2.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /
+          protocol: ftp
+          port: 21
+          timeout: 60000
+          log-level: standard
+          exclude: |
+            **/.git*
+            **/.env*
+            **/node_modules/**
+            **/storage/logs/*.log
+            **/storage/framework/cache/data/*
+            **/storage/framework/sessions/*
+            **/storage/framework/views/*
+            **/storage/framework/testing/*
+            **/tests/**
+            **/uploads/**
+            **/public/storage/**
+            **/.claude/**
+
       - name: 🔄 Clear server cache via deploy hook
+        if: steps.ftp_attempt1.outcome == 'success' || steps.ftp_attempt2.outcome == 'success' || steps.ftp_attempt3.outcome == 'success'
         run: |
           sleep 15
           curl -sf "https://1dollardigitizing.com/deploy-hook.php?t=${{ steps.hook.outputs.token }}" \
