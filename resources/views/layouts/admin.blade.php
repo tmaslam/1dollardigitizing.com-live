@@ -15,9 +15,9 @@
             --muted: #64748b;
             --line: rgba(15, 23, 42, 0.08);
             --line-strong: rgba(15, 23, 42, 0.18);
-            --accent: #6366f1;
-            --accent-dark: #4338ca;
-            --accent-soft: #eef2ff;
+            --accent: #169fe6;
+            --accent-dark: #0d6ea3;
+            --accent-soft: #e8f5fd;
             --warning: #d97706;
             --shadow: 0 4px 24px rgba(15, 23, 42, 0.08), 0 1px 4px rgba(15, 23, 42, 0.04);
         }
@@ -135,13 +135,13 @@
             transition: background 0.2s ease;
         }
         .nav-card a:hover { background: rgba(255,255,255,0.1); }
-        .nav-card a.active { background: rgba(99,102,241,0.22); }
+        .nav-card a.active { background: rgba(22,159,230,0.22); }
         .count {
             min-width: 32px;
             padding: 4px 8px;
             border-radius: 999px;
-            background: rgba(199, 210, 254, 0.16);
-            color: #c7d2fe;
+            background: rgba(22, 159, 230, 0.15);
+            color: #bae3fa;
             text-align: center;
             font-size: 0.82rem;
             font-weight: 800;
@@ -317,7 +317,7 @@
         }
         .stat-link:hover .stat {
             transform: translateY(-2px);
-            border-color: rgba(99, 102, 241, 0.28);
+            border-color: rgba(22, 159, 230, 0.28);
             box-shadow: 0 18px 34px rgba(20, 33, 49, 0.1);
         }
         .stat {
@@ -373,14 +373,14 @@
             font-size: 0.85rem;
             font-weight: 700;
             color: #fff;
-            background: #6366f1;
+            background: #169fe6;
             border: none;
             border-radius: 10px 10px 0 0;
             cursor: pointer;
             letter-spacing: 0.02em;
             transition: background 0.15s;
         }
-        .table-scroll-btn:hover { background: #4338ca; }
+        .table-scroll-btn:hover { background: #0d6ea3; }
         table {
             width: 100%;
             min-width: 720px;
@@ -423,7 +423,7 @@
             background: rgba(255,255,255,0.34);
         }
         tbody tr:hover td {
-            background: rgba(238, 242, 255, 0.5);
+            background: rgba(22, 159, 230, 0.08);
         }
         .badge {
             display: inline-flex;
@@ -527,9 +527,9 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: rgba(99, 102, 241, 0.6);
+            border-color: rgba(22, 159, 230, 0.6);
             background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14);
+            box-shadow: 0 0 0 4px rgba(22, 159, 230, 0.14);
         }
         input[type="checkbox"],
         input[type="radio"] {
@@ -554,7 +554,7 @@
             justify-content: center;
             gap: 8px;
             line-height: 1.1;
-            box-shadow: 0 12px 24px rgba(67, 56, 202, 0.22);
+            box-shadow: 0 12px 24px rgba(13, 110, 163, 0.22);
             transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
             white-space: nowrap;
             text-decoration: none;
@@ -571,7 +571,7 @@
         .button.secondary {
             background: rgba(248, 250, 252, 0.95);
             color: var(--ink);
-            box-shadow: 0 2px 8px rgba(67, 56, 202, 0.08);
+            box-shadow: 0 2px 8px rgba(13, 110, 163, 0.08);
             border: 1px solid rgba(24, 34, 45, 0.15);
         }
         button,
@@ -607,7 +607,7 @@
             font-weight: 700;
         }
         .pagination a:hover {
-            border-color: rgba(99, 102, 241, 0.32);
+            border-color: rgba(22, 159, 230, 0.32);
             background: #ffffff;
         }
         .pagination .current {

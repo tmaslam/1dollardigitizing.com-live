@@ -14,9 +14,9 @@
             --muted: #64748b;
             --line: rgba(15, 23, 42, 0.08);
             --line-strong: rgba(15, 23, 42, 0.18);
-            --accent: #8b5cf6;
-            --accent-dark: #6d28d9;
-            --accent-soft: #f5f3ff;
+            --accent: #169fe6;
+            --accent-dark: #0d6ea3;
+            --accent-soft: #e8f5fd;
             --alert: #d97706;
             --shadow: 0 4px 24px rgba(15, 23, 42, 0.08), 0 1px 4px rgba(15, 23, 42, 0.04);
         }
@@ -123,8 +123,8 @@
             min-width: 30px;
             padding: 4px 8px;
             border-radius: 999px;
-            background: rgba(221, 214, 254, 0.16);
-            color: #ddd6fe;
+            background: rgba(22, 159, 230, 0.15);
+            color: #bae3fa;
             font-size: 0.8rem;
             text-align: center;
             font-weight: 800;
@@ -166,8 +166,8 @@
             min-height: 36px;
             padding: 6px 12px;
             border-radius: 999px;
-            background: rgba(139, 92, 246, 0.12);
-            color: #5b21b6;
+            background: rgba(22, 159, 230, 0.12);
+            color: #0d6ea3;
             font-weight: 800;
             white-space: nowrap;
         }
@@ -255,14 +255,14 @@
             font-size: 0.85rem;
             font-weight: 700;
             color: #fff;
-            background: #8b5cf6;
+            background: #169fe6;
             border: none;
             border-radius: 10px 10px 0 0;
             cursor: pointer;
             letter-spacing: 0.02em;
             transition: background 0.15s;
         }
-        .table-scroll-btn:hover { background: #6d28d9; }
+        .table-scroll-btn:hover { background: #0d6ea3; }
         table {
             width: 100%;
             min-width: 720px;
@@ -288,7 +288,7 @@
             background: rgba(255,255,255,0.34);
         }
         tbody tr:hover td {
-            background: rgba(245, 243, 255, 0.55);
+            background: rgba(22, 159, 230, 0.08);
         }
         .badge {
             display: inline-flex;
@@ -346,8 +346,8 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: rgba(139, 92, 246, 0.6);
-            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.14);
+            border-color: rgba(22, 159, 230, 0.6);
+            box-shadow: 0 0 0 4px rgba(22, 159, 230, 0.14);
         }
         button {
             border: 0;
