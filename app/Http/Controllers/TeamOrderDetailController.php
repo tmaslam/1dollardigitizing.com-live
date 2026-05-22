@@ -451,13 +451,15 @@ class TeamOrderDetailController extends Controller
         $submitDate = now()->format('Y-m-d G:i');
         $order->update(Order::writablePayload([
             'status'            => 'Ready',
-            'supervisor_status' => 'pending',
+            'supervisor_status' => $teamUser->is_supervisor ? 'approved' : 'pending',
             'stitches_price'    => $price,
             'stitches'          => $stitches,
             'vender_complete_date' => $submitDate,
         ]));
 
-        $this->notifySupervisors($teamUser->display_name, $order);
+        if (! $teamUser->is_supervisor) {
+            $this->notifySupervisors($teamUser->display_name, $order);
+        }
 
         return redirect()->to($this->backUrl($queue !== '' ? $queue : $mode))
             ->with('success', $mode === 'quote'

@@ -30,7 +30,12 @@ class AdminNavigation
                           $q2->whereNotNull('assigned_group')->where('assigned_group', '!=', '');
                       });
                 })->count(),
-            'designer_completed_orders' => Order::query()->active()->orderManagement()->where('status', 'Ready')->count(),
+            'designer_completed_orders' => Order::query()->active()->orderManagement()->where('status', 'Ready')
+                ->where(fn ($q) => $q->whereNull('supervisor_status')->orWhere('supervisor_status', 'approved'))
+                ->count(),
+            'pending_qa_orders' => Order::query()->active()->orderManagement()->where('status', 'Ready')
+                ->where('supervisor_status', 'pending')
+                ->count(),
             'approval_waiting_orders' => Order::query()->active()->orderManagement()->where('status', 'done')->count(),
             'approved_orders' => Order::query()->active()->orderManagement()->where('status', 'approved')
                 ->whereNotIn('order_id', Billing::query()->active()->select('order_id')->where(function ($query) {

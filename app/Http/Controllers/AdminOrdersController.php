@@ -320,6 +320,11 @@ class AdminOrdersController extends Controller
                 ->orderManagement()
                 ->where('status', 'Ready')
                 ->where(fn ($q) => $q->whereNull('supervisor_status')->orWhere('supervisor_status', 'approved')),
+            'pending_qa_orders' => Order::query()
+                ->active()
+                ->orderManagement()
+                ->where('status', 'Ready')
+                ->where('supervisor_status', 'pending'),
             'approval_waiting_orders' => Order::query()
                 ->active()
                 ->orderManagement()
