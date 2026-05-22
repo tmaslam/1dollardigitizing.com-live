@@ -141,6 +141,12 @@
                         </tr>
                     @else
                     @foreach ($billings as $billing)
+                        @php
+                            $orderNum  = $billing->order?->order_num ?: $billing->order_id;
+                            $designName = $billing->order?->design_name ?: '-';
+                            $custName  = $billing->customer?->display_name ?: '-';
+                            $amountFmt = is_numeric($billing->amount) ? number_format((float) $billing->amount, 2) : ($billing->amount ?: '0.00');
+                        @endphp
                         <tr>
                             <td>
                                 @if ($detailUrl($billing))
@@ -149,28 +155,40 @@
                                     <span class="muted">-</span>
                                 @endif
                             </td>
-                            <td>{{ $billing->order?->order_num ?: $billing->order_id }}</td>
-                            <td>{{ $billing->order?->design_name ?: '-' }}</td>
-                            <td>{{ $billing->customer?->display_name ?: '-' }}</td>
+                            <td>{{ $orderNum }}</td>
+                            <td>{{ $designName }}</td>
+                            <td>{{ $custName }}</td>
                             @if ($mode === 'due')
-                                <td>{{ is_numeric($billing->amount) ? number_format((float) $billing->amount, 2) : ($billing->amount ?: '0.00') }}</td>
+                                <td>{{ $amountFmt }}</td>
                                 <td>{{ $billing->approve_date ?: '-' }}</td>
                                 <td>{{ $billing->website ?: '-' }}</td>
                             @else
-                                <td>{{ is_numeric($billing->amount) ? number_format((float) $billing->amount, 2) : ($billing->amount ?: '0.00') }}</td>
+                                <td>{{ $amountFmt }}</td>
                                 <td>{{ $billing->trandtime ?: '-' }}</td>
                                 <td>{{ $billing->transid ?: '-' }}</td>
                                 <td>{{ $billing->website ?: '-' }}</td>
                             @endif
                             <td>
-                                <form method="post" action="{{ url('/v/billing/'.$billing->bill_id.'/delete') }}" onsubmit="return confirm('{{ $mode === 'received' ? 'Mark this order as unpaid?' : 'Delete this billing record?' }}');">
-                                    @csrf
-                                    @foreach (request()->query() as $key => $value)
-                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                    @endforeach
-                                    <input type="hidden" name="return_to" value="{{ $mode }}">
-                                    <button type="submit" style="background:linear-gradient(135deg,{{ $mode === 'received' ? '#c47a20,#8f520d' : '#a24d2a,#7f2e14' }});">{{ $mode === 'received' ? 'Unpay' : 'Delete' }}</button>
-                                </form>
+                                @if ($mode === 'received')
+                                    <button type="button"
+                                        style="background:linear-gradient(135deg,#c47a20,#8f520d);"
+                                        onclick="openUnpayModal(
+                                            '{{ url('/v/billing/'.$billing->bill_id.'/delete') }}',
+                                            '{{ e($orderNum) }}',
+                                            '{{ e($designName) }}',
+                                            '{{ e($custName) }}',
+                                            '${{ e($amountFmt) }}'
+                                        )">Unpay</button>
+                                @else
+                                    <form method="post" action="{{ url('/v/billing/'.$billing->bill_id.'/delete') }}" onsubmit="return confirm('Delete this billing record?');">
+                                        @csrf
+                                        @foreach (request()->query() as $key => $value)
+                                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                        @endforeach
+                                        <input type="hidden" name="return_to" value="{{ $mode }}">
+                                        <button type="submit" style="background:linear-gradient(135deg,#a24d2a,#7f2e14);">Delete</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -186,4 +204,37 @@
             @endif
         </div>
     </section>
+@if ($mode === 'received')
+<dialog id="unpayModal" style="border:1px solid var(--line,#e2e6ea);border-radius:12px;padding:28px 32px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.15);">
+    <h3 style="margin:0 0 6px;font-size:1.05rem;color:#92400e;">Mark Order as Unpaid?</h3>
+    <p style="margin:0 0 18px;font-size:0.875rem;color:#64748b;">This will remove the payment record and revert the order to an unpaid state.</p>
+    <table style="width:100%;border-collapse:collapse;font-size:0.875rem;margin-bottom:20px;">
+        <tr><td style="padding:5px 0;color:#64748b;width:110px;">Order ID</td><td id="unpayOrderNum" style="font-weight:600;"></td></tr>
+        <tr><td style="padding:5px 0;color:#64748b;">Design</td><td id="unpayDesign" style="font-weight:600;"></td></tr>
+        <tr><td style="padding:5px 0;color:#64748b;">Customer</td><td id="unpayCustomer" style="font-weight:600;"></td></tr>
+        <tr><td style="padding:5px 0;color:#64748b;">Amount</td><td id="unpayAmount" style="font-weight:600;"></td></tr>
+    </table>
+    <form id="unpayForm" method="post">
+        @csrf
+        @foreach (request()->query() as $key => $value)
+            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+        @endforeach
+        <input type="hidden" name="return_to" value="received">
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button type="button" class="button secondary" onclick="document.getElementById('unpayModal').close()">Cancel</button>
+            <button type="submit" style="background:linear-gradient(135deg,#c47a20,#8f520d);">Confirm Unpay</button>
+        </div>
+    </form>
+</dialog>
+<script>
+function openUnpayModal(action, orderNum, design, customer, amount) {
+    document.getElementById('unpayOrderNum').textContent = orderNum;
+    document.getElementById('unpayDesign').textContent = design;
+    document.getElementById('unpayCustomer').textContent = customer;
+    document.getElementById('unpayAmount').textContent = amount;
+    document.getElementById('unpayForm').action = action;
+    document.getElementById('unpayModal').showModal();
+}
+</script>
+@endif
 @endsection
