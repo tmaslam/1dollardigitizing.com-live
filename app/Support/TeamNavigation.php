@@ -60,7 +60,7 @@ class TeamNavigation
                 ? Order::query()
                     ->active()
                     ->where('status', 'Ready')
-                    ->whereIn('assign_to', $memberIds)
+                    ->where('supervisor_status', 'pending')
                     ->count()
                 : 0,
             'verified_jobs' => $isSupervisor
@@ -78,10 +78,6 @@ class TeamNavigation
                 ? Order::query()
                     ->active()
                     ->where('status', 'Underprocess')
-                    ->whereIn('assign_to', array_filter($memberIds))
-                    ->where(function ($q) {
-                        $q->whereNotNull('assign_to')->where('assign_to', '!=', 0)->where('assign_to', '!=', '');
-                    })
                     ->count()
                 : 0,
         ];
