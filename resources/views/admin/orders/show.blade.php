@@ -628,7 +628,7 @@
                                 autocomplete="off"
                                 spellcheck="false"
                             >
-                            <span class="muted">Enter the final stitch count used to price and complete this job. For multiple files use / separator (e.g. 12000/8000). Only the first count is used for auto-pricing; manually adjust the amount if needed.</span>
+                            <span class="muted">For multiple files use / separator (e.g. 12000/8000) and adjust the price manually.</span>
                         </div>
                     @endif
 
