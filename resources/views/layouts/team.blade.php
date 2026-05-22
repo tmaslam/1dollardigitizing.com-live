@@ -637,6 +637,11 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
         // Horizontal scroll buttons for every .table-wrap (placed as sibling BEFORE the wrap)
+        // Skip on order/quote detail pages — keep only on listing pages
+        var path = window.location.pathname;
+        var isDetailPage = /\/team\/(?:view-order-detail\.php|view-order-quick-detail\.php|orders\/\d+\/detail|quick-quotes\/\d+\/detail)/.test(path);
+        if (isDetailPage) return;
+
         document.querySelectorAll('.table-wrap').forEach(function(wrap) {
             var btn = document.createElement('button');
             btn.className = 'table-scroll-btn';
