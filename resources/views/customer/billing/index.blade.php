@@ -67,13 +67,7 @@
                             <button type="submit" class="button">Pay All with Credits</button>
                         </form>
                     @endif
-                    <form method="post" action="{{ url('/view-billing.php/pay-all') }}">
-                        @csrf
-                        @include('customer.payments.provider-buttons', [
-                            'paymentProviders' => $paymentProviders,
-                            'buttonPrefix' => 'Pay All With',
-                        ])
-                    </form>
+                    <a href="{{ url('/dashboard.php#credits-plans') }}" style="display:inline-flex;align-items:center;padding:10px 22px;border-radius:999px;background:rgba(212,175,55,0.12);color:#9a7a10;border:1px solid rgba(212,175,55,0.35);font-weight:700;font-size:0.9rem;text-decoration:none;">Buy Credits</a>
                 </div>
             @endif
         </div>
