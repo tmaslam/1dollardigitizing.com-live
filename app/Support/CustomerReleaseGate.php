@@ -49,16 +49,62 @@ class CustomerReleaseGate
             ->where('payment', 'no')
             ->sum(\Illuminate\Support\Facades\DB::raw('CAST(amount AS DECIMAL(12,2))'));
         $previewOnlyOverride = (string) ($meta?->delivery_override ?: 'auto') === 'preview_only';
-        $fullReleaseAllowed = $paid
-            || $amount <= 0
-            || ($prepaidAmount + 0.0001 >= $amount);
+
+        // Default (single-order) credit check.
+        $cumulativeReleaseAllowed = ($prepaidAmount + 0.0001 >= $amount);
+        $cumulativelyBlocked      = false;
+
+        if (!$paid && $amount > 0) {
+            // Cumulative check: deduct the prices of all earlier-completed 'done' orders
+            // (oldest first) before deciding if this order's credit covers it.
+            $siblingsQuery = Order::query()
+                ->where('user_id', $order->user_id)
+                ->where('status', 'done')
+                ->whereNotIn('order_id', Billing::query()
+                    ->select('order_id')
+                    ->where(function ($b) {
+                        $b->where('payment', 'yes')->orWhere('is_paid', 1);
+                    })
+                )
+                ->orderByRaw('COALESCE(vender_complete_date, "9999-12-31") ASC')
+                ->orderBy('order_id', 'asc');
+
+            if (trim((string) $order->website) !== '') {
+                $siblingsQuery->where('website', $order->website);
+            }
+
+            $siblings = $siblingsQuery->get(['order_id', 'total_amount', 'stitches_price', 'vender_complete_date']);
+
+            if ($siblings->isNotEmpty()) {
+                $runningCredit = $prepaidAmount;
+
+                foreach ($siblings as $sibling) {
+                    $siblingAmount = self::orderAmount($sibling);
+
+                    if ($sibling->order_id === $order->order_id) {
+                        $cumulativeReleaseAllowed = $siblingAmount <= 0 || ($runningCredit + 0.0001 >= $siblingAmount);
+                        $cumulativelyBlocked      = !$cumulativeReleaseAllowed;
+                        break;
+                    }
+
+                    if ($siblingAmount > 0) {
+                        $runningCredit -= $siblingAmount;
+                    }
+                }
+                // If order not found in sibling list (e.g. status != 'done'),
+                // $cumulativeReleaseAllowed retains the naive result — no regression.
+            }
+        }
+
+        $fullReleaseAllowed = $paid || $amount <= 0 || $cumulativeReleaseAllowed;
         $fullReleaseAllowed = $previewOnlyOverride ? false : $fullReleaseAllowed;
 
         $reason = match (true) {
             $previewOnlyOverride => 'Preview-only delivery is enforced for this order.',
             $paid => 'Payment is already recorded, so released production files can be shared with the customer.',
             $amount <= 0 => 'This order currently has no charge, so released production files can be shared with the customer.',
-            $prepaidAmount + 0.0001 >= $amount => 'Available customer credit covers this order, so released production files can be shared with the customer.',
+            $prepaidAmount + 0.0001 >= $amount && !$cumulativelyBlocked => 'Available customer credit covers this order, so released production files can be shared with the customer.',
+            $cumulativelyBlocked => 'Your credit covers earlier completed orders but not this one yet. Please top up your balance to access these files.',
             default => 'Only preview-safe files should be available until payment or approved credit covers the order.',
         };
 
