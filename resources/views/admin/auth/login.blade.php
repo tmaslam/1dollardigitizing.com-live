@@ -154,9 +154,9 @@
 <div class="shell">
     <section class="hero">
         <span>Secure Admin Access</span>
-        <h1 style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;">
-            <img src="{{ url('/images/logo.png') }}" alt="1 Dollar Digitizing" style="height:clamp(96px,14vw,144px);width:auto;display:block;">
-            <span style="font-size:clamp(1rem,2vw,1.6rem);letter-spacing:-0.05em;line-height:1;">Admin</span>
+        <h1 style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <img src="{{ url('/images/logo.png') }}" alt="1 Dollar Digitizing" style="height:clamp(48px,7vw,72px);width:auto;display:block;">
+            <span style="font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-0.05em;line-height:1;">Admin</span>
         </h1>
         <p>Authorized access only.</p>
         <ul>
