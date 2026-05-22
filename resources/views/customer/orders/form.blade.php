@@ -23,7 +23,7 @@
                         @if (($placement['pending_amount'] ?? 0) > 0)
                             <a class="button secondary" href="{{ url('/view-billing.php') }}" style="font-size:0.84rem;">Clear Billing →</a>
                         @else
-                            <a class="button secondary" href="{{ url('/dashboard.php') }}" style="font-size:0.84rem;">Top Up Credits →</a>
+                            <a href="{{ url('/dashboard.php#credits-plans') }}" style="display:inline-flex;align-items:center;padding:8px 18px;border-radius:999px;background:rgba(212,175,55,0.12);color:#9a7a10;border:1px solid rgba(212,175,55,0.35);font-weight:700;font-size:0.84rem;text-decoration:none;">Buy Credits</a>
                         @endif
                     </div>
                 @endif

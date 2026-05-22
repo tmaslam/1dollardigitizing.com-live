@@ -269,6 +269,11 @@
         @if (!empty($placement['warning']))
             <div class="alert {{ $placement['can_place'] ? 'alert-success' : 'alert-error' }}" style="margin-bottom:16px;">
                 {{ $placement['warning'] }}
+                @if (! $placement['can_place'])
+                    <div style="margin-top:10px;">
+                        <a href="{{ url('/dashboard.php#credits-plans') }}" style="display:inline-flex;align-items:center;padding:8px 18px;border-radius:999px;background:rgba(212,175,55,0.12);color:#9a7a10;border:1px solid rgba(212,175,55,0.35);font-weight:700;font-size:0.84rem;text-decoration:none;">Buy Credits</a>
+                    </div>
+                @endif
             </div>
         @endif
 
