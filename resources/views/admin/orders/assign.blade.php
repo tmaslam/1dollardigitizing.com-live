@@ -42,19 +42,7 @@
                                 Vector
                             </label>
                         </div>
-                        <p class="muted" style="margin:4px 0 0;font-size:0.85rem;">In-house members self-claim jobs from the pool. Freelancers submit price quotes. Vector orders are assigned directly to one member.</p>
-                    </div>
-
-                    <div class="field" id="vectorMemberField" style="min-width:240px;display:{{ $currentGroup === 'vector' ? 'block' : 'none' }};">
-                        <label for="vector_user_id">Vector Team Member</label>
-                        <select name="vector_user_id" id="vector_user_id" style="width:100%;min-height:44px;border-radius:12px;border:1px solid var(--line-strong);padding:10px 14px;background:#f8fafc;font-family:inherit;">
-                            <option value="">— Select member —</option>
-                            @foreach ($vectorMembers as $vm)
-                                <option value="{{ $vm->user_id }}" @selected(old('vector_user_id', $order->assign_to ?? '') == $vm->user_id)>
-                                    {{ $vm->display_name ?: $vm->user_name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <p class="muted" style="margin:4px 0 0;font-size:0.85rem;">In-house and Vector members self-claim jobs from their pool. Freelancers submit price quotes for your review.</p>
                     </div>
 
                     <div class="field" style="min-width:280px;">
@@ -262,20 +250,4 @@
         });
     });
     </script>
-<script>
-document.querySelectorAll('input[name="group"]').forEach(function(radio) {
-    radio.addEventListener('change', function() {
-        var field = document.getElementById('vectorMemberField');
-        var select = document.getElementById('vector_user_id');
-        if (this.value === 'vector') {
-            field.style.display = 'block';
-            select.required = true;
-        } else {
-            field.style.display = 'none';
-            select.required = false;
-            select.value = '';
-        }
-    });
-});
-</script>
 @endsection
