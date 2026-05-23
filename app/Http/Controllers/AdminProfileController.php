@@ -758,11 +758,14 @@ class AdminProfileController extends Controller
         $nextStatus = $requestedStatus === 'disapproved' ? 'disapprove' : 'Underprocess';
 
         $order->update([
-            'assign_to'      => 0,
-            'assigned_group' => $assignedGroup,
-            'status'         => $nextStatus,
-            'assigned_date'  => $submitDate,
-            'working'        => '',
+            'assign_to'             => 0,
+            'assigned_group'        => $assignedGroup,
+            'status'                => $nextStatus,
+            'assigned_date'         => $submitDate,
+            'working'               => '',
+            'supervisor_status'     => null,
+            'vender_complete_date'  => null,
+            'completion_date'       => null,
         ]);
 
         $detailUrl = url('/v/orders/'.$order->order_id.'/detail/'.$validated['page']);
