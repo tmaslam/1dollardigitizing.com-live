@@ -4,11 +4,13 @@
     $currentRole = old('role', match(true) {
         $accountType === 'supervisor'                      => 'supervisor',
         ($team->team_group ?? '') === 'freelance'          => 'freelance',
+        ($team->team_group ?? '') === 'vector'             => 'vector',
         default                                            => 'inhouse',
     });
     $label = match($currentRole) {
         'supervisor' => 'Supervisor',
         'freelance'  => 'Freelance',
+        'vector'     => 'Vector',
         default      => 'In-House',
     };
 @endphp
@@ -51,6 +53,10 @@
                         <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;">
                             <input type="radio" name="role" value="freelance" @checked($currentRole === 'freelance') style="width:auto;min-height:auto;" onchange="updateNameLabel(this.value)">
                             Freelance Team
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;">
+                            <input type="radio" name="role" value="vector" @checked($currentRole === 'vector') style="width:auto;min-height:auto;" onchange="updateNameLabel(this.value)">
+                            Vector Team
                         </label>
                     </div>
                 </div>

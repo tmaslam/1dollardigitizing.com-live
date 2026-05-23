@@ -480,7 +480,7 @@ class AdminProfileController extends Controller
 
         $validated = $request->validate([
             'user_id'     => ['nullable', 'integer'],
-            'role'        => ['required', 'in:supervisor,inhouse,freelance'],
+            'role'        => ['required', 'in:supervisor,inhouse,freelance,vector'],
             'txtTeamName' => ['required', 'string', 'max:150'],
             'txtPassword' => [$team->exists ? 'nullable' : 'required', 'string', 'min:6', 'max:100'],
             'txtCPassword'=> [$team->exists ? 'nullable' : 'required', 'same:txtPassword'],
@@ -500,6 +500,7 @@ class AdminProfileController extends Controller
         $targetGroup = match ($validated['role']) {
             'supervisor' => null,
             'freelance'  => 'freelance',
+            'vector'     => 'vector',
             default      => 'inhouse',
         };
 
@@ -657,6 +658,12 @@ class AdminProfileController extends Controller
                 ->where('order_id', $orderId)
                 ->orderBy('created_at')
                 ->get(),
+            'vectorMembers' => AdminUser::query()
+                ->where('usre_type_id', AdminUser::TYPE_TEAM)
+                ->where('team_group', 'vector')
+                ->where('is_active', 1)
+                ->orderBy('user_name')
+                ->get(['user_id', 'user_name', 'display_name']),
         ]);
     }
 
@@ -667,7 +674,7 @@ class AdminProfileController extends Controller
             'page'                   => ['required', 'in:order,quote,vector'],
             'status'                 => ['nullable', 'string'],
             'back'                   => ['nullable', 'string'],
-            'group'                  => ['required', 'in:inhouse,freelance'],
+            'group'                  => ['required', 'in:inhouse,freelance,vector'],
             'handoff_comment'        => ['nullable', 'string'],
             'customer_comment_mode'  => ['required', 'in:none,original,edited'],
             'shared_customer_comment'=> ['nullable', 'string'],
@@ -688,8 +695,15 @@ class AdminProfileController extends Controller
             'notes_by_admin'         => 'admin notes option',
         ]);
 
+        if ($validated['group'] === 'vector') {
+            $request->validate([
+                'vector_user_id' => ['required', 'integer', 'exists:users,user_id'],
+            ], [], ['vector_user_id' => 'vector team member']);
+        }
+
         $order = Order::query()->findOrFail((int) $validated['design_id']);
         $assignedGroup = $validated['group'];
+        $vectorUserId = $assignedGroup === 'vector' ? (int) $request->input('vector_user_id') : 0;
         $submitDate = now()->format('Y-m-d G:i');
         $currentAssignee = (string) $order->assign_to;
 
@@ -757,7 +771,7 @@ class AdminProfileController extends Controller
         $nextStatus = $requestedStatus === 'disapproved' ? 'disapprove' : 'Underprocess';
 
         $order->update([
-            'assign_to'      => 0,
+            'assign_to'      => $vectorUserId ?: 0,
             'assigned_group' => $assignedGroup,
             'status'         => $nextStatus,
             'assigned_date'  => $submitDate,

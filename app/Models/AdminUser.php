@@ -220,11 +220,17 @@ class AdminUser extends Model
         return $this->team_group === 'freelance';
     }
 
+    public function isVector(): bool
+    {
+        return $this->team_group === 'vector';
+    }
+
     public function getTeamGroupLabelAttribute(): string
     {
         return match ($this->team_group) {
             'inhouse'   => 'In-House',
             'freelance' => 'Freelance',
+            'vector'    => 'Vector',
             default     => '—',
         };
     }

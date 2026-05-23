@@ -451,13 +451,13 @@ class TeamOrderDetailController extends Controller
         $submitDate = now()->format('Y-m-d G:i');
         $order->update(Order::writablePayload([
             'status'            => 'Ready',
-            'supervisor_status' => $teamUser->is_supervisor ? 'approved' : 'pending',
+            'supervisor_status' => ($teamUser->is_supervisor || $teamUser->isVector()) ? 'approved' : 'pending',
             'stitches_price'    => $price,
             'stitches'          => $stitches,
             'vender_complete_date' => $submitDate,
         ]));
 
-        if (! $teamUser->is_supervisor) {
+        if (! $teamUser->is_supervisor && ! $teamUser->isVector()) {
             $this->notifySupervisors($teamUser->display_name, $order);
         }
 
