@@ -272,6 +272,19 @@ class CustomerRegistrationController extends Controller
                 'exist_customer' => '0',
             ]);
 
+            PortalMailer::sendHtml(
+                '1dollardigitizing@gmail.com',
+                'New customer pending approval — '.$site->brandName,
+                '<p>A new customer has registered and is waiting for admin approval.</p>'
+                .'<ul>'
+                .'<li><strong>Name:</strong> '.e(trim((string) ($customer->display_name ?: $customer->user_name))).'</li>'
+                .'<li><strong>Email:</strong> '.e((string) $customer->user_email).'</li>'
+                .'<li><strong>Username:</strong> '.e((string) $customer->user_name).'</li>'
+                .'<li><strong>Site:</strong> '.e($site->displayLabel()).'</li>'
+                .'</ul>'
+                .'<p><a href="'.e(url('/v/customer-approvals.php')).'">Review pending customers</a></p>'
+            );
+
             return view('customer.auth.activation-result', [
                 'pageTitle' => 'Verification Complete',
                 'activated' => true,
