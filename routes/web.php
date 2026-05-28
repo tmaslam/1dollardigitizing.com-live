@@ -261,6 +261,8 @@ Route::post('/v/teams/{team}/destroy', [AdminPeopleController::class, 'destroyTe
     Route::get('/v/customer-detail.php', [AdminProfileController::class, 'customerShow']);
     Route::post('/v/customers/{customer}/reset-password', [AdminProfileController::class, 'resetCustomerPassword']);
     Route::post('/v/customers/{customer}/add-credit', [AdminProfileController::class, 'addCustomerCredit']);
+    Route::post('/v/customers/{customer}/subscription/cancel-request', [AdminProfileController::class, 'subscriptionCancelRequest']);
+    Route::post('/v/customers/{customer}/subscription/pause-request', [AdminProfileController::class, 'subscriptionPauseRequest']);
     Route::get('/v/edit-customer-detail.php', [AdminProfileController::class, 'customerEdit']);
     Route::post('/v/edit-customer-detail.php', [AdminProfileController::class, 'customerUpdate']);
     Route::get('/v/change-password.php', [AdminProfileController::class, 'adminPasswordForm']);

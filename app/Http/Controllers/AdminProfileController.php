@@ -288,6 +288,58 @@ class AdminProfileController extends Controller
         return redirect()->to($redirectUrl)->with('credit_success', $msg);
     }
 
+    public function subscriptionCancelRequest(Request $request, AdminUser $customer)
+    {
+        abort_unless((int) $customer->usre_type_id === AdminUser::TYPE_CUSTOMER, 403);
+
+        $source      = trim((string) $request->input('source'));
+        $redirectUrl = url('/v/customer-detail.php?uid='.$customer->user_id.($source ? '&source='.rawurlencode($source) : ''));
+        $plan        = ucfirst((string) ($customer->subscription_plan ?: 'unknown'));
+        $name        = $customer->display_name ?: $customer->user_name ?: 'Customer #'.$customer->user_id;
+
+        PortalMailer::sendHtml(
+            '1dollardigitizing@gmail.com',
+            'Subscription Cancellation Request — '.$name,
+            '<p>A subscription cancellation request has been submitted from the admin panel.</p>
+            <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr><td><strong>User ID</strong></td><td>'.(int) $customer->user_id.'</td></tr>
+                <tr><td><strong>Name</strong></td><td>'.e($name).'</td></tr>
+                <tr><td><strong>Email</strong></td><td>'.e((string) ($customer->user_email ?: '—')).'</td></tr>
+                <tr><td><strong>Subscription Plan</strong></td><td>'.e($plan).'</td></tr>
+                <tr><td><strong>Request</strong></td><td><strong style="color:#9d2d17;">Cancel Subscription</strong></td></tr>
+            </table>
+            <p>Please process this cancellation manually.</p>'
+        );
+
+        return redirect()->to($redirectUrl)->with('subscription_request_success', 'Cancellation request sent to admin.');
+    }
+
+    public function subscriptionPauseRequest(Request $request, AdminUser $customer)
+    {
+        abort_unless((int) $customer->usre_type_id === AdminUser::TYPE_CUSTOMER, 403);
+
+        $source      = trim((string) $request->input('source'));
+        $redirectUrl = url('/v/customer-detail.php?uid='.$customer->user_id.($source ? '&source='.rawurlencode($source) : ''));
+        $plan        = ucfirst((string) ($customer->subscription_plan ?: 'unknown'));
+        $name        = $customer->display_name ?: $customer->user_name ?: 'Customer #'.$customer->user_id;
+
+        PortalMailer::sendHtml(
+            '1dollardigitizing@gmail.com',
+            'Subscription Pause Request — '.$name,
+            '<p>A subscription pause request has been submitted from the admin panel.</p>
+            <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr><td><strong>User ID</strong></td><td>'.(int) $customer->user_id.'</td></tr>
+                <tr><td><strong>Name</strong></td><td>'.e($name).'</td></tr>
+                <tr><td><strong>Email</strong></td><td>'.e((string) ($customer->user_email ?: '—')).'</td></tr>
+                <tr><td><strong>Subscription Plan</strong></td><td>'.e($plan).'</td></tr>
+                <tr><td><strong>Request</strong></td><td><strong style="color:#b26a2a;">Pause Subscription</strong></td></tr>
+            </table>
+            <p>Please process this pause manually.</p>'
+        );
+
+        return redirect()->to($redirectUrl)->with('subscription_request_success', 'Pause request sent to admin.');
+    }
+
     public function customerEdit(Request $request)
     {
         $customer = AdminUser::query()->findOrFail((int) $request->query('uid'));
