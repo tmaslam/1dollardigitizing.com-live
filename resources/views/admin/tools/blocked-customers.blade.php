@@ -46,7 +46,7 @@
                     @else
                     @foreach ($customers as $customer)
                         <tr>
-                            <td class="cell-nowrap"><a href="{{ url('/v/customer-detail.php?uid='.$customer->user_id) }}" style="font-weight:700;color:var(--accent);">{{ $customer->user_id }}</a></td>
+                            <td class="cell-nowrap"><a href="{{ url('/v/customer-detail.php?uid='.$customer->user_id.'&source=inactive-customers') }}" style="font-weight:700;color:var(--accent);">{{ $customer->user_id }}</a></td>
                             <td class="cell-nowrap">{{ $customer->display_name ?: $customer->user_name ?: '-' }}</td>
                             <td class="cell-nowrap">{{ $customer->user_email ?: '-' }}</td>
                             <td class="cell-nowrap">{{ $customer->user_country ?: '-' }}</td>

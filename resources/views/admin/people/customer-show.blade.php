@@ -5,7 +5,20 @@
 @section('page_subheading', 'Review customer account details, pricing, and approval limits.')
 
 @section('content')
-    @php $source = request('source'); @endphp
+    @php
+        $source = request('source');
+        $backUrl = match($source) {
+            'customer-approvals'   => url('/v/customer-approvals.php'),
+            'inactive-customers'   => url('/v/block-customer_list.php'),
+            default                => url('/v/customer_list.php'),
+        };
+        $backLabel = match($source) {
+            'customer-approvals'   => 'Customer Approvals',
+            'inactive-customers'   => 'Inactive Customers',
+            default                => 'Customers',
+        };
+        $isInactive = $source === 'inactive-customers' || (int) $customer->is_active !== 1;
+    @endphp
     <section class="card">
         <div class="card-body">
             <div style="display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;">
@@ -14,13 +27,20 @@
                     <p class="muted" style="margin:0;">Customer account, contact info, pricing, and approval limits.</p>
                 </div>
                 <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                    <a class="badge" href="{{ $source === 'customer-approvals' ? url('/v/customer-approvals.php') : url('/v/customer_list.php') }}">Back to {{ $source === 'customer-approvals' ? 'Customer Approvals' : 'Customers' }}</a>
+                    <a class="badge" href="{{ $backUrl }}">Back to {{ $backLabel }}</a>
                     <a class="badge" href="{{ url('/v/edit-customer-detail.php?uid='.$customer->user_id.($source ? '&source='.rawurlencode($source) : '')) }}">Edit Customer</a>
-                    <form method="post" action="{{ url('/v/simulate-login/'.$customer->user_id) }}" onsubmit="return confirm('Start a simulated customer session for support?');">
-                        @csrf
-                        <input type="hidden" name="return_to" value="{{ request()->fullUrl() }}">
-                        <button type="submit">Simulate Login</button>
-                    </form>
+                    @if ($isInactive)
+                        <form method="post" action="{{ url('/v/block-customer_list/'.$customer->user_id.'/unblock') }}" onsubmit="return confirm('Unblock this customer?');">
+                            @csrf
+                            <button type="submit" style="background:linear-gradient(135deg,#1b8d5a,#146845);">Unblock</button>
+                        </form>
+                    @else
+                        <form method="post" action="{{ url('/v/simulate-login/'.$customer->user_id) }}" onsubmit="return confirm('Start a simulated customer session for support?');">
+                            @csrf
+                            <input type="hidden" name="return_to" value="{{ request()->fullUrl() }}">
+                            <button type="submit">Simulate Login</button>
+                        </form>
+                    @endif
                 </div>
             </div>
 
