@@ -2496,6 +2496,7 @@
                     @else
                         <span class="eyebrow">{{ $customerFirstName ? 'Welcome Back, '.$customerFirstName : 'Welcome Back' }}</span>
                     @endif
+                    @yield('hero_announcement')
                 </section>
 
                 <nav class="customer-nav">

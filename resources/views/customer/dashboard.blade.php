@@ -5,6 +5,14 @@
 @section('hero_title', 'Dashboard')
 @section('hero_text', 'Track your orders, quotes, billing, downloads, and account details in one streamlined workspace.')
 
+@if (session('welcome_bonus'))
+@section('hero_announcement')
+    <div style="margin-top:12px;padding:12px 16px;border-radius:10px;background:linear-gradient(135deg,rgba(22,163,74,0.15),rgba(22,163,74,0.07));border:1.5px solid rgba(22,163,74,0.3);color:#14532d;font-size:0.88rem;line-height:1.5;">
+        <strong>Welcome to 1Dollar Digitizing!</strong> As a thank you for switching from our legacy platform, we've added <strong>$10.00 in credits</strong> to your account.
+    </div>
+@endsection
+@endif
+
 @section('content')
     <section class="content-card">
         <div class="section-head">
@@ -279,11 +287,6 @@
 
         @if (session('subscription_request_success'))
             <div class="alert alert-success" style="margin-bottom:16px;">{{ session('subscription_request_success') }}</div>
-        @endif
-        @if (session('welcome_bonus'))
-            <div class="alert alert-success" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(22,163,74,0.12),rgba(22,163,74,0.06));border:1.5px solid rgba(22,163,74,0.3);color:#15532e;border-radius:12px;padding:14px 18px;">
-                <strong>Welcome to 1Dollar Digitizing!</strong> As a thank you for switching from our legacy platform, we've added <strong>$10.00 in credits</strong> to your account.
-            </div>
         @endif
 
         {{-- Credit balance hero --}}
