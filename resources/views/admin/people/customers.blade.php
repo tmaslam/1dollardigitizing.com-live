@@ -101,13 +101,15 @@
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_country', 'sort' => $nextDirection('user_country')]) }}">Country</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'userip_addrs', 'sort' => $nextDirection('userip_addrs')]) }}">IP Address</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'date_added', 'sort' => $nextDirection('date_added')]) }}">Date Added</a></th>
+                        <th>Credits</th>
+                        <th>Subscription</th>
                         <th>Delete</th>
                     </tr>
                     </thead>
                     <tbody>
                     @if (collect($customers)->isEmpty())
                         <tr>
-                            <td colspan="8" class="muted">No active customers match the current filters.</td>
+                            <td colspan="10" class="muted">No active customers match the current filters.</td>
                         </tr>
                     @else
                     @foreach ($customers as $customer)
@@ -136,6 +138,24 @@
                             <td class="cell-wrap-md">{{ $customer->user_country ?: '-' }}</td>
                             <td class="cell-nowrap">{{ $customer->userip_addrs ?: '-' }}</td>
                             <td class="cell-nowrap">{{ $customer->date_added ?: '-' }}</td>
+                            <td class="cell-nowrap">
+                                @php $credit = round((float) $customer->topup, 2); @endphp
+                                @if ($credit > 0)
+                                    <strong style="color:#1b8d5a;">${{ number_format($credit, 2) }}</strong>
+                                @else
+                                    <span class="muted">$0.00</span>
+                                @endif
+                            </td>
+                            <td class="cell-nowrap">
+                                @if ($customer->subscription_plan)
+                                    <span>{{ ucfirst((string) $customer->subscription_plan) }}</span>
+                                    @if ($customer->subscription_status)
+                                        <br><span class="muted" style="font-size:0.78rem;">{{ ucfirst((string) $customer->subscription_status) }}</span>
+                                    @endif
+                                @else
+                                    <span class="muted">—</span>
+                                @endif
+                            </td>
                             <td>
                                 <form method="post" action="{{ url('/v/customers/'.$customer->user_id.'/delete') }}" onsubmit="return confirm('Delete this customer?');">
                                     @csrf
