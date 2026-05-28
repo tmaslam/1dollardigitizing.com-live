@@ -152,13 +152,6 @@
                                         @endforeach
                                         <button class="block-button" type="submit">Block</button>
                                     </form>
-                                    <form method="post" action="{{ url('/v/customers/'.$customer->user_id.'/delete') }}" onsubmit="return confirm('Delete this customer?');">
-                                        @csrf
-                                        @foreach (request()->query() as $key => $value)
-                                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                        @endforeach
-                                        <button type="submit" style="background:linear-gradient(135deg,#a24d2a,#7f2e14);">Delete</button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>

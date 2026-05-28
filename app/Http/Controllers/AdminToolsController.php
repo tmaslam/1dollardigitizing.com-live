@@ -580,7 +580,11 @@ class AdminToolsController extends Controller
                 });
             })
             ->when($request->filled('txtEmail'), fn (Builder $query) => $query->where('user_email', 'like', '%'.trim((string) $request->string('txtEmail')).'%'))
-            ->orderBy($this->sortColumn((string) $request->input('column_name'), 'user_id', ['user_id', 'user_name', 'user_email', 'user_country', 'is_active', 'userip_addrs', 'date_added']), $this->sortDirection((string) $request->input('sort'), 'desc'))
+            ->when(
+                $this->sortColumn((string) $request->input('column_name'), 'user_id', ['user_id', 'user_name', 'user_email', 'user_country', 'is_active', 'userip_addrs', 'date_added', 'topup', 'subscription_plan']) === 'topup',
+                fn ($q) => $q->orderByRaw('CAST(topup AS DECIMAL(12,2)) '.$this->sortDirection((string) $request->input('sort'), 'desc')),
+                fn ($q) => $q->orderBy($this->sortColumn((string) $request->input('column_name'), 'user_id', ['user_id', 'user_name', 'user_email', 'user_country', 'is_active', 'userip_addrs', 'date_added', 'topup', 'subscription_plan']), $this->sortDirection((string) $request->input('sort'), 'desc'))
+            )
             ->paginate(30)
             ->withQueryString();
 
