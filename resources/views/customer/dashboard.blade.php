@@ -317,14 +317,14 @@
                             <strong>{{ \Carbon\Carbon::parse($subRenewsAt)->format('M d, Y') }}</strong>
                         </div>
                     @endif
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid rgba(22,159,230,0.10);">
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid rgba(22,159,230,0.10);">
                         <form method="post" action="{{ url('/subscription/pause-request') }}" onsubmit="return confirm('Are you sure you want to pause your subscription? Our team will contact you to process the pause.');">
                             @csrf
-                            <button type="submit" style="padding:7px 16px;border-radius:999px;font-size:0.78rem;font-weight:700;background:linear-gradient(135deg,#b26a2a,#7f4a1a);color:#fff;border:none;cursor:pointer;">Pause Subscription</button>
+                            <button type="submit" style="padding:3px 10px;border-radius:999px;font-size:0.68rem;font-weight:700;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border:none;cursor:pointer;line-height:1.5;">Pause</button>
                         </form>
                         <form method="post" action="{{ url('/subscription/cancel-request') }}" onsubmit="return confirm('Are you sure you want to cancel your subscription? This action will notify our team to process your cancellation.');">
                             @csrf
-                            <button type="submit" style="padding:7px 16px;border-radius:999px;font-size:0.78rem;font-weight:700;background:linear-gradient(135deg,#a24d2a,#7f2e14);color:#fff;border:none;cursor:pointer;">Cancel Subscription</button>
+                            <button type="submit" style="padding:3px 10px;border-radius:999px;font-size:0.68rem;font-weight:700;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;cursor:pointer;line-height:1.5;">Cancel</button>
                         </form>
                     </div>
                 @endif
