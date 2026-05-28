@@ -114,9 +114,9 @@
                     @foreach ($customers as $customer)
                         <tr>
                             <td class="cell-nowrap">{{ $customer->user_id }}</td>
-                            <td class="cell-wrap-md">{{ $customer->display_name ?: $customer->user_name ?: '-' }}</td>
-                            <td class="cell-wrap-lg">{{ $customer->user_email ?: '-' }}</td>
-                            <td class="cell-wrap-md">{{ $customer->user_country ?: '-' }}</td>
+                            <td class="cell-nowrap">{{ $customer->display_name ?: $customer->user_name ?: '-' }}</td>
+                            <td class="cell-nowrap">{{ $customer->user_email ?: '-' }}</td>
+                            <td class="cell-nowrap">{{ $customer->user_country ?: '-' }}</td>
                             <td class="cell-nowrap">{{ $customer->userip_addrs ?: '-' }}</td>
                             <td class="cell-nowrap">{{ $customer->date_added ?: '-' }}</td>
                             <td class="cell-nowrap">
