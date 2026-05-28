@@ -45,7 +45,11 @@ class AdminPeopleController extends Controller
             ->when($request->filled('txtEmail'), function (Builder $query) use ($request) {
                 $query->where('user_email', 'like', '%'.$request->string('txtEmail')->trim().'%');
             })
-            ->orderBy($this->sortColumn((string) $request->input('column_name'), 'user_id', ['user_id', 'user_name', 'user_email', 'user_country', 'userip_addrs', 'date_added', 'topup', 'subscription_plan']), $this->sortDirection((string) $request->input('sort'), 'desc'))
+            ->when(
+                $this->sortColumn((string) $request->input('column_name'), 'user_id', ['user_id', 'user_name', 'user_email', 'user_country', 'userip_addrs', 'date_added', 'topup', 'subscription_plan']) === 'topup',
+                fn ($q) => $q->orderByRaw('CAST(topup AS DECIMAL(12,2)) '.$this->sortDirection((string) $request->input('sort'), 'desc')),
+                fn ($q) => $q->orderBy($this->sortColumn((string) $request->input('column_name'), 'user_id', ['user_id', 'user_name', 'user_email', 'user_country', 'userip_addrs', 'date_added', 'topup', 'subscription_plan']), $this->sortDirection((string) $request->input('sort'), 'desc'))
+            )
             ->paginate(30)
             ->withQueryString();
 
