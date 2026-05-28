@@ -113,7 +113,7 @@
                     @else
                     @foreach ($customers as $customer)
                         <tr>
-                            <td class="cell-nowrap">{{ $customer->user_id }}</td>
+                            <td class="cell-nowrap"><a href="{{ url('/v/customer-detail.php?uid='.$customer->user_id) }}" style="font-weight:700;color:var(--accent);">{{ $customer->user_id }}</a></td>
                             <td class="cell-nowrap">{{ $customer->display_name ?: $customer->user_name ?: '-' }}</td>
 
                             <td class="cell-nowrap">{{ $customer->user_country ?: '-' }}</td>
@@ -139,7 +139,6 @@
                             <td class="cell-nowrap">{{ $customer->date_added ?: '-' }}</td>
                             <td class="action-col customer-actions-cell">
                                 <div class="action-row customer-actions">
-                                    <a class="badge" href="{{ url('/v/customer-detail.php?uid='.$customer->user_id) }}">View</a>
                                     <a class="badge" href="{{ url('/v/edit-customer-detail.php?uid='.$customer->user_id) }}">Edit</a>
                                     <form method="post" action="{{ url('/v/simulate-login/'.$customer->user_id) }}" onsubmit="return confirm('Start a simulated customer session for support?');">
                                         @csrf
