@@ -100,8 +100,8 @@
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_country', 'sort' => $nextDirection('user_country')]) }}">Country</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'userip_addrs', 'sort' => $nextDirection('userip_addrs')]) }}">IP Address</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'date_added', 'sort' => $nextDirection('date_added')]) }}">Date Added</a></th>
-                        <th>Credits</th>
-                        <th>Subscription</th>
+                        <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'topup', 'sort' => $nextDirection('topup')]) }}">Credits</a></th>
+                        <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'subscription_plan', 'sort' => $nextDirection('subscription_plan')]) }}">Subscription</a></th>
                         <th class="action-col">Action</th>
                     </tr>
                     </thead>
