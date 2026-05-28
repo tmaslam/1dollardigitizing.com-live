@@ -339,6 +339,34 @@ class CustomerPortalController extends Controller
         return redirect()->to(url('/dashboard.php'))->with('subscription_request_success', 'Your pause request has been sent. We will be in touch shortly.');
     }
 
+    public function subscriptionReactivateRequest(Request $request)
+    {
+        $customer = $this->customer($request);
+
+        abort_unless((bool) $customer->subscription_plan, 403);
+
+        $plan = ucfirst((string) $customer->subscription_plan);
+        $name = $customer->display_name ?: $customer->user_name ?: 'Customer #'.$customer->user_id;
+
+        $customer->update(['subscription_status' => 'active']);
+
+        PortalMailer::sendHtml(
+            '1dollardigitizing@gmail.com',
+            'Subscription Reactivation Request — '.$name,
+            '<p>A customer has requested to <strong>reactivate</strong> their paused subscription.</p>
+            <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr><td><strong>User ID</strong></td><td>'.(int) $customer->user_id.'</td></tr>
+                <tr><td><strong>Name</strong></td><td>'.e($name).'</td></tr>
+                <tr><td><strong>Email</strong></td><td>'.e((string) ($customer->user_email ?: '—')).'</td></tr>
+                <tr><td><strong>Subscription Plan</strong></td><td>'.e($plan).'</td></tr>
+                <tr><td><strong>Request</strong></td><td><strong style="color:#16a34a;">Reactivate Subscription</strong></td></tr>
+            </table>
+            <p>Please process this reactivation manually in the billing system.</p>'
+        );
+
+        return redirect()->to(url('/dashboard.php'))->with('subscription_request_success', 'Your reactivation request has been sent. We will be in touch shortly.');
+    }
+
     public function subscriptionCancelRequest(Request $request)
     {
         $customer = $this->customer($request);

@@ -317,11 +317,19 @@
                             <strong>{{ \Carbon\Carbon::parse($subRenewsAt)->format('M d, Y') }}</strong>
                         </div>
                     @endif
+                    @php $subStatus = strtolower(trim((string) ($customer->subscription_status ?? ''))); @endphp
                     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid rgba(22,159,230,0.10);">
-                        <form method="post" action="{{ url('/subscription/pause-request') }}" onsubmit="return confirm('Are you sure you want to pause your subscription? Our team will contact you to process the pause.');">
-                            @csrf
-                            <button type="submit" style="padding:3px 10px;border-radius:999px;font-size:0.68rem;font-weight:700;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border:none;cursor:pointer;line-height:1.5;">Pause</button>
-                        </form>
+                        @if ($subStatus === 'paused')
+                            <form method="post" action="{{ url('/subscription/reactivate-request') }}" onsubmit="return confirm('Are you sure you want to reactivate your subscription? Our team will be notified to process your reactivation.');">
+                                @csrf
+                                <button type="submit" style="padding:3px 10px;border-radius:999px;font-size:0.68rem;font-weight:700;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;cursor:pointer;line-height:1.5;">Reactivate</button>
+                            </form>
+                        @else
+                            <form method="post" action="{{ url('/subscription/pause-request') }}" onsubmit="return confirm('Are you sure you want to pause your subscription? Our team will contact you to process the pause.');">
+                                @csrf
+                                <button type="submit" style="padding:3px 10px;border-radius:999px;font-size:0.68rem;font-weight:700;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border:none;cursor:pointer;line-height:1.5;">Pause</button>
+                            </form>
+                        @endif
                         <form method="post" action="{{ url('/subscription/cancel-request') }}" onsubmit="return confirm('Are you sure you want to cancel your subscription? This action will notify our team to process your cancellation.');">
                             @csrf
                             <button type="submit" style="padding:3px 10px;border-radius:999px;font-size:0.68rem;font-weight:700;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;cursor:pointer;line-height:1.5;">Cancel</button>

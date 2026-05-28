@@ -91,6 +91,7 @@ Route::middleware('detect.site')->group(function () use ($adminPrefix, $internal
     Route::post('/select-plan.php', [CustomerPortalController::class, 'selectPlan'])->middleware('customer.auth');
     Route::post('/subscription/pause-request', [CustomerPortalController::class, 'subscriptionPauseRequest'])->middleware('customer.auth');
     Route::post('/subscription/cancel-request', [CustomerPortalController::class, 'subscriptionCancelRequest'])->middleware('customer.auth');
+    Route::post('/subscription/reactivate-request', [CustomerPortalController::class, 'subscriptionReactivateRequest'])->middleware('customer.auth');
     Route::get('/stripe-return.php', [CustomerPortalController::class, 'stripeReturn'])->middleware('customer.auth');
     Route::get('/payment-success.php', [CustomerPortalController::class, 'paymentSuccess'])->middleware('customer.auth');
     Route::get('/new-order.php', [CustomerOrderEntryController::class, 'create'])->middleware('customer.auth');
