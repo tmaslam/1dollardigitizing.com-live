@@ -294,6 +294,16 @@
                 <div class="dash-credit-rate">1 Credit = 1 USD = 1,000 stitches</div>
                 @if ($subLabel)
                     <span class="dash-sub-badge">{{ $subLabel }} Subscriber</span>
+                    @if ($subRenewsAt || $subPrice)
+                        <div style="margin-top:7px;line-height:1.5;">
+                            @if ($subRenewsAt)
+                                <div style="font-size:0.75rem;color:#526071;">{{ \Carbon\Carbon::parse($subRenewsAt)->format('M d, Y') }}</div>
+                            @endif
+                            @if ($subPrice)
+                                <div style="font-size:0.75rem;font-weight:700;color:#526071;">${{ number_format($subPrice) }}/mo</div>
+                            @endif
+                        </div>
+                    @endif
                 @endif
             </div>
             <div class="dash-credit-breakdown">
@@ -316,15 +326,6 @@
                     <div class="dash-credit-row dash-credit-row--sub" style="margin-top:6px; border-top:1px solid rgba(22,159,230,0.10); padding-top:8px;">
                         <span>Subscription</span>
                         <strong>{{ $subLabel }}</strong>
-                    </div>
-                    <div class="dash-credit-row dash-credit-row--sub">
-                        <span>Next payment</span>
-                        <strong>
-                            @if ($subPrice)${{ number_format($subPrice) }}@endif
-                            @if ($subPrice && $subRenewsAt) &middot; @endif
-                            @if ($subRenewsAt){{ \Carbon\Carbon::parse($subRenewsAt)->format('M d, Y') }}@endif
-                            @if (!$subPrice && !$subRenewsAt)—@endif
-                        </strong>
                     </div>
                     @php $subStatus = strtolower(trim((string) ($customer->subscription_status ?? ''))); @endphp
                     <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-start;margin-top:10px;padding-top:10px;border-top:1px solid rgba(22,159,230,0.10);">
