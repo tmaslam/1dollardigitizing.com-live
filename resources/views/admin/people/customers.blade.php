@@ -95,7 +95,7 @@
                     <thead>
                     <tr>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_id', 'sort' => $nextDirection('user_id')]) }}">User ID</a></th>
-                        <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_name', 'sort' => $nextDirection('user_name')]) }}">Username</a></th>
+                        <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_name', 'sort' => $nextDirection('user_name')]) }}">Name</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_email', 'sort' => $nextDirection('user_email')]) }}">Email</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_country', 'sort' => $nextDirection('user_country')]) }}">Country</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'userip_addrs', 'sort' => $nextDirection('userip_addrs')]) }}">IP Address</a></th>
@@ -114,7 +114,7 @@
                     @foreach ($customers as $customer)
                         <tr>
                             <td class="cell-nowrap">{{ $customer->user_id }}</td>
-                            <td class="cell-wrap-md">{{ $customer->user_name ?: '-' }}</td>
+                            <td class="cell-wrap-md">{{ $customer->display_name ?: $customer->user_name ?: '-' }}</td>
                             <td class="cell-wrap-lg">{{ $customer->user_email ?: '-' }}</td>
                             <td class="cell-wrap-md">{{ $customer->user_country ?: '-' }}</td>
                             <td class="cell-nowrap">{{ $customer->userip_addrs ?: '-' }}</td>
