@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminUser;
+use App\Support\CustomerBalance;
 use App\Support\SiteContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -76,6 +77,18 @@ class LegacyMigrationController extends Controller
                 'exist_customer' => '1',
             ]);
             $customer->refresh();
+
+            CustomerBalance::recordIncomingPayment(
+                userId: (int) $customer->user_id,
+                amount: 10.00,
+                referenceNo: 'legacy-welcome-bonus-'.(int) $customer->user_id,
+                createdBy: 'system',
+                notes: '$10 welcome bonus for switching from legacy platform.',
+                applyToDue: false,
+                website: $site->legacyKey,
+            );
+
+            $request->session()->flash('welcome_bonus', true);
         }
 
         // Establish the customer session (same as normal login).
