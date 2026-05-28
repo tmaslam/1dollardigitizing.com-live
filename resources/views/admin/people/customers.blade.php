@@ -96,7 +96,7 @@
                     <tr>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_id', 'sort' => $nextDirection('user_id')]) }}">User ID</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_name', 'sort' => $nextDirection('user_name')]) }}">Name</a></th>
-                        <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_email', 'sort' => $nextDirection('user_email')]) }}">Email</a></th>
+
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_country', 'sort' => $nextDirection('user_country')]) }}">Country</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'topup', 'sort' => $nextDirection('topup')]) }}">Credits</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'subscription_plan', 'sort' => $nextDirection('subscription_plan')]) }}">Subscription</a></th>
@@ -108,14 +108,14 @@
                     <tbody>
                     @if (collect($customers)->isEmpty())
                         <tr>
-                            <td colspan="10" class="muted">No active customers match the current filters.</td>
+                            <td colspan="9" class="muted">No active customers match the current filters.</td>
                         </tr>
                     @else
                     @foreach ($customers as $customer)
                         <tr>
                             <td class="cell-nowrap">{{ $customer->user_id }}</td>
                             <td class="cell-nowrap">{{ $customer->display_name ?: $customer->user_name ?: '-' }}</td>
-                            <td class="cell-nowrap">{{ $customer->user_email ?: '-' }}</td>
+
                             <td class="cell-nowrap">{{ $customer->user_country ?: '-' }}</td>
                             <td class="cell-nowrap">
                                 @php $credit = round((float) $customer->topup, 2); @endphp
