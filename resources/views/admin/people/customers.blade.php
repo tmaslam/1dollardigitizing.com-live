@@ -94,7 +94,6 @@
                 <table>
                     <thead>
                     <tr>
-                        <th class="action-col">Action</th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_id', 'sort' => $nextDirection('user_id')]) }}">User ID</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_name', 'sort' => $nextDirection('user_name')]) }}">Username</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_email', 'sort' => $nextDirection('user_email')]) }}">Email</a></th>
@@ -103,7 +102,7 @@
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'date_added', 'sort' => $nextDirection('date_added')]) }}">Date Added</a></th>
                         <th>Credits</th>
                         <th>Subscription</th>
-                        <th>Delete</th>
+                        <th class="action-col">Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -114,24 +113,6 @@
                     @else
                     @foreach ($customers as $customer)
                         <tr>
-                            <td class="action-col customer-actions-cell">
-                                <div class="action-row customer-actions">
-                                    <a class="badge" href="{{ url('/v/customer-detail.php?uid='.$customer->user_id) }}">View</a>
-                                    <a class="badge" href="{{ url('/v/edit-customer-detail.php?uid='.$customer->user_id) }}">Edit</a>
-                                    <form method="post" action="{{ url('/v/simulate-login/'.$customer->user_id) }}" onsubmit="return confirm('Start a simulated customer session for support?');">
-                                        @csrf
-                                        <input type="hidden" name="return_to" value="{{ request()->fullUrl() }}">
-                                        <button class="simulate-login-button" type="submit">Simulate Login</button>
-                                    </form>
-                                    <form method="post" action="{{ url('/v/customers/'.$customer->user_id.'/block') }}" onsubmit="return confirm('Block this customer?');">
-                                        @csrf
-                                        @foreach (request()->query() as $key => $value)
-                                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                        @endforeach
-                                        <button class="block-button" type="submit">Block</button>
-                                    </form>
-                                </div>
-                            </td>
                             <td class="cell-nowrap">{{ $customer->user_id }}</td>
                             <td class="cell-wrap-md">{{ $customer->user_name ?: '-' }}</td>
                             <td class="cell-wrap-lg">{{ $customer->user_email ?: '-' }}</td>
@@ -156,14 +137,30 @@
                                     <span class="muted">—</span>
                                 @endif
                             </td>
-                            <td>
-                                <form method="post" action="{{ url('/v/customers/'.$customer->user_id.'/delete') }}" onsubmit="return confirm('Delete this customer?');">
-                                    @csrf
-                                    @foreach (request()->query() as $key => $value)
-                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                    @endforeach
-                                    <button type="submit" style="background:linear-gradient(135deg,#a24d2a,#7f2e14);">Delete</button>
-                                </form>
+                            <td class="action-col customer-actions-cell">
+                                <div class="action-row customer-actions">
+                                    <a class="badge" href="{{ url('/v/customer-detail.php?uid='.$customer->user_id) }}">View</a>
+                                    <a class="badge" href="{{ url('/v/edit-customer-detail.php?uid='.$customer->user_id) }}">Edit</a>
+                                    <form method="post" action="{{ url('/v/simulate-login/'.$customer->user_id) }}" onsubmit="return confirm('Start a simulated customer session for support?');">
+                                        @csrf
+                                        <input type="hidden" name="return_to" value="{{ request()->fullUrl() }}">
+                                        <button class="simulate-login-button" type="submit">Simulate Login</button>
+                                    </form>
+                                    <form method="post" action="{{ url('/v/customers/'.$customer->user_id.'/block') }}" onsubmit="return confirm('Block this customer?');">
+                                        @csrf
+                                        @foreach (request()->query() as $key => $value)
+                                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                        @endforeach
+                                        <button class="block-button" type="submit">Block</button>
+                                    </form>
+                                    <form method="post" action="{{ url('/v/customers/'.$customer->user_id.'/delete') }}" onsubmit="return confirm('Delete this customer?');">
+                                        @csrf
+                                        @foreach (request()->query() as $key => $value)
+                                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                        @endforeach
+                                        <button type="submit" style="background:linear-gradient(135deg,#a24d2a,#7f2e14);">Delete</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
