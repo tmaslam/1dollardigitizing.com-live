@@ -98,10 +98,10 @@
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_name', 'sort' => $nextDirection('user_name')]) }}">Name</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_email', 'sort' => $nextDirection('user_email')]) }}">Email</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'user_country', 'sort' => $nextDirection('user_country')]) }}">Country</a></th>
-                        <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'userip_addrs', 'sort' => $nextDirection('userip_addrs')]) }}">IP Address</a></th>
-                        <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'date_added', 'sort' => $nextDirection('date_added')]) }}">Date Added</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'topup', 'sort' => $nextDirection('topup')]) }}">Credits</a></th>
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'subscription_plan', 'sort' => $nextDirection('subscription_plan')]) }}">Subscription</a></th>
+                        <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'userip_addrs', 'sort' => $nextDirection('userip_addrs')]) }}">IP Address</a></th>
+                        <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'date_added', 'sort' => $nextDirection('date_added')]) }}">Date Added</a></th>
                         <th class="action-col">Action</th>
                     </tr>
                     </thead>
@@ -117,8 +117,6 @@
                             <td class="cell-nowrap">{{ $customer->display_name ?: $customer->user_name ?: '-' }}</td>
                             <td class="cell-nowrap">{{ $customer->user_email ?: '-' }}</td>
                             <td class="cell-nowrap">{{ $customer->user_country ?: '-' }}</td>
-                            <td class="cell-nowrap">{{ $customer->userip_addrs ?: '-' }}</td>
-                            <td class="cell-nowrap">{{ $customer->date_added ?: '-' }}</td>
                             <td class="cell-nowrap">
                                 @php $credit = round((float) $customer->topup, 2); @endphp
                                 @if ($credit > 0)
@@ -131,12 +129,14 @@
                                 @if ($customer->subscription_plan)
                                     <span>{{ ucfirst((string) $customer->subscription_plan) }}</span>
                                     @if ($customer->subscription_status)
-                                        <br><span class="muted" style="font-size:0.78rem;">{{ ucfirst((string) $customer->subscription_status) }}</span>
+                                        &nbsp;<span class="muted" style="font-size:0.78rem;">{{ ucfirst((string) $customer->subscription_status) }}</span>
                                     @endif
                                 @else
                                     <span class="muted">—</span>
                                 @endif
                             </td>
+                            <td class="cell-nowrap">{{ $customer->userip_addrs ?: '-' }}</td>
+                            <td class="cell-nowrap">{{ $customer->date_added ?: '-' }}</td>
                             <td class="action-col customer-actions-cell">
                                 <div class="action-row customer-actions">
                                     <a class="badge" href="{{ url('/v/customer-detail.php?uid='.$customer->user_id) }}">View</a>
