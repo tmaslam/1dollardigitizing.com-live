@@ -19,10 +19,6 @@
         };
         $isInactive = $source === 'inactive-customers' || (int) $customer->is_active !== 1;
     @endphp
-    @if (session('subscription_request_success'))
-        <div class="alert success" style="margin-bottom:16px;">{{ session('subscription_request_success') }}</div>
-    @endif
-
     <section class="card">
         <div class="card-body">
             <div style="display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;">
@@ -43,18 +39,6 @@
                             @csrf
                             <input type="hidden" name="return_to" value="{{ request()->fullUrl() }}">
                             <button type="submit">Simulate Login</button>
-                        </form>
-                    @endif
-                    @if ($customer->subscription_plan)
-                        <form method="post" action="{{ url('/v/customers/'.$customer->user_id.'/subscription/pause-request') }}" onsubmit="return confirm('Send a subscription pause request to admin?');">
-                            @csrf
-                            <input type="hidden" name="source" value="{{ $source }}">
-                            <button type="submit" style="background:linear-gradient(135deg,#b26a2a,#7f4a1a);">Pause Subscription</button>
-                        </form>
-                        <form method="post" action="{{ url('/v/customers/'.$customer->user_id.'/subscription/cancel-request') }}" onsubmit="return confirm('Send a subscription cancellation request to admin?');">
-                            @csrf
-                            <input type="hidden" name="source" value="{{ $source }}">
-                            <button type="submit" style="background:linear-gradient(135deg,#a24d2a,#7f2e14);">Cancel Subscription</button>
                         </form>
                     @endif
                 </div>

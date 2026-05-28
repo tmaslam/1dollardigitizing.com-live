@@ -89,6 +89,8 @@ Route::middleware('detect.site')->group(function () use ($adminPrefix, $internal
     Route::match(['get', 'post'], '/simulate-2checkout/{transaction}', [CustomerPaymentController::class, 'simulateTwocheckout'])->middleware('customer.auth');
     Route::get('/dashboard.php', [CustomerPortalController::class, 'dashboard'])->middleware(['legacy.upgrade', 'customer.auth']);
     Route::post('/select-plan.php', [CustomerPortalController::class, 'selectPlan'])->middleware('customer.auth');
+    Route::post('/subscription/pause-request', [CustomerPortalController::class, 'subscriptionPauseRequest'])->middleware('customer.auth');
+    Route::post('/subscription/cancel-request', [CustomerPortalController::class, 'subscriptionCancelRequest'])->middleware('customer.auth');
     Route::get('/stripe-return.php', [CustomerPortalController::class, 'stripeReturn'])->middleware('customer.auth');
     Route::get('/payment-success.php', [CustomerPortalController::class, 'paymentSuccess'])->middleware('customer.auth');
     Route::get('/new-order.php', [CustomerOrderEntryController::class, 'create'])->middleware('customer.auth');
@@ -261,8 +263,6 @@ Route::post('/v/teams/{team}/destroy', [AdminPeopleController::class, 'destroyTe
     Route::get('/v/customer-detail.php', [AdminProfileController::class, 'customerShow']);
     Route::post('/v/customers/{customer}/reset-password', [AdminProfileController::class, 'resetCustomerPassword']);
     Route::post('/v/customers/{customer}/add-credit', [AdminProfileController::class, 'addCustomerCredit']);
-    Route::post('/v/customers/{customer}/subscription/cancel-request', [AdminProfileController::class, 'subscriptionCancelRequest']);
-    Route::post('/v/customers/{customer}/subscription/pause-request', [AdminProfileController::class, 'subscriptionPauseRequest']);
     Route::get('/v/edit-customer-detail.php', [AdminProfileController::class, 'customerEdit']);
     Route::post('/v/edit-customer-detail.php', [AdminProfileController::class, 'customerUpdate']);
     Route::get('/v/change-password.php', [AdminProfileController::class, 'adminPasswordForm']);

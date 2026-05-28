@@ -311,6 +311,62 @@ class CustomerPortalController extends Controller
         ]);
     }
 
+    public function subscriptionPauseRequest(Request $request)
+    {
+        $customer = $this->customer($request);
+
+        abort_unless((bool) $customer->subscription_plan, 403);
+
+        $plan = ucfirst((string) $customer->subscription_plan);
+        $name = $customer->display_name ?: $customer->user_name ?: 'Customer #'.$customer->user_id;
+
+        $customer->update(['subscription_status' => 'paused']);
+
+        PortalMailer::sendHtml(
+            '1dollardigitizing@gmail.com',
+            'Subscription Pause Request — '.$name,
+            '<p>A customer has requested to <strong>pause</strong> their subscription.</p>
+            <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr><td><strong>User ID</strong></td><td>'.(int) $customer->user_id.'</td></tr>
+                <tr><td><strong>Name</strong></td><td>'.e($name).'</td></tr>
+                <tr><td><strong>Email</strong></td><td>'.e((string) ($customer->user_email ?: '—')).'</td></tr>
+                <tr><td><strong>Subscription Plan</strong></td><td>'.e($plan).'</td></tr>
+                <tr><td><strong>Request</strong></td><td><strong style="color:#b26a2a;">Pause Subscription</strong></td></tr>
+            </table>
+            <p>Please process this pause manually in the billing system.</p>'
+        );
+
+        return redirect()->to(url('/dashboard.php'))->with('subscription_request_success', 'Your pause request has been sent. We will be in touch shortly.');
+    }
+
+    public function subscriptionCancelRequest(Request $request)
+    {
+        $customer = $this->customer($request);
+
+        abort_unless((bool) $customer->subscription_plan, 403);
+
+        $plan = ucfirst((string) $customer->subscription_plan);
+        $name = $customer->display_name ?: $customer->user_name ?: 'Customer #'.$customer->user_id;
+
+        $customer->update(['subscription_status' => 'cancelled']);
+
+        PortalMailer::sendHtml(
+            '1dollardigitizing@gmail.com',
+            'Subscription Cancellation Request — '.$name,
+            '<p>A customer has requested to <strong>cancel</strong> their subscription.</p>
+            <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr><td><strong>User ID</strong></td><td>'.(int) $customer->user_id.'</td></tr>
+                <tr><td><strong>Name</strong></td><td>'.e($name).'</td></tr>
+                <tr><td><strong>Email</strong></td><td>'.e((string) ($customer->user_email ?: '—')).'</td></tr>
+                <tr><td><strong>Subscription Plan</strong></td><td>'.e($plan).'</td></tr>
+                <tr><td><strong>Request</strong></td><td><strong style="color:#9d2d17;">Cancel Subscription</strong></td></tr>
+            </table>
+            <p>Please process this cancellation manually in the billing system.</p>'
+        );
+
+        return redirect()->to(url('/dashboard.php'))->with('subscription_request_success', 'Your cancellation request has been sent. We will be in touch shortly.');
+    }
+
     public function orders(Request $request)
     {
         $customer = $this->customer($request);
