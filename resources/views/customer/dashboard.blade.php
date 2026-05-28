@@ -299,6 +299,7 @@
                 @php
                     $paymentDue = max(0, round($metrics['billing_total'] - $totalUsable, 2));
                     $subRenewsAt = $customer->subscription_renews_at ?? null;
+                    $subPrice = collect($dashPlans['subscription'])->firstWhere('id', 'sub-'.$subPlan)['price'] ?? null;
                 @endphp
                 <div class="dash-credit-row" style="margin-top:6px; border-top:1px solid rgba(22,159,230,0.10); padding-top:8px;">
                     <span>Payment due</span>
@@ -311,12 +312,15 @@
                         <span>Subscription</span>
                         <strong>{{ $subLabel }}</strong>
                     </div>
-                    @if ($subRenewsAt)
-                        <div class="dash-credit-row dash-credit-row--sub">
-                            <span>Next recurring payment</span>
-                            <strong>{{ \Carbon\Carbon::parse($subRenewsAt)->format('M d, Y') }}</strong>
-                        </div>
-                    @endif
+                    <div class="dash-credit-row dash-credit-row--sub">
+                        <span>Next payment</span>
+                        <strong>
+                            @if ($subPrice)${{ number_format($subPrice) }}@endif
+                            @if ($subPrice && $subRenewsAt) &middot; @endif
+                            @if ($subRenewsAt){{ \Carbon\Carbon::parse($subRenewsAt)->format('M d, Y') }}@endif
+                            @if (!$subPrice && !$subRenewsAt)—@endif
+                        </strong>
+                    </div>
                     @php $subStatus = strtolower(trim((string) ($customer->subscription_status ?? ''))); @endphp
                     <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-start;margin-top:10px;padding-top:10px;border-top:1px solid rgba(22,159,230,0.10);">
                         @if ($subStatus === 'paused')
