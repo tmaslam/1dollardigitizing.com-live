@@ -792,7 +792,7 @@ class CustomerOrderEntryController extends Controller
 
         $body = <<<HTML
 <p>{$subjectLabel} on {$site->displayLabel()}.</p>
-<p><strong>Order ID:</strong> {$order->order_id}</p>
+<p><strong>Order ID:</strong> {$order->order_num}</p>
 <p><strong>Design Name:</strong> {$designName}</p>
 <p><strong>Customer:</strong> {$customerLabel}</p>
 <p><strong>Email:</strong> {$customerEmail}</p>
