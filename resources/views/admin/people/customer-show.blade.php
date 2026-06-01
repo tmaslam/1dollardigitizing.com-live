@@ -49,6 +49,7 @@
                     <tbody>
                     <tr><th>User ID</th><td>{{ $customer->user_id }}</td><th>Username</th><td>{{ $customer->user_name ?: '-' }}</td></tr>
                     <tr><th>Email</th><td>{{ $customer->user_email ?: '-' }}</td><th>Status</th><td>{{ (int) $customer->is_active === 1 ? 'Active' : 'Blocked' }}</td></tr>
+                    <tr><th>Password</th><td>{{ trim((string) ($customer->user_password ?? '')) !== '' ? $customer->user_password : '— Securely hashed —' }}</td><th>Password Storage</th><td>{{ $customer->password_storage_label }}</td></tr>
                     <tr><th>First Name</th><td>{{ $customer->first_name ?: '-' }}</td><th>Last Name</th><td>{{ $customer->last_name ?: '-' }}</td></tr>
                     <tr><th>Company</th><td>{{ $customer->company ?: '-' }}</td><th>Company Type</th><td>{{ $customer->company_type ?: '-' }}</td></tr>
                     <tr><th>Address</th><td>{{ $customer->company_address ?: '-' }}</td><th>Zip Code</th><td>{{ $customer->zip_code ?: '-' }}</td></tr>
