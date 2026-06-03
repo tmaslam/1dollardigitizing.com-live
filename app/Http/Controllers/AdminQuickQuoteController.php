@@ -240,7 +240,7 @@ class AdminQuickQuoteController extends Controller
             $site,
             [
                 'design_name' => (string) ($order->design_name ?? ''),
-                'order_id' => (string) $order->order_id,
+                'order_id' => (string) $order->order_num,
                 'amount' => (string) $amount,
                 'stitches' => (string) $stitches,
                 'payment_url' => url('/instant-payment.php'),

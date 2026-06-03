@@ -1194,7 +1194,7 @@ class AdminOrderDetailController extends Controller
             [
                 'customer_name' => trim((string) ($customer->display_name ?: $customer->user_name)),
                 'customer_email' => (string) $customer->user_email,
-                'order_id' => (string) $order->order_id,
+                'order_id' => (string) $order->order_num,
                 'design_name' => (string) ($order->design_name ?? ''),
                 'order_type' => $page === 'quote' ? 'Quote' : 'Order',
                 'status' => (string) ($order->status ?? ''),
@@ -1279,7 +1279,7 @@ class AdminOrderDetailController extends Controller
             [
                 'customer_name' => trim((string) ($customer->display_name ?: $customer->user_name)),
                 'customer_email' => (string) $customer->user_email,
-                'order_id' => (string) $order->order_id,
+                'order_id' => (string) $order->order_num,
                 'design_name' => (string) ($order->design_name ?? ''),
                 'order_type' => 'Quote Negotiation',
                 'status' => match ($decision) {
@@ -1340,7 +1340,7 @@ class AdminOrderDetailController extends Controller
         return <<<HTML
 <p>Hello {$customerName},</p>
 <p>{$message}</p>
-<p><strong>Reference ID:</strong> {$order->order_id}</p>
+<p><strong>Reference ID:</strong> {$order->order_num}</p>
 <p><strong>Design Name:</strong> {$designName}</p>
 <p><strong>Current Amount:</strong> {$formattedAmount}</p>
 <p>You can review the latest quote status here:</p>

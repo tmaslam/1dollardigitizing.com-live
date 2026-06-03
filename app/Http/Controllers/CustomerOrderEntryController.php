@@ -755,7 +755,7 @@ class CustomerOrderEntryController extends Controller
             [
                 'customer_name' => trim((string) ($customer->display_name ?: $customer->user_name)),
                 'customer_email' => (string) $customer->user_email,
-                'order_id' => (string) $order->order_id,
+                'order_id' => (string) $order->order_num,
                 'design_name' => (string) $order->design_name,
                 'order_type' => (string) $flow['page_title'],
                 'format' => (string) ($order->format ?? ''),
@@ -831,7 +831,7 @@ HTML;
         return <<<HTML
 <p>Hello {$customerName},</p>
 <p>We received your {$flowLabel} and it is now in our workflow.</p>
-<p><strong>Reference ID:</strong> {$order->order_id}</p>
+<p><strong>Reference ID:</strong> {$order->order_num}</p>
 <p><strong>Design Name:</strong> {$designName}</p>
 <p><strong>Format:</strong> {$format}</p>
 <p><strong>Turnaround:</strong> {$turnaround}</p>

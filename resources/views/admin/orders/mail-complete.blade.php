@@ -12,7 +12,7 @@
 @endif
 
 <table cellpadding="6" cellspacing="0" border="0">
-    <tr><td><strong>{{ $page === 'quote' ? 'Quotation' : 'Order' }} ID:</strong></td><td>{{ $order->order_id }}</td></tr>
+    <tr><td><strong>{{ $page === 'quote' ? 'Quotation' : 'Order' }} ID:</strong></td><td>{{ $order->order_num }}</td></tr>
     <tr><td><strong>Design Name:</strong></td><td>{{ $order->design_name }}</td></tr>
     <tr><td><strong>Amount:</strong></td><td>{{ $amount }}{{ $amount !== 'first order is free' ? ' USD' : '' }}</td></tr>
     <tr><td><strong>{{ $bodyLabel }}:</strong></td><td>{{ $stitches }}</td></tr>
