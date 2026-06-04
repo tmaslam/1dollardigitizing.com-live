@@ -10,7 +10,8 @@ class CustomerWorkflowStatus
     {
         if ($orderOrStatus instanceof Order) {
             $status = strtolower(trim((string) $orderOrStatus->status));
-            $isAssigned = ! in_array((string) $orderOrStatus->assign_to, ['', '0'], true) && $orderOrStatus->assign_to !== null;
+            $isAssigned = (! in_array((string) $orderOrStatus->assign_to, ['', '0'], true) && $orderOrStatus->assign_to !== null)
+                || ($orderOrStatus->assigned_group !== null && (string) $orderOrStatus->assigned_group !== '');
 
             if ($status === 'underprocess' && ! $isAssigned) {
                 return 'New';
@@ -48,7 +49,8 @@ class CustomerWorkflowStatus
     {
         if ($orderOrStatus instanceof Order) {
             $status = strtolower(trim((string) $orderOrStatus->status));
-            $isAssigned = ! in_array((string) $orderOrStatus->assign_to, ['', '0'], true) && $orderOrStatus->assign_to !== null;
+            $isAssigned = (! in_array((string) $orderOrStatus->assign_to, ['', '0'], true) && $orderOrStatus->assign_to !== null)
+                || ($orderOrStatus->assigned_group !== null && (string) $orderOrStatus->assigned_group !== '');
 
             if ($status === 'underprocess' && ! $isAssigned) {
                 return $isQuote
