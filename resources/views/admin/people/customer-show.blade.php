@@ -267,11 +267,19 @@
                                 </tr>
                             @endforeach
                             <tr style="font-weight:700;background:rgba(22,159,230,0.06);">
-                                <td colspan="5" style="text-align:right;">Total</td>
+                                <td colspan="5" style="text-align:right;">Total (Completed)</td>
                                 <td>${{ number_format($paymentTotalRequested, 2) }}</td>
                                 <td>${{ number_format($paymentTotalConfirmed, 2) }}</td>
                                 <td></td>
                             </tr>
+                            @if ($paymentIncompleteTotal > 0)
+                            <tr style="font-weight:700;background:rgba(185,28,28,0.06);">
+                                <td colspan="5" style="text-align:right;color:#b42318;">Unfinished / Incomplete</td>
+                                <td style="color:#b42318;">${{ number_format($paymentIncompleteTotal, 2) }}</td>
+                                <td style="color:#b42318;">—</td>
+                                <td></td>
+                            </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>

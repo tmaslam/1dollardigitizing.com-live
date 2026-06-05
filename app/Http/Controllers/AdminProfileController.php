@@ -202,8 +202,16 @@ class AdminProfileController extends Controller
             ->limit(50)
             ->get();
 
-        $paymentTotalRequested = $paymentTransactions->sum(fn ($tx) => (float) $tx->requested_amount);
-        $paymentTotalConfirmed = $paymentTransactions->sum(fn ($tx) => (float) $tx->confirmed_amount);
+        $completedStatuses = ['verified', 'success'];
+        $paymentTotalRequested = $paymentTransactions
+            ->whereIn('status', $completedStatuses)
+            ->sum(fn ($tx) => (float) $tx->requested_amount);
+        $paymentTotalConfirmed = $paymentTransactions
+            ->whereIn('status', $completedStatuses)
+            ->sum(fn ($tx) => (float) $tx->confirmed_amount);
+        $paymentIncompleteTotal = $paymentTransactions
+            ->whereNotIn('status', $completedStatuses)
+            ->sum(fn ($tx) => (float) $tx->requested_amount);
 
         $creditLedger = \App\Models\CustomerCreditLedger::query()
             ->with('order')
@@ -226,6 +234,7 @@ class AdminProfileController extends Controller
             'paymentTransactions' => $paymentTransactions,
             'paymentTotalRequested' => $paymentTotalRequested,
             'paymentTotalConfirmed' => $paymentTotalConfirmed,
+            'paymentIncompleteTotal' => $paymentIncompleteTotal,
             'creditLedger' => $creditLedger,
             'depositBalance' => $depositBalance,
             'feeSchedule' => $feeSchedule,
