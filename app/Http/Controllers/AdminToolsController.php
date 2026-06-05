@@ -1196,8 +1196,14 @@ class AdminToolsController extends Controller
             ->where('is_active', 1)
             ->whereNotNull('subscription_plan')
             ->where('subscription_plan', '!=', '')
+            ->when($statusFilter !== '', fn ($q) => $q->where('subscription_status', $statusFilter), function ($q) {
+                $q->where(function ($sub) {
+                    $sub->whereNull('subscription_status')
+                        ->orWhere('subscription_status', '')
+                        ->orWhere('subscription_status', 'active');
+                });
+            })
             ->when($planFilter !== '', fn ($q) => $q->where('subscription_plan', $planFilter))
-            ->when($statusFilter !== '', fn ($q) => $q->where('subscription_status', $statusFilter))
             ->when($userSearch !== '', fn ($q) => $q->where('user_id', (int) $userSearch))
             ->when($nameSearch !== '', fn ($q) => $q->where(function ($q) use ($nameSearch) {
                 $q->where('user_name', 'like', '%'.$nameSearch.'%')

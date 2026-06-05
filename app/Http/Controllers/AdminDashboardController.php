@@ -25,6 +25,11 @@ class AdminDashboardController extends Controller
             ->where('is_active', 1)
             ->whereNotNull('subscription_plan')
             ->whereNotIn('subscription_plan', [''])
+            ->where(function ($q) {
+                $q->whereNull('subscription_status')
+                  ->orWhere('subscription_status', '')
+                  ->orWhere('subscription_status', 'active');
+            })
             ->get(['user_id', 'subscription_plan', 'subscription_status']);
         $subscriptionMrr = $subscribers->sum(fn ($u) => (float) ($planPrices[strtolower(trim((string) $u->subscription_plan))] ?? 0));
 
