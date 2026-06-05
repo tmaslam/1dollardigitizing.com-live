@@ -136,6 +136,7 @@ class AdminProfileController extends Controller
 
         if ($export === 'credit-history') {
             $ledger = \App\Models\CustomerCreditLedger::query()
+                ->with('order')
                 ->where('user_id', $customer->user_id)
                 ->orderByDesc('date_added')
                 ->get();
@@ -152,7 +153,7 @@ class AdminProfileController extends Controller
                 $e->date_added,
                 $entryLabel((string) $e->entry_type),
                 number_format((float) $e->amount, 2),
-                $e->reference_no,
+                $e->order->order_num ?? ($e->order_id ?: ''),
                 $e->notes,
                 $e->created_by,
             ])->all();
@@ -162,7 +163,7 @@ class AdminProfileController extends Controller
 
             return $this->csvResponse(
                 'credit-history-uid'.$customer->user_id,
-                ['Date', 'Type', 'Amount', 'Reference', 'Notes', 'Created By'],
+                ['Date', 'Type', 'Amount', 'Order ID', 'Notes', 'Created By'],
                 $rows
             );
         }
@@ -202,6 +203,7 @@ class AdminProfileController extends Controller
             ->get();
 
         $creditLedger = \App\Models\CustomerCreditLedger::query()
+            ->with('order')
             ->where('user_id', $customer->user_id)
             ->orderByDesc('date_added')
             ->limit(50)

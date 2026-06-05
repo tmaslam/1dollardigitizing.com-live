@@ -183,7 +183,7 @@
                                 <th>Date</th>
                                 <th>Type</th>
                                 <th>Amount</th>
-                                <th>Reference</th>
+                                <th>Order ID</th>
                                 <th>Notes</th>
                                 <th>Created By</th>
                             </tr>
@@ -204,7 +204,7 @@
                                     <td style="font-size:0.8rem;white-space:nowrap;">{{ $entry->date_added }}</td>
                                     <td><span class="badge {{ $amountClass }}">{{ $entryLabel }}</span></td>
                                     <td style="font-weight:700;color:{{ ((float) $entry->amount) >= 0 ? '#2a7d4f' : '#9d2d17' }};">${{ number_format((float) $entry->amount, 2) }}</td>
-                                    <td style="font-size:0.78rem;word-break:break-all;max-width:160px;">{{ $entry->reference_no }}</td>
+                                    <td style="font-size:0.78rem;">{{ $entry->order->order_num ?? ($entry->order_id ?: '-') }}</td>
                                     <td style="font-size:0.85rem;max-width:260px;">{{ $entry->notes }}</td>
                                     <td style="font-size:0.8rem;">{{ $entry->created_by }}</td>
                                 </tr>
