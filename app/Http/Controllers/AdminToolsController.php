@@ -283,6 +283,27 @@ class AdminToolsController extends Controller
         ]);
     }
 
+    public function paymentTransactions(Request $request)
+    {
+        $transactions = \App\Models\PaymentTransaction::query()
+            ->with('customer:user_id,user_name,first_name,last_name,user_email')
+            ->whereIn('status', ['verified', 'success'])
+            ->orderByDesc('created_at')
+            ->paginate(50)
+            ->withQueryString();
+
+        $totalReceivedAllTime = (float) \App\Models\PaymentTransaction::query()
+            ->whereIn('status', ['verified', 'success'])
+            ->sum(\Illuminate\Support\Facades\DB::raw('CAST(confirmed_amount AS DECIMAL(12,2))'));
+
+        return view('admin.tools.payment-transactions', [
+            'adminUser' => $request->attributes->get('adminUser'),
+            'navCounts' => AdminNavigation::counts(),
+            'transactions' => $transactions,
+            'totalReceivedAllTime' => $totalReceivedAllTime,
+        ]);
+    }
+
     public function receivedReportDetail(Request $request)
     {
         $userId = (int) $request->query('uid');
@@ -625,6 +646,14 @@ class AdminToolsController extends Controller
         }
 
         $customer->update(['is_active' => 1]);
+
+        // Restore subscription that was paused due to blocking.
+        if (
+            trim((string) ($customer->subscription_plan ?? '')) !== ''
+            && strtolower(trim((string) ($customer->subscription_status ?? ''))) === 'paused'
+        ) {
+            $customer->update(['subscription_status' => 'active']);
+        }
 
         return redirect()->to(url('/v/block-customer_list.php').'?'.http_build_query($request->except('_token')))
             ->with('success', 'Customer has been unblocked successfully.');

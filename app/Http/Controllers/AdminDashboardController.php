@@ -26,13 +26,6 @@ class AdminDashboardController extends Controller
             ->get(['user_id', 'subscription_plan', 'subscription_status']);
         $subscriptionMrr = $subscribers->sum(fn ($u) => (float) ($planPrices[strtolower(trim((string) $u->subscription_plan))] ?? 0));
 
-        $paymentTransactions = PaymentTransaction::query()
-            ->with('customer:user_id,user_name,first_name,last_name,user_email')
-            ->whereIn('status', ['verified', 'success'])
-            ->orderByDesc('created_at')
-            ->limit(20)
-            ->get();
-
         $totalReceivedAllTime = (float) PaymentTransaction::query()
             ->whereIn('status', ['verified', 'success'])
             ->sum(\Illuminate\Support\Facades\DB::raw('CAST(confirmed_amount AS DECIMAL(12,2))'));
@@ -74,7 +67,6 @@ class AdminDashboardController extends Controller
             'workflowFocus' => $workflowFocus,
             'securityWatch' => $securityWatch,
             'hasCreditLedger' => $hasCreditLedger,
-            'paymentTransactions' => $paymentTransactions,
         ]);
     }
 }

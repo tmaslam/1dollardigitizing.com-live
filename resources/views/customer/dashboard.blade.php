@@ -288,6 +288,9 @@
         @if (session('subscription_request_success'))
             <div class="alert alert-success" style="margin-bottom:16px;">{{ session('subscription_request_success') }}</div>
         @endif
+        @if (session('plan_error'))
+            <div class="alert alert-danger" style="margin-bottom:16px;">{{ session('plan_error') }}</div>
+        @endif
 
         {{-- Credit balance hero --}}
         <div class="dash-credit-hero">
@@ -330,7 +333,16 @@
                         <span>Subscription</span>
                         <strong>{{ $subLabel }}</strong>
                     </div>
-                    @php $subStatus = strtolower(trim((string) ($customer->subscription_status ?? ''))); @endphp
+                    @php
+                        $subStatus = strtolower(trim((string) ($customer->subscription_status ?? '')));
+                        $otherPlans = collect([
+                            ['id' => 'growth',     'label' => 'Starter',    'price' => 90],
+                            ['id' => 'studio',     'label' => 'Growth',     'price' => 170],
+                            ['id' => 'production', 'label' => 'Studio',     'price' => 320],
+                            ['id' => 'enterprise', 'label' => 'Production', 'price' => 700],
+                            ['id' => 'corporate',  'label' => 'Enterprise', 'price' => 1200],
+                        ])->filter(fn($p) => $p['id'] !== $subPlan);
+                    @endphp
                     <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-start;margin-top:10px;padding-top:10px;border-top:1px solid rgba(22,159,230,0.10);">
                         @if ($subStatus === 'paused')
                             <form method="post" action="{{ url('/subscription/reactivate-request') }}" onsubmit="return confirm('Are you sure you want to reactivate your subscription? Our team will be notified to process your reactivation.');">
@@ -342,12 +354,28 @@
                                 @csrf
                                 <button type="submit" style="padding:2px 8px;border-radius:999px;font-size:0.62rem;font-weight:700;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border:none;cursor:pointer;line-height:1.5;">Pause</button>
                             </form>
+                            <button type="button" onclick="document.getElementById('subChangeForm').style.display=document.getElementById('subChangeForm').style.display==='none'?'block':'none'" style="padding:2px 8px;border-radius:999px;font-size:0.62rem;font-weight:700;background:linear-gradient(135deg,#169fe6,#0f7ab8);color:#fff;border:none;cursor:pointer;line-height:1.5;">Change Plan</button>
                         @endif
                         <form method="post" action="{{ url('/subscription/cancel-request') }}" onsubmit="return confirm('Are you sure you want to cancel your subscription? This action will notify our team to process your cancellation.');">
                             @csrf
                             <button type="submit" style="padding:2px 8px;border-radius:999px;font-size:0.62rem;font-weight:700;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;cursor:pointer;line-height:1.5;">Cancel</button>
                         </form>
                     </div>
+                    @if ($subStatus !== 'paused')
+                    <form id="subChangeForm" method="post" action="{{ url('/subscription/change-request') }}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(22,159,230,0.10);">
+                        @csrf
+                        <p style="font-size:0.72rem;color:#526071;margin:0 0 6px;">Select a plan to upgrade or downgrade to:</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">
+                            @foreach ($otherPlans as $op)
+                                <label style="display:flex;align-items:center;gap:4px;font-size:0.72rem;cursor:pointer;padding:3px 8px;border-radius:999px;border:1.5px solid rgba(22,159,230,0.25);background:#f8fafb;">
+                                    <input type="radio" name="target_plan" value="{{ $op['id'] }}" required style="margin:0;">
+                                    {{ $op['label'] }} <span style="color:#526071;">${{ $op['price'] }}/mo</span>
+                                </label>
+                            @endforeach
+                        </div>
+                        <button type="submit" onclick="return confirm('Send a plan change request to our team?')" style="padding:2px 10px;border-radius:999px;font-size:0.62rem;font-weight:700;background:linear-gradient(135deg,#169fe6,#0f7ab8);color:#fff;border:none;cursor:pointer;line-height:1.5;">Submit Request</button>
+                    </form>
+                    @endif
                 @endif
             </div>
         </div>

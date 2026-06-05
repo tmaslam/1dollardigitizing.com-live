@@ -92,6 +92,7 @@ Route::middleware('detect.site')->group(function () use ($adminPrefix, $internal
     Route::post('/subscription/pause-request', [CustomerPortalController::class, 'subscriptionPauseRequest'])->middleware('customer.auth');
     Route::post('/subscription/cancel-request', [CustomerPortalController::class, 'subscriptionCancelRequest'])->middleware('customer.auth');
     Route::post('/subscription/reactivate-request', [CustomerPortalController::class, 'subscriptionReactivateRequest'])->middleware('customer.auth');
+    Route::post('/subscription/change-request', [CustomerPortalController::class, 'subscriptionChangeRequest'])->middleware('customer.auth');
     Route::get('/stripe-return.php', [CustomerPortalController::class, 'stripeReturn'])->middleware('customer.auth');
     Route::get('/payment-success.php', [CustomerPortalController::class, 'paymentSuccess'])->middleware('customer.auth');
     Route::get('/new-order.php', [CustomerOrderEntryController::class, 'create'])->middleware('customer.auth');
@@ -286,6 +287,7 @@ Route::post('/v/teams/{team}/destroy', [AdminPeopleController::class, 'destroyTe
     Route::post('/v/payment-due-report/invoice/{billing}/apply-balance', [AdminToolsController::class, 'applyCustomerBalance']);
     Route::post('/v/payment-due-report/customer/apply-balance', [AdminToolsController::class, 'applyCustomerBalanceToCustomer']);
     Route::match(['get', 'post'], '/v/payment-recieved-report.php', [AdminToolsController::class, 'receivedReport']);
+    Route::get('/v/payment-transactions.php', [AdminToolsController::class, 'paymentTransactions']);
     Route::get('/v/subscription-report.php', [AdminToolsController::class, 'subscriptionReport']);
     Route::get('/v/payment-recieved-detail.php', [AdminToolsController::class, 'receivedReportDetail']);
     Route::get('/v/pop-payment-recieved.php', [AdminToolsController::class, 'receivedReportPopupRedirect']);

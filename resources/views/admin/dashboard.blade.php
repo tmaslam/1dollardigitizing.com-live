@@ -112,12 +112,12 @@
                 <a href="{{ url('/v/payment-due-report.php') }}" class="badge">Open Payment Reports</a>
             </div>
             <div class="stats">
-                <a class="stat-link" href="{{ url('/v/payment-recieved-report.php') }}">
+                <a class="stat-link" href="{{ url('/v/payment-transactions.php') }}">
                     <article class="stat">
                         <span class="muted">Received Amount</span>
                         <strong>${{ number_format($financialSnapshot['total_received_all_time'], 2) }}</strong>
                         <div class="muted">Total payments received from day 1 to date.</div>
-                        <span class="view-link">View: Payment Received Report</span>
+                        <span class="view-link">View: Payment Transactions</span>
                     </article>
                 </a>
                 <a class="stat-link" href="{{ url('/v/payment-due-report.php') }}">
@@ -147,71 +147,6 @@
                     </article>
                 </a>
             </div>
-        </div>
-    </section>
-
-    <section class="card">
-        <div class="card-body">
-            <div class="section-head">
-                <div>
-                    <h3>Recent Payment Transactions</h3>
-                    <p class="section-copy">Latest successful payments with customer and method details.</p>
-                </div>
-                <a href="{{ url('/v/payment-recieved-report.php') }}" class="badge">View All</a>
-            </div>
-            @if ($paymentTransactions->isEmpty())
-                <div class="empty-state">No payment transactions found.</div>
-            @else
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Customer ID</th>
-                                <th>Customer Name</th>
-                                <th>Source</th>
-                                <th>Method</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($paymentTransactions as $tx)
-                                @php
-                                    $payload = json_decode((string) $tx->provider_payload, true) ?: [];
-                                    $planType = $payload['plan_type'] ?? '';
-                                    $methodLabel = match((string) $tx->payment_scope) {
-                                        'credit_purchase' => match($planType) {
-                                            'credit'       => 'Credit Pack',
-                                            'subscription' => 'Subscription',
-                                            'custom'       => 'Custom Amount',
-                                            default        => 'Credit Purchase',
-                                        },
-                                        'signup_offer'        => 'Signup Offer',
-                                        'outstanding_balance' => 'Invoice Payment',
-                                        'single_invoice'      => 'Invoice Payment',
-                                        default               => ucfirst(str_replace('_', ' ', (string) $tx->payment_scope)),
-                                    };
-                                    $sourceLabel = match((string) $tx->payment_scope) {
-                                        'credit_purchase'     => 'Credit Purchase',
-                                        'signup_offer'        => 'Signup Offer',
-                                        'outstanding_balance' => 'Invoice Payment',
-                                        'single_invoice'      => 'Invoice Payment',
-                                        default               => ucfirst(str_replace('_', ' ', (string) $tx->payment_scope)),
-                                    };
-                                @endphp
-                                <tr>
-                                    <td style="font-size:0.8rem;white-space:nowrap;">{{ $tx->created_at }}</td>
-                                    <td style="font-weight:700;">${{ number_format((float) ($tx->confirmed_amount ?: $tx->requested_amount), 2) }}</td>
-                                    <td>{{ $tx->user_id }}</td>
-                                    <td>{{ $tx->customer?->display_name ?: '-' }}</td>
-                                    <td><span class="badge">{{ $sourceLabel }}</span></td>
-                                    <td>{{ $methodLabel }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
         </div>
     </section>
 

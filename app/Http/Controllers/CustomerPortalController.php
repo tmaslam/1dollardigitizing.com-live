@@ -63,6 +63,16 @@ class CustomerPortalController extends Controller
         $request->session()->put('signup_selected_plan', $plan);
 
         $customer = $this->customer($request);
+
+        // Block a second subscription if one is already active or paused.
+        if ($type === 'subscription') {
+            $existingPlan   = trim((string) ($customer->subscription_plan ?? ''));
+            $existingStatus = strtolower(trim((string) ($customer->subscription_status ?? '')));
+            if ($existingPlan !== '' && ! in_array($existingStatus, ['cancelled', 'canceled', ''], true)) {
+                return back()->with('plan_error', 'You already have an active subscription. To change your plan, use the Upgrade / Downgrade option on your dashboard.');
+            }
+        }
+
         $site     = $this->site($request);
         $price    = round((float) $plan['plan']['price'], 2);
         $now      = now()->format('Y-m-d H:i:s');
@@ -393,6 +403,48 @@ class CustomerPortalController extends Controller
         );
 
         return redirect()->to(url('/dashboard.php'))->with('subscription_request_success', 'Your cancellation request has been sent. We will be in touch shortly.');
+    }
+
+    public function subscriptionChangeRequest(Request $request)
+    {
+        $validated = $request->validate([
+            'target_plan' => ['required', 'string', 'in:growth,studio,production,enterprise,corporate'],
+        ]);
+
+        $customer = $this->customer($request);
+
+        abort_unless((bool) $customer->subscription_plan, 403);
+
+        $currentPlan = strtolower(trim((string) $customer->subscription_plan));
+        $targetPlan  = $validated['target_plan'];
+
+        if ($currentPlan === $targetPlan) {
+            return back()->with('subscription_request_success', 'You are already on this plan.');
+        }
+
+        $planPrices  = ['growth' => 90, 'studio' => 170, 'production' => 320, 'enterprise' => 700, 'corporate' => 1200];
+        $currentPrice = $planPrices[$currentPlan] ?? 0;
+        $targetPrice  = $planPrices[$targetPlan] ?? 0;
+        $changeType   = $targetPrice > $currentPrice ? 'upgrade' : 'downgrade';
+
+        $name = $customer->display_name ?: $customer->user_name ?: 'Customer #'.$customer->user_id;
+
+        PortalMailer::sendHtml(
+            '1dollardigitizing@gmail.com',
+            'Subscription '.ucfirst($changeType).' Request — '.$name,
+            '<p>A customer has requested to <strong>'.e($changeType).'</strong> their subscription.</p>
+            <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr><td><strong>User ID</strong></td><td>'.(int) $customer->user_id.'</td></tr>
+                <tr><td><strong>Name</strong></td><td>'.e($name).'</td></tr>
+                <tr><td><strong>Email</strong></td><td>'.e((string) ($customer->user_email ?: '—')).'</td></tr>
+                <tr><td><strong>Current Plan</strong></td><td>'.e(ucfirst($currentPlan)).' ($'.number_format($currentPrice, 0).'/mo)</td></tr>
+                <tr><td><strong>Requested Plan</strong></td><td>'.e(ucfirst($targetPlan)).' ($'.number_format($targetPrice, 0).'/mo)</td></tr>
+                <tr><td><strong>Change Type</strong></td><td><strong style="color:'.($changeType === 'upgrade' ? '#16a34a' : '#d97706').';">'.ucfirst($changeType).'</strong></td></tr>
+            </table>
+            <p>Please process this plan change manually in the billing system.</p>'
+        );
+
+        return redirect()->to(url('/dashboard.php'))->with('subscription_request_success', 'Your plan '.e($changeType).' request has been sent. Our team will be in touch shortly.');
     }
 
     public function orders(Request $request)

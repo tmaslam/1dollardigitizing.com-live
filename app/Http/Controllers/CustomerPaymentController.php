@@ -1437,6 +1437,11 @@ class CustomerPaymentController extends Controller
             return ['ok' => false, 'message' => 'Customer not found for subscription '.$subscriptionId];
         }
 
+        // Do not credit a blocked/inactive customer.
+        if ((int) $customer->is_active === 0) {
+            return ['ok' => false, 'message' => 'Customer #'.$customer->user_id.' is blocked; skipping credit addition for subscription '.$subscriptionId.'.'];
+        }
+
         $credits = $this->subscriptionPlanCredits($customer->subscription_plan);
 
         if ($credits > 0) {

@@ -214,6 +214,14 @@ class AdminPeopleController extends Controller
 
         $customer->update($updateData);
 
+        // Pause an active subscription so it doesn't accrue credits while blocked.
+        if (
+            trim((string) ($customer->subscription_plan ?? '')) !== ''
+            && strtolower(trim((string) ($customer->subscription_status ?? ''))) === 'active'
+        ) {
+            $customer->update(['subscription_status' => 'paused']);
+        }
+
         $redirectBase = $returnTo === 'customer-approvals'
             ? url('/v/customer-approvals.php')
             : url('/v/customer_list.php');
