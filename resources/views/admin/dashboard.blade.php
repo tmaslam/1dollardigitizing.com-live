@@ -7,25 +7,25 @@
 @section('content')
     <section class="stats" style="margin-bottom:6px;">
         <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('new-orders') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['new_orders'] > 0 ? 'sc-blue' : '' }}">
                 <span class="muted">New Orders</span>
                 <strong>{{ $navCounts['new_orders'] }}</strong>
             </article>
         </a>
         <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('designer-orders') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['designer_orders'] > 0 ? 'sc-teal' : '' }}">
                 <span class="muted">Assigned Orders</span>
                 <strong>{{ $navCounts['designer_orders'] }}</strong>
             </article>
         </a>
         <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('designer-completed') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['designer_completed_orders'] > 0 ? 'sc-green' : '' }}">
                 <span class="muted">Designer Completed</span>
                 <strong>{{ $navCounts['designer_completed_orders'] }}</strong>
             </article>
         </a>
         <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('disapproved-orders') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['disapproved_orders'] > 0 ? 'sc-red' : '' }}">
                 <span class="muted">Disapproved Orders</span>
                 <strong>{{ $navCounts['disapproved_orders'] }}</strong>
             </article>
@@ -34,25 +34,25 @@
 
     <section class="stats" style="margin-bottom:6px;">
         <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('new-quotes') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['new_quotes'] > 0 ? 'sc-blue' : '' }}">
                 <span class="muted">New Quotes</span>
                 <strong>{{ $navCounts['new_quotes'] }}</strong>
             </article>
         </a>
         <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('assigned-quotes') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['assigned_quotes'] > 0 ? 'sc-teal' : '' }}">
                 <span class="muted">Assigned Quotes</span>
                 <strong>{{ $navCounts['assigned_quotes'] }}</strong>
             </article>
         </a>
         <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('designer-completed-quotes') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['designer_completed_quotes'] > 0 ? 'sc-green' : '' }}">
                 <span class="muted">Designer Completed Quotes</span>
                 <strong>{{ $navCounts['designer_completed_quotes'] }}</strong>
             </article>
         </a>
         <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('quote-negotiations') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['quote_negotiations'] > 0 ? 'sc-amber' : '' }}">
                 <span class="muted">Quote Negotiations</span>
                 <strong>{{ $navCounts['quote_negotiations'] }}</strong>
             </article>
@@ -61,25 +61,25 @@
 
     <section class="stats" style="margin-bottom:22px;">
         <a class="stat-link" href="{{ url('/v/customer-approvals.php') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['pending_customer_approvals'] > 0 ? 'sc-amber' : '' }}">
                 <span class="muted">Pending Customers</span>
                 <strong>{{ $navCounts['pending_customer_approvals'] }}</strong>
             </article>
         </a>
         <a class="stat-link" href="{{ url('/v/customer_list.php') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['customers'] > 0 ? 'sc-green' : '' }}">
                 <span class="muted">Active Customers</span>
                 <strong>{{ $navCounts['customers'] }}</strong>
             </article>
         </a>
         <a class="stat-link" href="{{ url('/v/block-customer_list.php') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['blocked_customers'] > 0 ? 'sc-slate' : '' }}">
                 <span class="muted">Inactive Customers</span>
                 <strong>{{ $navCounts['blocked_customers'] }}</strong>
             </article>
         </a>
         <a class="stat-link" href="{{ url('/v/show-all-teams.php') }}">
-            <article class="stat">
+            <article class="stat {{ $navCounts['teams'] > 0 ? 'sc-violet' : '' }}">
                 <span class="muted">Teams</span>
                 <strong>{{ $navCounts['teams'] }}</strong>
             </article>
@@ -87,6 +87,22 @@
     </section>
 
     <style>
+        /* Conditional stat card colors — only applied when value > 0 */
+        .stat.sc-blue   { background: linear-gradient(135deg,#e8f4fd,#d0eaf8); border-color:rgba(22,159,230,.35); }
+        .stat.sc-blue   strong { color:#0d6ea3; }
+        .stat.sc-teal   { background: linear-gradient(135deg,#e4f7f7,#c8eeee); border-color:rgba(14,152,152,.35); }
+        .stat.sc-teal   strong { color:#0a7070; }
+        .stat.sc-green  { background: linear-gradient(135deg,#e8f7ef,#c8eedd); border-color:rgba(34,160,100,.35); }
+        .stat.sc-green  strong { color:#1a7a48; }
+        .stat.sc-red    { background: linear-gradient(135deg,#fdeaea,#fac8c8); border-color:rgba(210,50,50,.35); }
+        .stat.sc-red    strong { color:#a01818; }
+        .stat.sc-amber  { background: linear-gradient(135deg,#fef6e4,#fde8b4); border-color:rgba(212,148,30,.35); }
+        .stat.sc-amber  strong { color:#9a6200; }
+        .stat.sc-slate  { background: linear-gradient(135deg,#f0f2f5,#e2e6ea); border-color:rgba(100,116,139,.30); }
+        .stat.sc-slate  strong { color:#3d4f63; }
+        .stat.sc-violet { background: linear-gradient(135deg,#f0edfb,#ddd5f7); border-color:rgba(120,90,210,.35); }
+        .stat.sc-violet strong { color:#5b3faa; }
+
         .snapshot-section .stat {
             padding: 24px;
             background: #fff;
