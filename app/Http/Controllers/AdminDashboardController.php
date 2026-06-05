@@ -18,6 +18,13 @@ class AdminDashboardController extends Controller
         $hasCreditLedger = true;
         $customerCreditInventory = CustomerBalance::balances();
 
+        $planPrices = ['growth' => 90, 'studio' => 170, 'production' => 320, 'enterprise' => 700, 'corporate' => 1200];
+        $subscribers = AdminUser::query()->customers()
+            ->whereNotNull('subscription_plan')
+            ->whereNotIn('subscription_plan', [''])
+            ->get(['user_id', 'subscription_plan', 'subscription_status']);
+        $subscriptionMrr = $subscribers->sum(fn ($u) => (float) ($planPrices[strtolower(trim((string) $u->subscription_plan))] ?? 0));
+
         $financialSnapshot = [
             'due_invoices' => Billing::query()->active()->where('approved', 'yes')->where('payment', 'no')->count(),
             'due_amount' => (float) Billing::query()->active()->where('approved', 'yes')->where('payment', 'no')->sum(\Illuminate\Support\Facades\DB::raw('CAST(amount AS DECIMAL(12,2))')),
@@ -25,6 +32,8 @@ class AdminDashboardController extends Controller
             'received_amount' => (float) Billing::query()->active()->where('approved', 'yes')->where('payment', 'yes')->sum(\Illuminate\Support\Facades\DB::raw('CAST(amount AS DECIMAL(12,2))')),
             'customer_balance' => (float) $customerCreditInventory->sum(fn ($row) => (float) $row->balance_total),
             'customers_with_credit' => $customerCreditInventory->count(),
+            'subscription_mrr' => $subscriptionMrr,
+            'subscription_count' => $subscribers->count(),
         ];
 
         $operationsSnapshot = [

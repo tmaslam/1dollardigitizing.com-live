@@ -138,12 +138,12 @@
                     </article>
                 </a>
                 @endif
-                <a class="stat-link" href="{{ url('/v/payment-due-report.php') }}">
+                <a class="stat-link" href="{{ url('/v/subscription-report.php') }}">
                     <article class="stat">
-                        <span class="muted">Due Payment Queue</span>
-                        <strong>{{ $financialSnapshot['due_invoices'] }}</strong>
-                        <div class="muted">Approved billing entries still waiting to be settled.</div>
-                        <span class="view-link">View: Payment Due Report</span>
+                        <span class="muted">Total Subscription Amount</span>
+                        <strong>${{ number_format($financialSnapshot['subscription_mrr'], 2) }}</strong>
+                        <div class="muted">Across {{ $financialSnapshot['subscription_count'] }} active subscribers.</div>
+                        <span class="view-link">View: Subscription Report</span>
                     </article>
                 </a>
             </div>

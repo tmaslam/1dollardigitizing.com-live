@@ -1097,6 +1097,68 @@ class AdminToolsController extends Controller
         ]);
     }
 
+    public function subscriptionReport(Request $request)
+    {
+        $planPrices = ['growth' => 90, 'studio' => 170, 'production' => 320, 'enterprise' => 700, 'corporate' => 1200];
+
+        $planFilter   = trim(strtolower((string) $request->query('plan', '')));
+        $statusFilter = trim(strtolower((string) $request->query('status', '')));
+        $userSearch   = trim((string) $request->query('txtUserID', ''));
+        $nameSearch   = trim((string) $request->query('txtUserName', ''));
+
+        $query = AdminUser::query()
+            ->customers()
+            ->whereNotNull('subscription_plan')
+            ->where('subscription_plan', '!=', '')
+            ->when($planFilter !== '', fn ($q) => $q->where('subscription_plan', $planFilter))
+            ->when($statusFilter !== '', fn ($q) => $q->where('subscription_status', $statusFilter))
+            ->when($userSearch !== '', fn ($q) => $q->where('user_id', (int) $userSearch))
+            ->when($nameSearch !== '', fn ($q) => $q->where(function ($q) use ($nameSearch) {
+                $q->where('user_name', 'like', '%'.$nameSearch.'%')
+                  ->orWhere('first_name', 'like', '%'.$nameSearch.'%')
+                  ->orWhere('last_name', 'like', '%'.$nameSearch.'%')
+                  ->orWhere('user_email', 'like', '%'.$nameSearch.'%');
+            }))
+            ->orderBy('subscription_plan')
+            ->orderBy('user_id');
+
+        if ($request->query('export') === 'csv') {
+            $rows = $query->get(['user_id', 'user_name', 'first_name', 'last_name', 'user_email', 'subscription_plan', 'subscription_status', 'subscription_renews_at'])
+                ->map(fn ($u) => [
+                    $u->user_id,
+                    $u->display_name,
+                    $u->user_email,
+                    ucfirst((string) $u->subscription_plan),
+                    number_format((float) ($planPrices[strtolower(trim((string) $u->subscription_plan))] ?? 0), 2),
+                    $u->subscription_status ?? 'active',
+                    $u->subscription_renews_at ?? '',
+                ])->all();
+
+            $total = array_sum(array_column($rows, 4));
+            $rows[] = ['', '', 'TOTAL MRR', '', number_format($total, 2), '', ''];
+
+            return $this->csvResponse('subscription-report', ['User ID', 'Customer', 'Email', 'Plan', 'Monthly Amount', 'Status', 'Renews At'], $rows);
+        }
+
+        $subscribers = $query->paginate(50)->withQueryString();
+        $totalMrr = AdminUser::query()
+            ->customers()
+            ->whereNotNull('subscription_plan')
+            ->where('subscription_plan', '!=', '')
+            ->get(['subscription_plan'])
+            ->sum(fn ($u) => (float) ($planPrices[strtolower(trim((string) $u->subscription_plan))] ?? 0));
+
+        return view('admin.tools.subscription-report', [
+            'adminUser'   => $request->attributes->get('adminUser'),
+            'navCounts'   => AdminNavigation::counts(),
+            'subscribers' => $subscribers,
+            'planPrices'  => $planPrices,
+            'totalMrr'    => $totalMrr,
+            'planFilter'  => $planFilter,
+            'statusFilter' => $statusFilter,
+        ]);
+    }
+
     public function notifyCustomers(Request $request)
     {
         $selectedWebsite = trim((string) $request->input('website', SiteResolver::forRequest($request)->legacyKey));
