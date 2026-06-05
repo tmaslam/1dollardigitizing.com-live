@@ -55,10 +55,16 @@
                 'marginTop' => '0',
                 'marginBottom' => '18px',
             ])
+            <div class="stats" style="margin-bottom:18px;">
+                <article class="stat"><span class="muted">Total Received</span><strong style="font-size:1.35rem;color:#3c9e6a;">${{ number_format((float) $grandTotal, 2) }}</strong></article>
+                <article class="stat"><span class="muted">Rows on This Page</span><strong style="font-size:1.15rem;">${{ number_format((float) $totalReceived, 2) }}</strong></article>
+                <article class="stat"><span class="muted">Paid Invoices</span><strong style="font-size:1.15rem;">{{ $groups->total() }}</strong></article>
+            </div>
+
             <div style="display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;">
                 <div>
                     <h3 style="margin:0 0 6px;font-size:1.15rem;">Received Billing</h3>
-                    <p class="muted" style="margin:0;">Visible amount across current rows: {{ number_format((float) $totalReceived, 2) }}</p>
+                    <p class="muted" style="margin:0;">Paid billing records grouped by customer.</p>
                 </div>
                 <div style="display:flex;gap:10px;flex-wrap:wrap;">
                     <span class="badge">paid invoices</span>

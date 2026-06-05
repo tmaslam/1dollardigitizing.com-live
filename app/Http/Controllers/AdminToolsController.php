@@ -270,12 +270,16 @@ class AdminToolsController extends Controller
 
         [$customers] = $this->customerContextForBillingGroups($groups->getCollection());
 
+        $pageTotal = (float) $groups->getCollection()->sum('amount_total');
+        $grandTotal = (float) $this->receivedReportGroupsQuery($request)->get()->sum('amount_total');
+
         return view('admin.tools.received-report', [
             'adminUser' => $request->attributes->get('adminUser'),
             'navCounts' => AdminNavigation::counts(),
             'groups' => $groups,
             'customers' => $customers,
-            'totalReceived' => (float) $groups->getCollection()->sum('amount_total'),
+            'totalReceived' => $pageTotal,
+            'grandTotal' => $grandTotal,
         ]);
     }
 
