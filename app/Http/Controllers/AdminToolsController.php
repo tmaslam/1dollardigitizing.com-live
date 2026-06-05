@@ -1193,6 +1193,7 @@ class AdminToolsController extends Controller
         $query = AdminUser::query()
             ->customers()
             ->active()
+            ->where('is_active', 1)
             ->whereNotNull('subscription_plan')
             ->where('subscription_plan', '!=', '')
             ->when($planFilter !== '', fn ($q) => $q->where('subscription_plan', $planFilter))
