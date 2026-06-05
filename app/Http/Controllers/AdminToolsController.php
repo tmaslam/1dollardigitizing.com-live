@@ -1126,6 +1126,61 @@ class AdminToolsController extends Controller
         ]);
     }
 
+    public function settledCreditsReport(Request $request)
+    {
+        $userSearch = trim((string) $request->query('txtUserID', ''));
+        $nameSearch = trim((string) $request->query('txtUserName', ''));
+
+        $groupsQuery = Billing::query()
+            ->selectRaw('user_id, COUNT(*) as order_count, SUM(CAST(amount AS DECIMAL(12,2))) as total_amount, MAX(trandtime) as last_settled_at')
+            ->active()
+            ->where('approved', 'yes')
+            ->where('payment', 'yes')
+            ->when($userSearch !== '', fn ($q) => $q->where('user_id', (int) $userSearch))
+            ->when($nameSearch !== '', fn ($q) => $q->whereHas('customer', function ($q) use ($nameSearch) {
+                $term = '%'.$nameSearch.'%';
+                $q->where('user_name', 'like', $term)
+                  ->orWhere('first_name', 'like', $term)
+                  ->orWhere('last_name', 'like', $term)
+                  ->orWhere('user_email', 'like', $term);
+            }))
+            ->groupBy('user_id')
+            ->orderByRaw('SUM(CAST(amount AS DECIMAL(12,2))) DESC');
+
+        $grandTotal     = (float) Billing::query()->active()->where('approved', 'yes')->where('payment', 'yes')->sum(DB::raw('CAST(amount AS DECIMAL(12,2))'));
+        $grandOrderCount = Billing::query()->active()->where('approved', 'yes')->where('payment', 'yes')->count();
+
+        if ($request->query('export') === 'csv') {
+            $groups = $groupsQuery->get();
+            [$customers] = $this->customerContextForBillingGroups($groups);
+
+            $rows = $groups->map(fn ($g) => [
+                $g->user_id,
+                $customers->get($g->user_id)?->display_name ?: '-',
+                $customers->get($g->user_id)?->user_email ?: '-',
+                $g->order_count,
+                number_format((float) $g->total_amount, 2, '.', ''),
+                $g->last_settled_at ?: '-',
+            ])->all();
+
+            $rows[] = ['', 'TOTAL', '', $grandOrderCount, number_format($grandTotal, 2, '.', ''), ''];
+
+            return $this->csvResponse('settled-credits-report', ['User ID', 'Customer', 'Email', 'Paid Orders', 'Total Settled', 'Last Settlement'], $rows);
+        }
+
+        $groups = $groupsQuery->paginate(50)->withQueryString();
+        [$customers] = $this->customerContextForBillingGroups($groups->getCollection());
+
+        return view('admin.tools.settled-credits-report', [
+            'adminUser'      => $request->attributes->get('adminUser'),
+            'navCounts'      => AdminNavigation::counts(),
+            'groups'         => $groups,
+            'customers'      => $customers,
+            'grandTotal'     => $grandTotal,
+            'grandOrderCount' => $grandOrderCount,
+        ]);
+    }
+
     public function subscriptionReport(Request $request)
     {
         $planPrices = ['growth' => 90, 'studio' => 170, 'production' => 320, 'enterprise' => 700, 'corporate' => 1200];

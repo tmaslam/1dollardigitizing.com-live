@@ -30,6 +30,10 @@ class AdminDashboardController extends Controller
             ->whereIn('status', ['verified', 'success'])
             ->sum(\Illuminate\Support\Facades\DB::raw('CAST(confirmed_amount AS DECIMAL(12,2))'));
 
+        $settledQuery = Billing::query()->active()->where('approved', 'yes')->where('payment', 'yes');
+        $settledAmount    = (float) (clone $settledQuery)->sum(\Illuminate\Support\Facades\DB::raw('CAST(amount AS DECIMAL(12,2))'));
+        $settledCustomers = (clone $settledQuery)->distinct()->count('user_id');
+
         $financialSnapshot = [
             'due_invoices' => Billing::query()->active()->where('approved', 'yes')->where('payment', 'no')->count(),
             'due_amount' => (float) Billing::query()->active()->where('approved', 'yes')->where('payment', 'no')->sum(\Illuminate\Support\Facades\DB::raw('CAST(amount AS DECIMAL(12,2))')),
@@ -40,6 +44,8 @@ class AdminDashboardController extends Controller
             'customers_with_credit' => $customerCreditInventory->count(),
             'subscription_mrr' => $subscriptionMrr,
             'subscription_count' => $subscribers->count(),
+            'settled_amount' => $settledAmount,
+            'settled_customers' => $settledCustomers,
         ];
 
         $operationsSnapshot = [

@@ -120,12 +120,12 @@
                         <span class="view-link">View: Payment Transactions</span>
                     </article>
                 </a>
-                <a class="stat-link" href="{{ url('/v/payment-due-report.php') }}">
+                <a class="stat-link" href="{{ url('/v/settled-credits-report.php') }}">
                     <article class="stat">
-                        <span class="muted">Due Amount</span>
-                        <strong>${{ number_format($financialSnapshot['due_amount'], 2) }}</strong>
-                        <div class="muted">Across {{ $financialSnapshot['due_invoices'] }} unpaid approved invoice rows.</div>
-                        <span class="view-link">View: Payment Due Report</span>
+                        <span class="muted">Settled Credits</span>
+                        <strong>${{ number_format($financialSnapshot['settled_amount'], 2) }}</strong>
+                        <div class="muted">Across {{ $financialSnapshot['settled_customers'] }} customers with fully settled invoices.</div>
+                        <span class="view-link">View: Settled Credits Report</span>
                     </article>
                 </a>
                 @if ($hasCreditLedger)

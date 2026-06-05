@@ -289,6 +289,7 @@ Route::post('/v/teams/{team}/destroy', [AdminPeopleController::class, 'destroyTe
     Route::match(['get', 'post'], '/v/payment-recieved-report.php', [AdminToolsController::class, 'receivedReport']);
     Route::get('/v/payment-transactions.php', [AdminToolsController::class, 'paymentTransactions']);
     Route::get('/v/subscription-report.php', [AdminToolsController::class, 'subscriptionReport']);
+    Route::get('/v/settled-credits-report.php', [AdminToolsController::class, 'settledCreditsReport']);
     Route::get('/v/payment-recieved-detail.php', [AdminToolsController::class, 'receivedReportDetail']);
     Route::get('/v/pop-payment-recieved.php', [AdminToolsController::class, 'receivedReportPopupRedirect']);
     Route::match(['get', 'post'], '/v/monthly-reports.php', [AdminToolsController::class, 'teamReport']);
