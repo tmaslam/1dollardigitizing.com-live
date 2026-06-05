@@ -115,54 +115,6 @@
         <div class="card-body">
             <div class="section-head">
                 <div>
-                    <h3>Financial Snapshot</h3>
-                    <p class="section-copy">Payment pressure and money movement at a glance.</p>
-                </div>
-                <a href="{{ url('/v/payment-due-report.php') }}" class="badge">Open Payment Reports</a>
-            </div>
-            <div class="stats">
-                <a class="stat-link" href="{{ url('/v/payment-transactions.php') }}">
-                    <article class="stat snap-blue">
-                        <span class="muted">Received Amount</span>
-                        <strong>${{ number_format($financialSnapshot['total_received_all_time'], 2) }}</strong>
-                        <div class="muted">Total payments received from day 1 to date.</div>
-                        <span class="view-link">View: Payment Transactions</span>
-                    </article>
-                </a>
-                <a class="stat-link" href="{{ url('/v/settled-credits-report.php') }}">
-                    <article class="stat snap-green">
-                        <span class="muted">Settled Credits</span>
-                        <strong>${{ number_format($financialSnapshot['settled_amount'], 2) }}</strong>
-                        <div class="muted">Across {{ $financialSnapshot['settled_customers'] }} customers with fully settled invoices.</div>
-                        <span class="view-link">View: Settled Credits Report</span>
-                    </article>
-                </a>
-                @if ($hasCreditLedger)
-                <a class="stat-link" href="{{ url('/v/customer-payment-inventory.php') }}">
-                    <article class="stat snap-amber">
-                        <span class="muted">Unsettled Credits</span>
-                        <strong>${{ number_format($financialSnapshot['customer_balance'] ?? 0, 2) }}</strong>
-                        <div class="muted">Across {{ $financialSnapshot['customers_with_credit'] }} active customers with credit ready to apply to future invoices.</div>
-                        <span class="view-link">View: Customer Credit Inventory</span>
-                    </article>
-                </a>
-                @endif
-                <a class="stat-link" href="{{ url('/v/subscription-report.php') }}">
-                    <article class="stat snap-violet">
-                        <span class="muted">Total Subscription Amount</span>
-                        <strong>${{ number_format($financialSnapshot['subscription_mrr'], 2) }}</strong>
-                        <div class="muted">Across {{ $financialSnapshot['subscription_count'] }} active subscribers.</div>
-                        <span class="view-link">View: Subscription Report</span>
-                    </article>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section class="card snapshot-section">
-        <div class="card-body">
-            <div class="section-head">
-                <div>
                     <h3>Operations Snapshot</h3>
                     <p class="section-copy">Customer, team, and queue health in one place.</p>
                 </div>
@@ -287,6 +239,54 @@
                         <span class="muted">Assigned Work</span>
                         <strong>{{ $workflowFocus['assigned_work'] }}</strong>
                         <div class="muted" style="margin-top:8px;">Orders and quotes currently with designers in progress.</div>
+                    </article>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="card snapshot-section">
+        <div class="card-body">
+            <div class="section-head">
+                <div>
+                    <h3>Financial Snapshot</h3>
+                    <p class="section-copy">Payment pressure and money movement at a glance.</p>
+                </div>
+                <a href="{{ url('/v/payment-due-report.php') }}" class="badge">Open Payment Reports</a>
+            </div>
+            <div class="stats">
+                <a class="stat-link" href="{{ url('/v/payment-transactions.php') }}">
+                    <article class="stat snap-blue">
+                        <span class="muted">Received Amount</span>
+                        <strong>${{ number_format($financialSnapshot['total_received_all_time'], 2) }}</strong>
+                        <div class="muted">Total payments received from day 1 to date.</div>
+                        <span class="view-link">View: Payment Transactions</span>
+                    </article>
+                </a>
+                <a class="stat-link" href="{{ url('/v/settled-credits-report.php') }}">
+                    <article class="stat snap-green">
+                        <span class="muted">Settled Credits</span>
+                        <strong>${{ number_format($financialSnapshot['settled_amount'], 2) }}</strong>
+                        <div class="muted">Across {{ $financialSnapshot['settled_customers'] }} customers with fully settled invoices.</div>
+                        <span class="view-link">View: Settled Credits Report</span>
+                    </article>
+                </a>
+                @if ($hasCreditLedger)
+                <a class="stat-link" href="{{ url('/v/customer-payment-inventory.php') }}">
+                    <article class="stat snap-amber">
+                        <span class="muted">Unsettled Credits</span>
+                        <strong>${{ number_format($financialSnapshot['customer_balance'] ?? 0, 2) }}</strong>
+                        <div class="muted">Across {{ $financialSnapshot['customers_with_credit'] }} active customers with credit ready to apply to future invoices.</div>
+                        <span class="view-link">View: Customer Credit Inventory</span>
+                    </article>
+                </a>
+                @endif
+                <a class="stat-link" href="{{ url('/v/subscription-report.php') }}">
+                    <article class="stat snap-violet">
+                        <span class="muted">Total Subscription Amount</span>
+                        <strong>${{ number_format($financialSnapshot['subscription_mrr'], 2) }}</strong>
+                        <div class="muted">Across {{ $financialSnapshot['subscription_count'] }} active subscribers.</div>
+                        <span class="view-link">View: Subscription Report</span>
                     </article>
                 </a>
             </div>
