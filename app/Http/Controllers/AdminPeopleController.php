@@ -274,19 +274,28 @@ class AdminPeopleController extends Controller
         $email = strtolower(trim((string) $validated['user_email']));
         $username = $this->deriveCustomerUsername($email, $site);
 
-        $existing = AdminUser::query()
+        $existingEmail = AdminUser::query()
+            ->customers()
+            ->active()
+            ->where('user_email', $email)
+            ->first();
+
+        if ($existingEmail) {
+            return back()
+                ->withErrors(['user_email' => 'This email address is already registered to an active customer account.'])
+                ->withInput();
+        }
+
+        $existingUsername = AdminUser::query()
             ->customers()
             ->active()
             ->forWebsite($site->legacyKey)
-            ->where(function ($query) use ($email, $username) {
-                $query->where('user_email', $email)
-                    ->orWhere('user_name', $username);
-            })
+            ->where('user_name', $username)
             ->first();
 
-        if ($existing) {
+        if ($existingUsername) {
             return back()
-                ->withErrors(['user_email' => 'A customer with this email or username already exists.'])
+                ->withErrors(['user_email' => 'A customer with this username already exists.'])
                 ->withInput();
         }
 

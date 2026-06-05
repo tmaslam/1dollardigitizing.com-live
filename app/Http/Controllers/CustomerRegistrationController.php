@@ -86,14 +86,21 @@ class CustomerRegistrationController extends Controller
         $username = $this->deriveUsername($email, $site);
         $ipAddress = (string) ($request->ip() ?? '127.0.0.1');
 
+        $existingEmailAccount = AdminUser::query()
+            ->customers()
+            ->active()
+            ->where('user_email', $email)
+            ->exists();
+
+        if ($existingEmailAccount) {
+            return back()->withErrors(['useremail' => 'This email address is already registered. Please log in or contact support if you need help.'])->withInput();
+        }
+
         $existingAccount = AdminUser::query()
             ->customers()
             ->active()
             ->forWebsite($site->legacyKey)
-            ->where(function ($query) use ($email, $username) {
-                $query->where('user_email', $email)
-                    ->orWhere('user_name', $username);
-            })
+            ->where('user_name', $username)
             ->exists();
 
         if ($existingAccount) {

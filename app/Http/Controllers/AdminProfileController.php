@@ -465,13 +465,30 @@ class AdminProfileController extends Controller
             'max_num_stiches' => 'maximum stitches',
         ]);
 
+        $email = strtolower(trim((string) ($validated['txtEmail'] ?? '')));
+
+        if ($email !== '') {
+            $existingEmail = AdminUser::query()
+                ->customers()
+                ->active()
+                ->where('user_email', $email)
+                ->where('user_id', '!=', $customer->user_id)
+                ->first();
+
+            if ($existingEmail) {
+                return back()
+                    ->withErrors(['txtEmail' => 'This email address is already registered to another active customer account.'])
+                    ->withInput();
+            }
+        }
+
         $updates = [
             'user_name' => $validated['user_name'] ?? '',
             'first_name' => $validated['txtFirstName'] ?? '',
             'last_name' => $validated['txtLastName'] ?? '',
             'company' => $validated['txtCompany'] ?? '',
             'company_type' => $validated['selCompanyTypes'] ?? '',
-            'user_email' => $validated['txtEmail'] ?? '',
+            'user_email' => $email,
             'company_address' => $validated['txtCompanyAddress'] ?? '',
             'zip_code' => $validated['txtZipCode'] ?? '',
             'user_city' => $validated['txtCity'] ?? '',
