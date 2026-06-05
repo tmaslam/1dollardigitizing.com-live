@@ -266,6 +266,12 @@
                                     <td style="font-size:0.8rem;white-space:nowrap;">{{ $tx->created_at }}</td>
                                 </tr>
                             @endforeach
+                            <tr style="font-weight:700;background:rgba(22,159,230,0.06);">
+                                <td colspan="5" style="text-align:right;">Total</td>
+                                <td>${{ number_format($paymentTotalRequested, 2) }}</td>
+                                <td>${{ number_format($paymentTotalConfirmed, 2) }}</td>
+                                <td></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

@@ -202,6 +202,9 @@ class AdminProfileController extends Controller
             ->limit(50)
             ->get();
 
+        $paymentTotalRequested = $paymentTransactions->sum(fn ($tx) => (float) $tx->requested_amount);
+        $paymentTotalConfirmed = $paymentTransactions->sum(fn ($tx) => (float) $tx->confirmed_amount);
+
         $creditLedger = \App\Models\CustomerCreditLedger::query()
             ->with('order')
             ->where('user_id', $customer->user_id)
@@ -221,6 +224,8 @@ class AdminProfileController extends Controller
             'navCounts' => AdminNavigation::counts(),
             'customer' => $customer,
             'paymentTransactions' => $paymentTransactions,
+            'paymentTotalRequested' => $paymentTotalRequested,
+            'paymentTotalConfirmed' => $paymentTotalConfirmed,
             'creditLedger' => $creditLedger,
             'depositBalance' => $depositBalance,
             'feeSchedule' => $feeSchedule,
