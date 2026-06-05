@@ -1210,6 +1210,10 @@ class CustomerPortalController extends Controller
             return false;
         }
 
+        if ($order->assigned_group !== null && (string) $order->assigned_group !== '') {
+            return false;
+        }
+
         return ! Billing::query()
             ->active()
             ->where('order_id', $order->order_id)

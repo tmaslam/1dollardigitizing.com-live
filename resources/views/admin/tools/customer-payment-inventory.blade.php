@@ -12,7 +12,15 @@
             <div class="card-body">
                 <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px;">
                     <div class="muted">This page lists only customers with positive credit balance (Advance Deposit) that can be used on future invoices.</div>
-                    <a class="badge" href="{{ url('/v/pay-now.php') }}">New Payment</a>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <a class="button secondary" href="{{ url('/v/customer-payment-inventory.php') }}?{{ http_build_query(array_filter(['txtUserID' => request('txtUserID'), 'txtUserName' => request('txtUserName'), 'export' => 'csv'])) }}">Download Summary</a>
+                        <a class="badge" href="{{ url('/v/pay-now.php') }}">New Payment</a>
+                    </div>
+                </div>
+                <div class="stats" style="margin-bottom:18px;">
+                    <article class="stat"><span class="muted">Total Available Balance</span><strong style="font-size:1.35rem;color:#3c9e6a;">${{ number_format($totalBalance, 2) }}</strong></article>
+                    <article class="stat"><span class="muted">Total Current Due</span><strong style="font-size:1.35rem;color:#b26a2a;">${{ number_format($totalDue, 2) }}</strong></article>
+                    <article class="stat"><span class="muted">Net Position</span><strong style="font-size:1.35rem;color:{{ $totalBalance >= $totalDue ? '#3c9e6a' : '#b42318' }};">${{ number_format($totalBalance - $totalDue, 2) }}</strong></article>
                 </div>
                 <form method="get" action="{{ url('/v/customer-payment-inventory.php') }}" class="toolbar">
                     <div class="field">

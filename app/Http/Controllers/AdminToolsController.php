@@ -1057,11 +1057,38 @@ class AdminToolsController extends Controller
             ->get()
             ->keyBy('user_id');
 
+        $totalBalance = $balances->sum(fn ($b) => (float) $b->balance_total);
+        $totalDue     = $dueAmounts->sum(fn ($d) => (float) $d->due_total);
+
+        if ($request->query('export') === 'csv') {
+            $rows = collect($balances)->map(function ($balance) use ($dueAmounts) {
+                $due = (float) ($dueAmounts[$balance->user_id]->due_total ?? 0);
+                return [
+                    $balance->user_id,
+                    $balance->customer->display_name ?? '',
+                    $balance->customer->user_email ?? '',
+                    number_format((float) $balance->balance_total, 2),
+                    number_format($due, 2),
+                ];
+            })->all();
+
+            $rows[] = ['', '', 'TOTAL', number_format($totalBalance, 2), number_format($totalDue, 2)];
+            $rows[] = ['', '', 'NET POSITION', number_format($totalBalance - $totalDue, 2), ''];
+
+            return $this->csvResponse(
+                'customer-payment-inventory',
+                ['User ID', 'Customer', 'Email', 'Available Balance', 'Current Due'],
+                $rows
+            );
+        }
+
         return view('admin.tools.customer-payment-inventory', [
             'adminUser' => $request->attributes->get('adminUser'),
             'navCounts' => AdminNavigation::counts(),
             'balances' => $balances,
             'dueAmounts' => $dueAmounts,
+            'totalBalance' => $totalBalance,
+            'totalDue' => $totalDue,
             'hasCustomerBalanceTable' => Schema::hasTable('users') && Schema::hasColumn('users', 'topup'),
         ]);
     }
