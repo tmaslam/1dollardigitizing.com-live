@@ -122,7 +122,7 @@
                 </a>
                 <a class="stat-link" href="{{ url('/v/payment-recieved-report.php') }}">
                     <article class="stat">
-                        <span class="muted">Received Amount</span>
+                        <span class="muted">Settled Credits</span>
                         <strong>${{ number_format($financialSnapshot['received_amount'], 2) }}</strong>
                         <div class="muted">Across {{ $financialSnapshot['received_invoices'] }} paid invoice rows.</div>
                         <span class="view-link">View: Payment Received Report</span>
