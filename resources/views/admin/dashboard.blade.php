@@ -120,7 +120,7 @@
                         <span class="view-link">View: Payment Due Report</span>
                     </article>
                 </a>
-                <a class="stat-link" href="{{ url('/v/customer-payment-inventory.php') }}">
+                <a class="stat-link" href="{{ url('/v/payment-recieved-report.php') }}">
                     <article class="stat">
                         <span class="muted">Received Amount</span>
                         <strong>${{ number_format($financialSnapshot['received_amount'], 2) }}</strong>
