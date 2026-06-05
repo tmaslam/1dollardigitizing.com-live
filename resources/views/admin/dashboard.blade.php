@@ -66,24 +66,6 @@
                 <strong>{{ $navCounts['pending_customer_approvals'] }}</strong>
             </article>
         </a>
-        <a class="stat-link" href="{{ url('/v/customer_list.php') }}">
-            <article class="stat {{ $navCounts['customers'] > 0 ? 'sc-green' : '' }}">
-                <span class="muted">Active Customers</span>
-                <strong>{{ $navCounts['customers'] }}</strong>
-            </article>
-        </a>
-        <a class="stat-link" href="{{ url('/v/block-customer_list.php') }}">
-            <article class="stat {{ $navCounts['blocked_customers'] > 0 ? 'sc-slate' : '' }}">
-                <span class="muted">Inactive Customers</span>
-                <strong>{{ $navCounts['blocked_customers'] }}</strong>
-            </article>
-        </a>
-        <a class="stat-link" href="{{ url('/v/show-all-teams.php') }}">
-            <article class="stat {{ $navCounts['teams'] > 0 ? 'sc-violet' : '' }}">
-                <span class="muted">Teams</span>
-                <strong>{{ $navCounts['teams'] }}</strong>
-            </article>
-        </a>
     </section>
 
     <style>
