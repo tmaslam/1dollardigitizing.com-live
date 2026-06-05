@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminUser;
 use App\Models\Billing;
+use App\Models\PaymentTransaction;
 use App\Support\AdminNavigation;
 use App\Support\CustomerBalance;
 use App\Support\SecurityAlertSummary;
@@ -25,11 +26,23 @@ class AdminDashboardController extends Controller
             ->get(['user_id', 'subscription_plan', 'subscription_status']);
         $subscriptionMrr = $subscribers->sum(fn ($u) => (float) ($planPrices[strtolower(trim((string) $u->subscription_plan))] ?? 0));
 
+        $paymentTransactions = PaymentTransaction::query()
+            ->with('customer:user_id,user_name,first_name,last_name,user_email')
+            ->whereIn('status', ['verified', 'success'])
+            ->orderByDesc('created_at')
+            ->limit(20)
+            ->get();
+
+        $totalReceivedAllTime = (float) PaymentTransaction::query()
+            ->whereIn('status', ['verified', 'success'])
+            ->sum(\Illuminate\Support\Facades\DB::raw('CAST(confirmed_amount AS DECIMAL(12,2))'));
+
         $financialSnapshot = [
             'due_invoices' => Billing::query()->active()->where('approved', 'yes')->where('payment', 'no')->count(),
             'due_amount' => (float) Billing::query()->active()->where('approved', 'yes')->where('payment', 'no')->sum(\Illuminate\Support\Facades\DB::raw('CAST(amount AS DECIMAL(12,2))')),
             'received_invoices' => Billing::query()->active()->where('approved', 'yes')->where('payment', 'yes')->count(),
             'received_amount' => (float) Billing::query()->active()->where('approved', 'yes')->where('payment', 'yes')->sum(\Illuminate\Support\Facades\DB::raw('CAST(amount AS DECIMAL(12,2))')),
+            'total_received_all_time' => $totalReceivedAllTime,
             'customer_balance' => (float) $customerCreditInventory->sum(fn ($row) => (float) $row->balance_total),
             'customers_with_credit' => $customerCreditInventory->count(),
             'subscription_mrr' => $subscriptionMrr,
@@ -61,6 +74,7 @@ class AdminDashboardController extends Controller
             'workflowFocus' => $workflowFocus,
             'securityWatch' => $securityWatch,
             'hasCreditLedger' => $hasCreditLedger,
+            'paymentTransactions' => $paymentTransactions,
         ]);
     }
 }
