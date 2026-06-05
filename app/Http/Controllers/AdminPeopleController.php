@@ -239,6 +239,9 @@ class AdminPeopleController extends Controller
         $customer->update([
             'end_date' => now()->format('Y-m-d H:i:s'),
             'deleted_by' => $adminUser?->user_name ?: 'admin',
+            'subscription_plan' => null,
+            'subscription_status' => null,
+            'subscription_renews_at' => null,
         ]);
 
         return redirect()->to(url('/v/customer_list.php').'?'.http_build_query($request->except('_token')))

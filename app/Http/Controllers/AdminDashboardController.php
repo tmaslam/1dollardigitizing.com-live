@@ -21,6 +21,7 @@ class AdminDashboardController extends Controller
 
         $planPrices = ['growth' => 90, 'studio' => 170, 'production' => 320, 'enterprise' => 700, 'corporate' => 1200];
         $subscribers = AdminUser::query()->customers()
+            ->active()
             ->whereNotNull('subscription_plan')
             ->whereNotIn('subscription_plan', [''])
             ->get(['user_id', 'subscription_plan', 'subscription_status']);
