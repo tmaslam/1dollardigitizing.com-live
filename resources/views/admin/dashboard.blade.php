@@ -98,8 +98,19 @@
             margin-top: 12px;
             font-size: 0.82rem;
             font-weight: 700;
-            color: #0f5f66;
         }
+        .snap-blue  { background: linear-gradient(135deg, #e8f4fd 0%, #d0eaf8 100%); border-color: rgba(22,159,230,0.25); }
+        .snap-blue  strong { color: #0d6ea3; }
+        .snap-blue  .view-link { color: #0d6ea3; }
+        .snap-green { background: linear-gradient(135deg, #e8f7ef 0%, #d0f0e0 100%); border-color: rgba(34,160,100,0.25); }
+        .snap-green strong { color: #1a7a48; }
+        .snap-green .view-link { color: #1a7a48; }
+        .snap-amber { background: linear-gradient(135deg, #fef6e4 0%, #fdecc8 100%); border-color: rgba(212,148,30,0.25); }
+        .snap-amber strong { color: #9a6200; }
+        .snap-amber .view-link { color: #9a6200; }
+        .snap-violet { background: linear-gradient(135deg, #f0edfb 0%, #e2daf7 100%); border-color: rgba(120,90,210,0.25); }
+        .snap-violet strong { color: #5b3faa; }
+        .snap-violet .view-link { color: #5b3faa; }
     </style>
 
     <section class="card snapshot-section">
@@ -113,7 +124,7 @@
             </div>
             <div class="stats">
                 <a class="stat-link" href="{{ url('/v/payment-transactions.php') }}">
-                    <article class="stat">
+                    <article class="stat snap-blue">
                         <span class="muted">Received Amount</span>
                         <strong>${{ number_format($financialSnapshot['total_received_all_time'], 2) }}</strong>
                         <div class="muted">Total payments received from day 1 to date.</div>
@@ -121,7 +132,7 @@
                     </article>
                 </a>
                 <a class="stat-link" href="{{ url('/v/settled-credits-report.php') }}">
-                    <article class="stat">
+                    <article class="stat snap-green">
                         <span class="muted">Settled Credits</span>
                         <strong>${{ number_format($financialSnapshot['settled_amount'], 2) }}</strong>
                         <div class="muted">Across {{ $financialSnapshot['settled_customers'] }} customers with fully settled invoices.</div>
@@ -130,7 +141,7 @@
                 </a>
                 @if ($hasCreditLedger)
                 <a class="stat-link" href="{{ url('/v/customer-payment-inventory.php') }}">
-                    <article class="stat">
+                    <article class="stat snap-amber">
                         <span class="muted">Unsettled Credits</span>
                         <strong>${{ number_format($financialSnapshot['customer_balance'] ?? 0, 2) }}</strong>
                         <div class="muted">Across {{ $financialSnapshot['customers_with_credit'] }} active customers with credit ready to apply to future invoices.</div>
@@ -139,7 +150,7 @@
                 </a>
                 @endif
                 <a class="stat-link" href="{{ url('/v/subscription-report.php') }}">
-                    <article class="stat">
+                    <article class="stat snap-violet">
                         <span class="muted">Total Subscription Amount</span>
                         <strong>${{ number_format($financialSnapshot['subscription_mrr'], 2) }}</strong>
                         <div class="muted">Across {{ $financialSnapshot['subscription_count'] }} active subscribers.</div>
