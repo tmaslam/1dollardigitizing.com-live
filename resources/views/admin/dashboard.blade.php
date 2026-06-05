@@ -131,7 +131,7 @@
                 @if ($hasCreditLedger)
                 <a class="stat-link" href="{{ url('/v/customer-payment-inventory.php') }}">
                     <article class="stat">
-                        <span class="muted">Available Customer Credit</span>
+                        <span class="muted">Unsettled Credits</span>
                         <strong>${{ number_format($financialSnapshot['customer_balance'] ?? 0, 2) }}</strong>
                         <div class="muted">Across {{ $financialSnapshot['customers_with_credit'] }} active customers with credit ready to apply to future invoices.</div>
                         <span class="view-link">View: Customer Credit Inventory</span>
