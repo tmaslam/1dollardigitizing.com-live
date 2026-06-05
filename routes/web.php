@@ -295,6 +295,7 @@ Route::post('/v/teams/{team}/destroy', [AdminPeopleController::class, 'destroyTe
     Route::match(['get', 'post'], '/v/monthly-reports.php', [AdminToolsController::class, 'teamReport']);
     Route::match(['get', 'post'], '/v/login_history.php', [AdminToolsController::class, 'loginHistory']);
     Route::match(['get', 'post'], '/v/security-events.php', [AdminToolsController::class, 'securityEvents']);
+    Route::post('/v/security-events/block-ip', [AdminToolsController::class, 'securityBlockIp']);
     Route::match(['get', 'post'], '/v/block-customer_list.php', [AdminToolsController::class, 'blockedCustomers']);
     Route::post('/v/block-customer_list/{customer}/unblock', [AdminToolsController::class, 'unblockCustomer']);
     Route::post('/v/block-customer_list/{customer}/delete', [AdminToolsController::class, 'deleteBlockedCustomer']);

@@ -12,6 +12,38 @@
 
 @section('content')
     @if ($securityWatch['available'])
+        @if ($securityWatch['suggested_actions']->count() > 0)
+        <section class="card" style="margin-bottom:18px;">
+            <div class="card-body">
+                <h3 style="margin-top:0;">Suggested Actions</h3>
+                <div style="display:grid;gap:10px;">
+                    @foreach ($securityWatch['suggested_actions'] as $action)
+                        <div style="padding:12px 14px;border-radius:16px;background:rgba(197,107,34,0.08);border:1px solid rgba(24,34,45,0.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                            <div>
+                                <strong>{{ $action['label'] }}</strong>
+                                <div class="muted" style="margin-top:4px;">{{ $action['description'] }}</div>
+                            </div>
+                            <div style="display:flex;gap:8px;">
+                                @if ($action['type'] === 'block_ip')
+                                    <form method="post" action="{{ url('/v/security-events/block-ip') }}" onsubmit="return confirm('Block IP {{ $action['ip_address'] }}?');">
+                                        @csrf
+                                        <input type="hidden" name="ip_address" value="{{ $action['ip_address'] }}">
+                                        <button type="submit" style="background:linear-gradient(135deg,#a24d2a,#7f2e14);">Block IP</button>
+                                    </form>
+                                @elseif ($action['type'] === 'review_account')
+                                    <a href="{{ url('/v/block-customer_list.php?txtUserID=' . $action['user_id']) }}" class="button">Review Account</a>
+                                @elseif ($action['type'] === 'review_login')
+                                    <a href="{{ url('/v/login_history.php?txtLoginName=' . urlencode($action['login'])) }}" class="button">View Login History</a>
+                                    <a href="{{ url('/v/block-customer_list.php?txtUserID=' . $action['user_id']) }}" class="button">Review Account</a>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+        @endif
+
         <section class="stats">
             <article class="stat">
                 <span class="muted">Action Required</span>
@@ -70,6 +102,15 @@
                                     <span class="badge">{{ $ip->total_events }} events</span>
                                 </div>
                                 <div class="muted" style="margin-top:8px;">{{ $ip->actionable_events }} actionable · {{ $ip->critical_events }} critical</div>
+                                @if ($ip->critical_events > 0 || $ip->actionable_events >= 3)
+                                    <div style="margin-top:10px;">
+                                        <form method="post" action="{{ url('/v/security-events/block-ip') }}" onsubmit="return confirm('Block IP {{ $ip->ip_address }}?');">
+                                            @csrf
+                                            <input type="hidden" name="ip_address" value="{{ $ip->ip_address }}">
+                                            <button type="submit" style="background:linear-gradient(135deg,#a24d2a,#7f2e14);font-size:0.84rem;padding:6px 12px;">Block IP</button>
+                                        </form>
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
                         @endif
@@ -138,11 +179,12 @@
                         <th><a href="{{ request()->fullUrlWithQuery(['column_name' => 'request_path', 'sort' => $nextDirection('request_path')]) }}">Path</a></th>
                         <th>Message</th>
                         <th>Details</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
                     @if (collect($events)->isEmpty())
-                        <tr><td colspan="9" class="muted">No security events found.</td></tr>
+                        <tr><td colspan="10" class="muted">No security events found.</td></tr>
                     @else
                     @foreach ($events as $event)
                         <tr>
@@ -167,6 +209,18 @@
                                     </details>
                                 @else
                                     -
+                                @endif
+                            </td>
+                            <td>
+                                @if ($event->ip_address)
+                                    <form method="post" action="{{ url('/v/security-events/block-ip') }}" onsubmit="return confirm('Block IP {{ $event->ip_address }}?');" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="ip_address" value="{{ $event->ip_address }}">
+                                        <button type="submit" style="background:linear-gradient(135deg,#a24d2a,#7f2e14);font-size:0.84rem;padding:6px 12px;">Block IP</button>
+                                    </form>
+                                @endif
+                                @if ($event->actor_user_id)
+                                    <a href="{{ url('/v/customer-detail.php?id=' . $event->actor_user_id) }}" class="button" style="font-size:0.84rem;padding:6px 12px;">View</a>
                                 @endif
                             </td>
                         </tr>

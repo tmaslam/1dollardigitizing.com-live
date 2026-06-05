@@ -589,6 +589,23 @@ class AdminToolsController extends Controller
         ]);
     }
 
+    public function securityBlockIp(Request $request)
+    {
+        $validated = $request->validate([
+            'ip_address' => ['required', 'ip'],
+        ], [
+            'ip_address.required' => 'Please enter an IP address.',
+            'ip_address.ip' => 'Please enter a valid IP address.',
+        ]);
+
+        \App\Models\BlockIp::query()->firstOrCreate([
+            'ipaddress' => trim((string) $validated['ip_address']),
+        ]);
+
+        return redirect()->to(url('/v/security-events.php'))
+            ->with('success', 'IP Address has been blocked successfully.');
+    }
+
     public function blockedCustomers(Request $request)
     {
         $customers = AdminUser::query()
@@ -1235,8 +1252,15 @@ class AdminToolsController extends Controller
         $subscribers = $query->paginate(50)->withQueryString();
         $totalMrr = AdminUser::query()
             ->customers()
+            ->active()
+            ->where('is_active', 1)
             ->whereNotNull('subscription_plan')
             ->where('subscription_plan', '!=', '')
+            ->where(function ($sub) {
+                $sub->whereNull('subscription_status')
+                    ->orWhere('subscription_status', '')
+                    ->orWhere('subscription_status', 'active');
+            })
             ->get(['subscription_plan'])
             ->sum(fn ($u) => (float) ($planPrices[strtolower(trim((string) $u->subscription_plan))] ?? 0));
 

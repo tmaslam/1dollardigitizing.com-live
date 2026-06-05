@@ -49,6 +49,9 @@ class SecurityAlertSummary
 
         $windowQuery = self::windowQuery($hours);
 
+        $topIps = self::topIps($hours);
+        $recentEvents = self::recentEvents($hours);
+
         return [
             'available' => true,
             'window_hours' => $hours,
@@ -64,8 +67,9 @@ class SecurityAlertSummary
             'unauthorized_access' => (clone $windowQuery)->where('event_type', 'auth.unauthorized_access')->count(),
             'upload_rejections' => (clone $windowQuery)->where('event_type', 'files.upload_rejected')->count(),
             'turnstile_failures' => (clone $windowQuery)->where('event_type', 'bot.turnstile_failed')->count(),
-            'recent_events' => self::recentEvents($hours),
-            'top_ips' => self::topIps($hours),
+            'recent_events' => $recentEvents,
+            'top_ips' => $topIps,
+            'suggested_actions' => self::suggestedActions($windowQuery, $topIps, $recentEvents),
         ];
     }
 
@@ -82,6 +86,77 @@ class SecurityAlertSummary
             ->orderByDesc('created_at')
             ->limit(6)
             ->get();
+    }
+
+    private static function suggestedActions(Builder $windowQuery, Collection $topIps, Collection $recentEvents): Collection
+    {
+        $actions = collect();
+
+        // 1. Suggest blocking IPs with high concentrations of actionable events
+        foreach ($topIps as $ip) {
+            if ($ip->critical_events > 0 || $ip->actionable_events >= 3) {
+                $actions->push([
+                    'type' => 'block_ip',
+                    'label' => 'Block IP',
+                    'description' => "{$ip->ip_address} triggered {$ip->actionable_events} warning+ events ({$ip->critical_events} critical).",
+                    'ip_address' => $ip->ip_address,
+                    'count' => $ip->actionable_events,
+                    'severity' => $ip->critical_events > 0 ? 'critical' : 'warning',
+                ]);
+            }
+        }
+
+        // 2. Suggest reviewing accounts that were permanently locked
+        $lockedAccounts = (clone $windowQuery)
+            ->where('event_type', 'auth.account_locked')
+            ->whereNotNull('actor_user_id')
+            ->select('actor_user_id', 'actor_login')
+            ->selectRaw('COUNT(*) as event_count')
+            ->groupBy('actor_user_id', 'actor_login')
+            ->orderByDesc('event_count')
+            ->limit(5)
+            ->get();
+
+        foreach ($lockedAccounts as $account) {
+            $actions->push([
+                'type' => 'review_account',
+                'label' => 'Review Locked Account',
+                'description' => "Account '{$account->actor_login}' (ID: {$account->actor_user_id}) was permanently locked.",
+                'user_id' => $account->actor_user_id,
+                'login' => $account->actor_login,
+                'count' => (int) $account->event_count,
+                'severity' => 'critical',
+            ]);
+        }
+
+        // 3. Suggest reviewing login blocks
+        $blockedLogins = (clone $windowQuery)
+            ->whereIn('event_type', ['auth.login_blocked', 'auth.login_rate_limited'])
+            ->whereNotNull('actor_user_id')
+            ->select('actor_user_id', 'actor_login')
+            ->selectRaw('COUNT(*) as event_count')
+            ->groupBy('actor_user_id', 'actor_login')
+            ->orderByDesc('event_count')
+            ->limit(5)
+            ->get();
+
+        foreach ($blockedLogins as $account) {
+            // Skip if already added as locked account for same user
+            if ($actions->contains(fn ($a) => $a['type'] === 'review_account' && ($a['user_id'] ?? null) == $account->actor_user_id)) {
+                continue;
+            }
+            $actions->push([
+                'type' => 'review_login',
+                'label' => 'Review Login Blocks',
+                'description' => "Account '{$account->actor_login}' (ID: {$account->actor_user_id}) had {$account->event_count} blocked/rate-limited login attempts.",
+                'user_id' => $account->actor_user_id,
+                'login' => $account->actor_login,
+                'count' => (int) $account->event_count,
+                'severity' => 'warning',
+            ]);
+        }
+
+        return $actions->values();
     }
 
     private static function topIps(int $hours): Collection

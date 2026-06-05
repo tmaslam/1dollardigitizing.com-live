@@ -68,6 +68,47 @@
         </a>
     </section>
 
+    <section class="card" style="margin-bottom:22px;">
+        <div class="card-body">
+            <div class="section-head">
+                <div>
+                    <h3>Workflow Focus</h3>
+                    <p class="section-copy">What needs attention right now across the production pipeline.</p>
+                </div>
+            </div>
+            <div class="stats">
+                <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('designer-completed') }}">
+                    <article class="stat">
+                        <span class="muted">Review Ready</span>
+                        <strong>{{ $workflowFocus['review_ready'] }}</strong>
+                        <div class="muted" style="margin-top:8px;">Designer completed orders and quotes awaiting admin review.</div>
+                    </article>
+                </a>
+                <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('approval-waiting') }}">
+                    <article class="stat">
+                        <span class="muted">Approval Waiting</span>
+                        <strong>{{ $workflowFocus['approval_waiting'] }}</strong>
+                        <div class="muted" style="margin-top:8px;">Orders reviewed by admin and waiting for customer approval.</div>
+                    </article>
+                </a>
+                <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('new-orders') }}">
+                    <article class="stat">
+                        <span class="muted">New Work</span>
+                        <strong>{{ $workflowFocus['new_work'] }}</strong>
+                        <div class="muted" style="margin-top:8px;">Fresh orders and quotes submitted by customers.</div>
+                    </article>
+                </a>
+                <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('designer-orders') }}">
+                    <article class="stat">
+                        <span class="muted">Assigned Work</span>
+                        <strong>{{ $workflowFocus['assigned_work'] }}</strong>
+                        <div class="muted" style="margin-top:8px;">Orders and quotes currently with designers in progress.</div>
+                    </article>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <style>
         /* Conditional stat card colors — only applied when value > 0 */
         .stat.sc-blue   { background: linear-gradient(135deg,#e8f4fd,#d0eaf8); border-color:rgba(22,159,230,.35); }
@@ -203,47 +244,6 @@
             </div>
         </section>
     @endif
-
-    <section class="card">
-        <div class="card-body">
-            <div class="section-head">
-                <div>
-                    <h3>Workflow Focus</h3>
-                    <p class="section-copy">What needs attention right now across the production pipeline.</p>
-                </div>
-            </div>
-            <div class="stats">
-                <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('designer-completed') }}">
-                    <article class="stat">
-                        <span class="muted">Review Ready</span>
-                        <strong>{{ $workflowFocus['review_ready'] }}</strong>
-                        <div class="muted" style="margin-top:8px;">Designer completed orders and quotes awaiting admin review.</div>
-                    </article>
-                </a>
-                <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('approval-waiting') }}">
-                    <article class="stat">
-                        <span class="muted">Approval Waiting</span>
-                        <strong>{{ $workflowFocus['approval_waiting'] }}</strong>
-                        <div class="muted" style="margin-top:8px;">Orders reviewed by admin and waiting for customer approval.</div>
-                    </article>
-                </a>
-                <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('new-orders') }}">
-                    <article class="stat">
-                        <span class="muted">New Work</span>
-                        <strong>{{ $workflowFocus['new_work'] }}</strong>
-                        <div class="muted" style="margin-top:8px;">Fresh orders and quotes submitted by customers.</div>
-                    </article>
-                </a>
-                <a class="stat-link" href="{{ \App\Support\AdminOrderQueues::url('designer-orders') }}">
-                    <article class="stat">
-                        <span class="muted">Assigned Work</span>
-                        <strong>{{ $workflowFocus['assigned_work'] }}</strong>
-                        <div class="muted" style="margin-top:8px;">Orders and quotes currently with designers in progress.</div>
-                    </article>
-                </a>
-            </div>
-        </div>
-    </section>
 
     <section class="card snapshot-section">
         <div class="card-body">
