@@ -165,9 +165,12 @@
 
     <section class="card">
         <div class="card-body">
-            <div style="margin-bottom:16px;">
-                <h3 style="margin:0 0 6px;font-size:1.15rem;">Credit History</h3>
-                <p class="muted" style="margin:0;">Admin credit adjustments, payments, and deductions for this customer.</p>
+            <div style="margin-bottom:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div>
+                    <h3 style="margin:0 0 6px;font-size:1.15rem;">Credit History</h3>
+                    <p class="muted" style="margin:0;">Admin credit adjustments, payments, and deductions for this customer.</p>
+                </div>
+                <a href="{{ url('/v/customer-detail.php') }}?uid={{ $customer->user_id }}&export=credit-history" class="button secondary" style="white-space:nowrap;flex-shrink:0;">Download Excel</a>
             </div>
 
             @if ($creditLedger->isEmpty())
@@ -215,9 +218,12 @@
 
     <section class="card">
         <div class="card-body">
-            <div style="margin-bottom:16px;">
-                <h3 style="margin:0 0 6px;font-size:1.15rem;">Payment Transactions</h3>
-                <p class="muted" style="margin:0;">Recent payment attempts, credit purchases, and checkout sessions for this customer.</p>
+            <div style="margin-bottom:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div>
+                    <h3 style="margin:0 0 6px;font-size:1.15rem;">Payment Transactions</h3>
+                    <p class="muted" style="margin:0;">Recent payment attempts, credit purchases, and checkout sessions for this customer.</p>
+                </div>
+                <a href="{{ url('/v/customer-detail.php') }}?uid={{ $customer->user_id }}&export=payment-transactions" class="button secondary" style="white-space:nowrap;flex-shrink:0;">Download Excel</a>
             </div>
 
             @if ($paymentTransactions->isEmpty())

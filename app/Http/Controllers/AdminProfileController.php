@@ -132,6 +132,68 @@ class AdminProfileController extends Controller
     public function customerShow(Request $request)
     {
         $customer = AdminUser::query()->findOrFail((int) $request->query('uid'));
+        $export   = (string) $request->query('export', '');
+
+        if ($export === 'credit-history') {
+            $ledger = \App\Models\CustomerCreditLedger::query()
+                ->where('user_id', $customer->user_id)
+                ->orderByDesc('date_added')
+                ->get();
+
+            $entryLabel = fn (string $type) => match ($type) {
+                'payment'     => 'Payment',
+                'overpayment' => 'Overpayment',
+                'applied'     => 'Applied to Invoice',
+                'adjustment'  => 'Manual Adjustment',
+                default       => ucfirst($type),
+            };
+
+            $rows = $ledger->map(fn ($e) => [
+                $e->date_added,
+                $entryLabel((string) $e->entry_type),
+                number_format((float) $e->amount, 2),
+                $e->reference_no,
+                $e->notes,
+                $e->created_by,
+            ])->all();
+
+            $total = $ledger->sum(fn ($e) => (float) $e->amount);
+            $rows[] = ['', 'TOTAL', number_format($total, 2), '', '', ''];
+
+            return $this->csvResponse(
+                'credit-history-uid'.$customer->user_id,
+                ['Date', 'Type', 'Amount', 'Reference', 'Notes', 'Created By'],
+                $rows
+            );
+        }
+
+        if ($export === 'payment-transactions') {
+            $transactions = \App\Models\PaymentTransaction::query()
+                ->where('user_id', $customer->user_id)
+                ->orderByDesc('created_at')
+                ->get();
+
+            $rows = $transactions->map(fn ($tx) => [
+                $tx->id,
+                $tx->merchant_reference,
+                $tx->payment_scope,
+                $tx->provider,
+                $tx->status,
+                number_format((float) $tx->requested_amount, 2),
+                $tx->confirmed_amount ? number_format((float) $tx->confirmed_amount, 2) : '',
+                $tx->created_at,
+            ])->all();
+
+            $totalRequested  = $transactions->sum(fn ($tx) => (float) $tx->requested_amount);
+            $totalConfirmed  = $transactions->sum(fn ($tx) => (float) $tx->confirmed_amount);
+            $rows[] = ['', '', '', '', 'TOTAL', number_format($totalRequested, 2), number_format($totalConfirmed, 2), ''];
+
+            return $this->csvResponse(
+                'payment-transactions-uid'.$customer->user_id,
+                ['ID', 'Reference', 'Scope', 'Provider', 'Status', 'Requested', 'Confirmed', 'Created'],
+                $rows
+            );
+        }
 
         $paymentTransactions = \App\Models\PaymentTransaction::query()
             ->where('user_id', $customer->user_id)
@@ -160,6 +222,24 @@ class AdminProfileController extends Controller
             'creditLedger' => $creditLedger,
             'depositBalance' => $depositBalance,
             'feeSchedule' => $feeSchedule,
+        ]);
+    }
+
+    private function csvResponse(string $prefix, array $headers, array $rows): \Illuminate\Http\Response
+    {
+        $filename = $prefix.'-'.now()->format('Ymd-His').'.csv';
+        $handle   = fopen('php://temp', 'r+');
+        fputcsv($handle, $headers);
+        foreach ($rows as $row) {
+            fputcsv($handle, $row);
+        }
+        rewind($handle);
+        $csv = stream_get_contents($handle) ?: '';
+        fclose($handle);
+
+        return response($csv, 200, [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 
