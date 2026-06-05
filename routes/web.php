@@ -233,6 +233,7 @@ Route::middleware('admin.auth')->group(function () use ($adminPrefix) {
     Route::post('/v/attachments/{attachment}/delete', [AdminOrderDetailController::class, 'deleteAttachment']);
     Route::post('/v/order-detail/select-for-customer', [AdminOrderDetailController::class, 'selectFilesForCustomer']);
     Route::post('/v/order-detail/delivery-controls', [AdminOrderDetailController::class, 'saveDeliveryControls']);
+    Route::post('/v/orders/{order}/send-quote-followup', [AdminOrderDetailController::class, 'sendQuoteFollowUp']);
     Route::post('/v/order-detail/respond-quote-negotiation', [AdminOrderDetailController::class, 'respondToQuoteNegotiation']);
     Route::post('/v/order-detail/convert-quote', [AdminOrderDetailController::class, 'convertQuoteToOrder']);
     Route::post('/v/order-detail/price-preview', [AdminOrderDetailController::class, 'previewPrice']);

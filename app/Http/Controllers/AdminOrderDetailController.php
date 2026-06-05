@@ -1349,6 +1349,82 @@ class AdminOrderDetailController extends Controller
 HTML;
     }
 
+    public function sendQuoteFollowUp(Request $request, Order $order): \Symfony\Component\HttpFoundation\Response
+    {
+        $page = $this->normalizePage((string) $request->query('page', 'quote'));
+
+        abort_unless(in_array($page, ['quote', 'vector'], true), 404);
+        abort_unless((string) $order->status === 'done', 422);
+
+        $customer = $order->customer ?? AdminUser::query()->find($order->user_id);
+        abort_unless($customer && PortalMailer::normalizeRecipient((string) $customer->user_email), 422);
+
+        $site = SiteResolver::fromLegacyKey((string) ($order->website ?: config('sites.primary_legacy_key', '1dollar')))
+            ?? SiteResolver::fromHost((string) config('sites.primary_host', 'localhost'));
+
+        $baseUrl   = $this->customerPortalBaseUrl($site?->host);
+        $reviewUrl = $baseUrl.'/view-quote-detail.php?order_id='.$order->order_id;
+        $quotesUrl = $baseUrl.'/view-quotes.php';
+        $amount    = trim((string) ($order->total_amount ?: $order->stitches_price ?: ''));
+
+        SystemEmailTemplates::send(
+            (string) $customer->user_email,
+            'customer_quote_followup',
+            $site,
+            [
+                'customer_name' => trim((string) ($customer->display_name ?: $customer->user_name)),
+                'order_id'      => (string) $order->order_num,
+                'design_name'   => (string) ($order->design_name ?? ''),
+                'amount'        => $amount !== '' ? '$'.number_format((float) $amount, 2) : 'See quote',
+                'review_url'    => $reviewUrl,
+                'quotes_url'    => $quotesUrl,
+            ],
+            fn () => [
+                'subject' => 'Your quote is ready for your review — '.$site->displayLabel(),
+                'body'    => $this->defaultQuoteFollowUpBody(
+                    trim((string) ($customer->display_name ?: $customer->user_name)),
+                    $site->displayLabel(),
+                    $order,
+                    $amount,
+                    $reviewUrl
+                ),
+            ]
+        );
+
+        $back      = AdminOrderQueues::normalize((string) $request->query('back', ''));
+        $detailUrl = url('/v/orders/'.$order->order_id.'/detail/'.$page);
+
+        return redirect()->to($back !== ''
+            ? $detailUrl.'?'.http_build_query(['back' => $back])
+            : $detailUrl
+        )->with('success', 'Follow-up email sent to '.$customer->user_email.'.');
+    }
+
+    private function defaultQuoteFollowUpBody(string $customerName, string $siteLabel, Order $order, string $amount, string $reviewUrl): string
+    {
+        $customerName = e($customerName);
+        $siteLabel    = e($siteLabel);
+        $designName   = e((string) ($order->design_name ?? ''));
+        $refId        = e((string) $order->order_num);
+        $amountLine   = $amount !== '' ? '<p><strong>Quoted Amount:</strong> $'.e(number_format((float) $amount, 2)).'</p>' : '';
+
+        return <<<HTML
+<p>Hello {$customerName},</p>
+<p>This is a friendly reminder that your quote from {$siteLabel} is ready and waiting for your response.</p>
+<p><strong>Reference ID:</strong> {$refId}</p>
+<p><strong>Design Name:</strong> {$designName}</p>
+{$amountLine}
+<p>Please log in to your account to take one of the following actions:</p>
+<ul>
+  <li><strong>Accept the quote</strong> — convert it to a live order and we'll begin production.</li>
+  <li><strong>Negotiate the price</strong> — submit a counter-offer and we'll review it.</li>
+  <li><strong>Delete the quote</strong> — if you no longer need this design.</li>
+</ul>
+<p><a href="{$reviewUrl}">Review your quote now</a></p>
+<p>Kind regards,<br>{$siteLabel}</p>
+HTML;
+    }
+
     private function customerPortalBaseUrl(?string $fallbackHost = null): string
     {
         $configuredUrl = trim((string) (config('app.force_url') ?: config('app.url', '')));

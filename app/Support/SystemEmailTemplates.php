@@ -49,6 +49,10 @@ class SystemEmailTemplates
             'name' => 'Customer Quote Negotiation Response',
             'usage' => 'Sent after admin responds to a customer price negotiation on a quote.',
         ],
+        'customer_quote_followup' => [
+            'name'  => 'Customer Quote Follow-Up',
+            'usage' => 'Reminder sent to customer when admin wants to prompt action on a completed quote.',
+        ],
     ];
 
     private const TOKEN_LABELS = [

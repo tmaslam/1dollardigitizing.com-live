@@ -93,6 +93,16 @@
                             <button type="submit" style="background:linear-gradient(135deg,#a24d2a,#7f2e14);">Delete Order</button>
                         </form>
                     @endif
+                    @if (in_array($page, ['quote', 'vector']) && $order->status === 'done')
+                        <form method="post" action="{{ url('/v/orders/'.$order->order_id.'/send-quote-followup') }}" onsubmit="return confirm('Send a follow-up reminder email to the customer?');">
+                            @csrf
+                            <input type="hidden" name="page" value="{{ $page }}">
+                            @if ($backQueue)
+                                <input type="hidden" name="back" value="{{ $backQueue }}">
+                            @endif
+                            <button type="submit">Send Follow-Up Email</button>
+                        </form>
+                    @endif
                 </div>
             </div>
 
