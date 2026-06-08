@@ -341,6 +341,13 @@ Route::post('/v/teams/{team}/destroy', [AdminPeopleController::class, 'destroyTe
     Route::post('/v/blogs/{blog}/delete', [AdminBlogController::class, 'destroy']);
     Route::post('/v/blogs/{blog}/toggle-publish', [AdminBlogController::class, 'togglePublish']);
     Route::post('/v/blog-image-upload', [AdminBlogController::class, 'uploadImage']);
+
+    // Temporary: one-time blog article insertion — remove after use
+    Route::get('/v/run-blog-insert', function () {
+        \Artisan::call('blog:insert-articles');
+        $output = trim(\Artisan::output());
+        return redirect('/v/blogs')->with('success', 'Done: ' . ($output ?: 'all articles already existed'));
+    });
 });
 
 Route::get('/team', [TeamAuthController::class, 'showLogin']);
