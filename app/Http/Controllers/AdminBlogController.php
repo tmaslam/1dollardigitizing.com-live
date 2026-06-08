@@ -61,38 +61,57 @@ class AdminBlogController extends Controller
             'published_at'     => 'nullable|date',
         ]);
 
-        $slug = $validated['slug'] ?: Blog::generateSlug($validated['title']);
+        try {
+            $slug = $validated['slug'] ?: Blog::generateSlug($validated['title']);
 
-        $heroPath = $request->file('hero_image')->store('blog-images', 'public_storage');
+            $heroPath = $request->file('hero_image')->store('blog-images', 'public_storage');
+            if (! $heroPath) {
+                throw new \Exception('Failed to store hero image. Please check storage permissions.');
+            }
 
-        $ogPath = null;
-        if ($request->hasFile('og_image')) {
-            $ogPath = $request->file('og_image')->store('blog-images', 'public_storage');
+            $ogPath = null;
+            if ($request->hasFile('og_image')) {
+                $ogPath = $request->file('og_image')->store('blog-images', 'public_storage');
+            }
+
+            $publishedAt = $validated['published_at'] ?? null;
+            if ($validated['status'] === 'published' && ! $publishedAt) {
+                $publishedAt = now();
+            }
+
+            $cleanContent = '';
+            try {
+                $cleanContent = purify($validated['content']);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Purify failed during blog store', ['error' => $e->getMessage()]);
+                $cleanContent = strip_tags($validated['content'], '<p><br><h1><h2><h3><h4><h5><h6><b><strong><i><em><u><s><del><a><ul><ol><li><blockquote><span><img>');
+            }
+
+            Blog::create([
+                'title'            => $validated['title'],
+                'slug'             => $slug,
+                'excerpt'          => $validated['excerpt'],
+                'content'          => $cleanContent,
+                'hero_image'       => $heroPath,
+                'hero_image_alt'   => $validated['hero_image_alt'],
+                'author_name'      => $validated['author_name'],
+                'category'         => $validated['category'] ?? null,
+                'tags'             => $validated['tags'] ?? null,
+                'status'           => $validated['status'],
+                'meta_title'       => $validated['meta_title'],
+                'meta_description' => $validated['meta_description'],
+                'og_image'         => $ogPath,
+                'published_at'     => $publishedAt,
+                'date'             => now()->format('Y-m-d'),
+                'decription'       => substr($validated['excerpt'], 0, 255),
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            \Illuminate\Support\Facades\Log::error('Blog store database error', ['error' => $e->getMessage()]);
+            return back()->withErrors(['save' => 'Database error: '.$e->getMessage()])->withInput();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Blog store error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return back()->withErrors(['save' => 'Error saving blog: '.$e->getMessage()])->withInput();
         }
-
-        $publishedAt = $validated['published_at'] ?? null;
-        if ($validated['status'] === 'published' && ! $publishedAt) {
-            $publishedAt = now();
-        }
-
-        Blog::create([
-            'title'            => $validated['title'],
-            'slug'             => $slug,
-            'excerpt'          => $validated['excerpt'],
-            'content'          => purify($validated['content']),
-            'hero_image'       => $heroPath,
-            'hero_image_alt'   => $validated['hero_image_alt'],
-            'author_name'      => $validated['author_name'],
-            'category'         => $validated['category'] ?? null,
-            'tags'             => $validated['tags'] ?? null,
-            'status'           => $validated['status'],
-            'meta_title'       => $validated['meta_title'],
-            'meta_description' => $validated['meta_description'],
-            'og_image'         => $ogPath,
-            'published_at'     => $publishedAt,
-            'date'             => now()->format('Y-m-d'),
-            'decription'       => substr($validated['excerpt'], 0, 255),
-        ]);
 
         return redirect()->to(url('/v/blogs'))
             ->with('success', 'Blog post created successfully.');
@@ -126,46 +145,62 @@ class AdminBlogController extends Controller
             'published_at'     => 'nullable|date',
         ]);
 
-        $slug = $validated['slug'] ?: Blog::generateSlug($validated['title'], $blog->id);
+        try {
+            $slug = $validated['slug'] ?: Blog::generateSlug($validated['title'], $blog->id);
 
-        $heroPath = $blog->hero_image;
-        if ($request->hasFile('hero_image')) {
-            if ($blog->hero_image) {
-                Storage::disk('public_storage')->delete($blog->hero_image);
+            $heroPath = $blog->hero_image;
+            if ($request->hasFile('hero_image')) {
+                if ($blog->hero_image) {
+                    Storage::disk('public_storage')->delete($blog->hero_image);
+                }
+                $heroPath = $request->file('hero_image')->store('blog-images', 'public_storage');
             }
-            $heroPath = $request->file('hero_image')->store('blog-images', 'public_storage');
-        }
 
-        $ogPath = $blog->og_image;
-        if ($request->hasFile('og_image')) {
-            if ($blog->og_image) {
-                Storage::disk('public_storage')->delete($blog->og_image);
+            $ogPath = $blog->og_image;
+            if ($request->hasFile('og_image')) {
+                if ($blog->og_image) {
+                    Storage::disk('public_storage')->delete($blog->og_image);
+                }
+                $ogPath = $request->file('og_image')->store('blog-images', 'public_storage');
             }
-            $ogPath = $request->file('og_image')->store('blog-images', 'public_storage');
-        }
 
-        $publishedAt = $validated['published_at'] ?? $blog->published_at;
-        if ($validated['status'] === 'published' && ! $publishedAt) {
-            $publishedAt = now();
-        }
+            $publishedAt = $validated['published_at'] ?? $blog->published_at;
+            if ($validated['status'] === 'published' && ! $publishedAt) {
+                $publishedAt = now();
+            }
 
-        $blog->update([
-            'title'            => $validated['title'],
-            'slug'             => $slug,
-            'excerpt'          => $validated['excerpt'],
-            'content'          => purify($validated['content']),
-            'hero_image'       => $heroPath,
-            'hero_image_alt'   => $validated['hero_image_alt'],
-            'author_name'      => $validated['author_name'],
-            'category'         => $validated['category'] ?? null,
-            'tags'             => $validated['tags'] ?? null,
-            'status'           => $validated['status'],
-            'meta_title'       => $validated['meta_title'],
-            'meta_description' => $validated['meta_description'],
-            'og_image'         => $ogPath,
-            'published_at'     => $publishedAt,
-            'decription'       => substr($validated['excerpt'], 0, 255),
-        ]);
+            $cleanContent = '';
+            try {
+                $cleanContent = purify($validated['content']);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Purify failed during blog update', ['error' => $e->getMessage()]);
+                $cleanContent = strip_tags($validated['content'], '<p><br><h1><h2><h3><h4><h5><h6><b><strong><i><em><u><s><del><a><ul><ol><li><blockquote><span><img>');
+            }
+
+            $blog->update([
+                'title'            => $validated['title'],
+                'slug'             => $slug,
+                'excerpt'          => $validated['excerpt'],
+                'content'          => $cleanContent,
+                'hero_image'       => $heroPath,
+                'hero_image_alt'   => $validated['hero_image_alt'],
+                'author_name'      => $validated['author_name'],
+                'category'         => $validated['category'] ?? null,
+                'tags'             => $validated['tags'] ?? null,
+                'status'           => $validated['status'],
+                'meta_title'       => $validated['meta_title'],
+                'meta_description' => $validated['meta_description'],
+                'og_image'         => $ogPath,
+                'published_at'     => $publishedAt,
+                'decription'       => substr($validated['excerpt'], 0, 255),
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            \Illuminate\Support\Facades\Log::error('Blog update database error', ['error' => $e->getMessage()]);
+            return back()->withErrors(['save' => 'Database error: '.$e->getMessage()])->withInput();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Blog update error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return back()->withErrors(['save' => 'Error updating blog: '.$e->getMessage()])->withInput();
+        }
 
         return redirect()->to(url('/v/blogs'))
             ->with('success', 'Blog post updated successfully.');
