@@ -344,9 +344,76 @@ Route::post('/v/teams/{team}/destroy', [AdminPeopleController::class, 'destroyTe
 
     // Temporary: one-time blog article insertion — remove after use
     Route::get('/v/run-blog-insert', function () {
-        \Artisan::call('blog:insert-articles');
-        $output = trim(\Artisan::output());
-        return redirect('/v/blogs')->with('success', 'Done: ' . ($output ?: 'all articles already existed'));
+        $inserted = [];
+        $today    = now()->format('Y-m-d');
+
+        $articles = [
+            [
+                'title'            => 'How to Calculate Stitch Counts for Custom Hats and Jackets',
+                'slug'             => 'how-to-calculate-stitch-counts-for-custom-hats-and-jackets',
+                'excerpt'          => 'Estimating stitch counts before placing a digitizing order lets you quote clients accurately and check delivered files. Key variables: design size, fill coverage, stitch density, and specialty elements like 3D puff or appliqué.',
+                'hero_image_alt'   => 'Embroidery stitch count estimation for custom hats and jackets',
+                'category'         => 'Digitizing Tips',
+                'tags'             => 'stitch count, embroidery, hats, jackets, cap front, left chest, digitizing',
+                'meta_title'       => 'How to Calculate Stitch Counts for Custom Hats and Jackets',
+                'meta_description' => 'Learn to estimate embroidery stitch counts before digitizing. Use this simple formula to quote clients, plan production time, and evaluate delivered files.',
+                'content'          => '<p>Before you even send artwork to a digitizer, you can get a surprisingly accurate stitch count estimate by factoring in design size, how much of that area is solid fill, stitch density, and whether anything like 3D puff or appliqué is involved. Left chest logos typically land between 8,000 and 15,000 stitches. Cap fronts usually come in at 5,000 to 12,000. Full jacket backs? Anywhere from 50,000 to 250,000, depending on how complex the design is.</p><h2>Why This Skill Pays for Itself</h2><p>Every embroidery shop owner knows the situation. A client sends over a logo and asks for a quote on 200 embroidered hats — and they need the number today. Your decoration cost depends on machine time, machine time depends on stitch count, and you don\'t have the digitized file yet. The shops that quote confidently aren\'t guessing — they\'ve learned to estimate from the artwork alone.</p><h2>The Core Formula</h2><p>For fill stitch areas: Stitch count = (Fill area in mm²) ÷ (Density in mm) × (Average stitch length in mm). Standard fill at 0.40mm density with a 4mm average stitch length gives 10 stitches per mm². That\'s the number worth memorizing.</p><p>For outlines and running stitch details: divide the total path length in mm by your average stitch length. At 2mm per stitch, that\'s 0.5 stitches per mm.</p><h2>Figuring Out Fill Coverage</h2><p><strong>High fill (70–90%):</strong> Mostly solid designs — big filled text, thick color blocks.</p><p><strong>Medium fill (40–60%):</strong> Mix of filled elements and outlines with meaningful open space.</p><p><strong>Low fill (10–30%):</strong> Outline-heavy work, primarily running stitch, lots of negative space.</p><h2>Stitch Count Ranges by Placement</h2><h3>Cap Front</h3><ul><li>Simple outline or single-color text: 3,000–6,000</li><li>Standard multi-color logo: 6,000–12,000</li><li>Complex dense logo: 12,000–20,000</li><li>3D puff elements: add 20–40% to fill counts</li></ul><h3>Left Chest</h3><ul><li>Simple text or single element: 5,000–10,000</li><li>Standard corporate logo, 3–5 colors: 8,000–18,000</li><li>Complex logo with fine detail: 15,000–30,000</li></ul><h3>Full Front or Full Back</h3><ul><li>Simple outline design: 20,000–50,000</li><li>Medium complexity graphic: 50,000–120,000</li><li>Dense detailed design: 120,000–250,000</li></ul><h3>Jacket Back</h3><p>Same size as full back, but commonly executed in appliqué. A design that would be 180,000 stitches as pure fill might drop to 55,000–70,000 with appliqué construction.</p><h2>Quick Estimation Method</h2><ol><li>Lock in actual embroidered dimensions.</li><li>Calculate bounding area: width × height in mm.</li><li>Estimate coverage: High = 80%, Medium = 50%, Low = 20%.</li><li>Fill area = bounding area × coverage.</li><li>Multiply by 10 stitches per mm².</li><li>Add 20–30% for running stitch allowance.</li></ol><p>Example: 90 × 70mm logo at medium fill (50%) = 3,150mm² fill area × 10 = 31,500 stitches + 25% = roughly 39,000 stitches.</p><h2>Checking Delivered Files</h2><p>Compare the actual stitch count to your estimate. Significantly higher = potentially over-dense. Close to estimate = well-digitized. Significantly lower = potentially under-dense with gappy fill areas.</p><h2>Production Planning Benchmarks</h2><ul><li>600 SPM: 1,000 stitches ≈ 1 minute</li><li>800 SPM: 1,000 stitches ≈ 0.75 minutes</li><li>1,000 SPM: 1,000 stitches ≈ 0.6 minutes</li></ul><p>For multi-head runs, multiply per-piece time by piece count and divide by active heads to get total machine time.</p>',
+            ],
+            [
+                'title'            => 'Flat Rate vs. Stitch Count Pricing — Which Is Better for Your Embroidery Shop?',
+                'slug'             => 'flat-rate-vs-stitch-count-pricing-which-is-better-for-your-embroidery-shop',
+                'excerpt'          => 'Most shops fall into a pricing model by accident. This article breaks down flat rate vs. stitch count pricing — what each model actually costs, where each one fails, and how to know which one fits your shop.',
+                'hero_image_alt'   => 'Flat rate vs stitch count pricing for embroidery digitizing',
+                'category'         => 'Business Tips',
+                'tags'             => 'pricing, flat rate, stitch count, digitizing, embroidery business',
+                'meta_title'       => 'Flat Rate vs. Stitch Count Pricing for Embroidery Shops',
+                'meta_description' => 'Flat rate or per-stitch pricing — which digitizing model fits your shop? We break down the real costs, tradeoffs, and which setup works best by design mix.',
+                'content'          => '<p>Most shops end up in a pricing model by accident. They found a digitizing service early on, it worked well enough, and they never really stopped to ask whether the pricing structure was doing them any favors. This article is that question.</p><p>There are two ways digitizing services charge you. Flat rate: one price per job, typically $10–$25, no matter how complicated the design. Or per-stitch: a rate per thousand stitches, usually $3–$6 on quality manual work.</p><h2>What You\'re Really Buying with Flat Rate</h2><p>Flat rate sells simplicity as much as it sells digitizing. One price, every job, no surprises on the invoice. If your bread and butter is 20 corporate left-chest logos a month — polo shirts, 8,000 to 12,000 stitches, nothing wild — flat rate probably makes complete sense. Predictable spend, easy to bake into client pricing, no invoice that comes back higher than expected.</p><p>The problem shows up at the edges. Every flat rate service has a complexity ceiling. Send a 90,000-stitch jacket back to a $15-per-design service and one of three things happens: they charge extra, the quality suffers, or they tell you it\'s out of scope.</p><h2>What You\'re Actually Paying For with Stitch Count Pricing</h2><p>Per-stitch pricing is proportional. A 10,000-stitch left chest logo costs less than a 50,000-stitch athletic design. It reflects the actual work involved. The friction is variability — if you don\'t estimate stitch counts before ordering, invoices can come in higher than expected.</p><p>Once you know your numbers, per-stitch pricing becomes very transparent. You can estimate cost before placing the order.</p><h2>What Determines Which Model Works for You</h2><p>It comes down to your design mix. Shops running simple, predictable work do fine on flat rate. Corporate uniform programs, school apparel, basic team setups — flat rate is probably cheaper and easier to manage.</p><p>Shops with real design variety will end up either overpaying on flat rate for simple work or accepting compromised quality on complex jobs.</p><p>Example monthly output: 15 simple left-chest logos (~10k stitches each), 5 mid-complexity logos (~25k stitches), 2 jacket backs (~120k stitches).</p><p>Flat rate at $15: ~$330 — but jacket backs trigger surcharges or quality issues, so that number isn\'t real.</p><p>Stitch count at $4/1k: $600 (left chest) + $500 (mid) + $960 (jacket backs) = $2,060.</p><p>Split the work: simple logos to flat rate ($225) + complex on per-stitch ($1,460) = $1,685 with better quality on the jobs that need it most.</p><h2>Questions Worth Asking</h2><p>Are you satisfied with quality on your most complex jobs? Do you know your typical stitch counts? Are you sending complex work to a flat rate service out of habit despite quality concerns? The cost shows up in reprints and client complaints, not on the digitizing invoice.</p><p>Neither model is universally better. The right one fits the work you actually do.</p>',
+            ],
+            [
+                'title'            => 'How Outsourcing Digitizing Increases Daily Machine Run Time',
+                'slug'             => 'how-outsourcing-digitizing-increases-daily-machine-run-time',
+                'excerpt'          => 'A machine sitting still is the most expensive thing in your shop. This article breaks down where idle time actually comes from — and how outsourcing digitizing fixes more of it than most shop owners expect.',
+                'hero_image_alt'   => 'Embroidery machine run time and production efficiency through outsourced digitizing',
+                'category'         => 'Business Tips',
+                'tags'             => 'outsourcing, digitizing, machine run time, production efficiency, embroidery business',
+                'meta_title'       => 'How Outsourcing Digitizing Increases Machine Run Time',
+                'meta_description' => 'A stopped machine is your biggest cost. Learn how outsourcing digitizing cuts idle time, thread breaks, and morning waits to maximize your daily machine capacity.',
+                'content'          => '<p>The most expensive thing in an embroidery shop isn\'t thread or hoops or even the machines themselves. It\'s a machine sitting still.</p><p>When a 15-head isn\'t running, you\'re losing somewhere between $40 and $70 per head per hour. Real money leaving the table every time a needle stops moving — and it happens more often than most shop owners realize until they actually sit down and track it.</p><h2>What Your Machines Are Doing When They\'re Not Running</h2><p>Ask most shop owners what\'s causing their downtime and they\'ll say changeovers, staffing, scheduling. Those are real. But spend a day watching the production floor and you\'ll see a different list.</p><p>Thread break — operator walks over, rethread, find where it broke, re-hoop if needed, restart. That\'s 5–10 minutes gone, six to ten times a day, per head.</p><p>Trim buildup from sloppy pathing, so somebody stands there babysitting the machine between elements instead of loading the next frame on a different head.</p><p>The morning wait — digitizing isn\'t done yet, so nothing starts at shift open. Maybe 30 minutes. Maybe an hour. Every day.</p><p>None of that shows up as a line item. It just quietly eats your machine capacity.</p><h2>The In-House Digitizing Math Most Shops Don\'t Run</h2><p>If your lead operator spends two hours a day digitizing, and your machines run at $45 per head per hour on a 10-head, that\'s $900 in potential machine revenue that never got captured. Every day. Five days a week: $4,500. Per month: $18,000 — not as a hard loss, as capacity that never got used.</p><p>In-house digitizers aren\'t touching hundreds of designs a month the way a specialist service does. That skill gap shows up as more thread breaks, more trimming problems, more re-runs on difficult fabrics.</p><h2>How Cleaner Files Change What Your Machines Can Do</h2><p>When a file throws frequent thread breaks, one operator can manage maybe 4–6 heads before something gets missed. When a file runs cleanly, one operator can manage 10, 12, sometimes 15 heads.</p><p>On a 15-head running an 8-hour shift, the gap between 5-head and 12-head effective utilization is around 400–500 machine hours per month.</p><p>Cutting from 6 thread breaks per day to 2 — on a 10-head, at 5–8 minutes per break — recovers 200–400 minutes of run time daily. That\'s 3–6 extra production hours without changing anything else.</p><h2>Tracking What You\'re Actually Losing</h2><p>Spend a week recording actual needle-moving hours. Most shops find real utilization between 50–65% of available shift hours. Well-run operations hit 80–90%.</p><p>In most shops, 30–50% of non-changeover idle time has some connection to digitizing quality or availability. Compare that against what outsourced digitizing costs at your volume — the recovered machine time is worth significantly more, often by a factor of 5–10.</p><h2>Making the Transition Work</h2><p>Get all digitizing requests to your service by end of business each day, with files returned before the next morning\'s shift starts. That one change eliminates the reactive wait completely.</p><p>Build a file library as designs come back. Most jobs get rerun — pay for digitizing once per design, not every time the client reorders.</p><p>The hours that used to go toward in-house digitizing go somewhere else: more floor time, more heads per operator, better quality control. That reallocation is usually where shops feel the biggest difference.</p>',
+            ],
+        ];
+
+        foreach ($articles as $a) {
+            if (\App\Models\Blog::where('title', $a['title'])->exists()) {
+                continue;
+            }
+            $slug = $a['slug'];
+            if (\App\Models\Blog::where('slug', $slug)->exists()) {
+                $slug .= '-2';
+            }
+            \App\Models\Blog::create([
+                'title'            => $a['title'],
+                'slug'             => $slug,
+                'excerpt'          => $a['excerpt'],
+                'content'          => $a['content'],
+                'hero_image'       => null,
+                'hero_image_alt'   => $a['hero_image_alt'],
+                'author_name'      => '1 Dollar Digitizing',
+                'category'         => $a['category'],
+                'tags'             => $a['tags'],
+                'status'           => 'draft',
+                'meta_title'       => $a['meta_title'],
+                'meta_description' => $a['meta_description'],
+                'date'             => $today,
+            ]);
+            $inserted[] = $a['title'];
+        }
+
+        $msg = count($inserted)
+            ? 'Inserted: ' . implode(', ', $inserted)
+            : 'All articles already exist.';
+
+        return redirect('/v/blogs')->with('success', $msg);
     });
 });
 
