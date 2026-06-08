@@ -72,6 +72,7 @@ jobs:
           Artisan::call('route:clear');
           Artisan::call('view:clear');
           Artisan::call('db:seed', ['--class' => 'Article16Seeder', '--force' => true]);
+          Artisan::call('db:seed', ['--class' => 'Article17Seeder', '--force' => true]);
           @unlink(__FILE__);
           echo 'OK';
           PHPEOF
