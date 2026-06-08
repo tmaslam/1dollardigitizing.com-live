@@ -104,6 +104,7 @@ class AdminBlogController extends Controller
                 'published_at'     => $publishedAt,
                 'date'             => now()->format('Y-m-d'),
                 'decription'       => substr($validated['excerpt'], 0, 255),
+                'attached_file'    => '',
             ]);
         } catch (\Illuminate\Database\QueryException $e) {
             \Illuminate\Support\Facades\Log::error('Blog store database error', ['error' => $e->getMessage()]);
@@ -193,6 +194,7 @@ class AdminBlogController extends Controller
                 'og_image'         => $ogPath,
                 'published_at'     => $publishedAt,
                 'decription'       => substr($validated['excerpt'], 0, 255),
+                'attached_file'    => $blog->attached_file ?? '',
             ]);
         } catch (\Illuminate\Database\QueryException $e) {
             \Illuminate\Support\Facades\Log::error('Blog update database error', ['error' => $e->getMessage()]);
