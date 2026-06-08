@@ -305,6 +305,113 @@ HTML;
     $results[] = 'Article 17: inserted (ID ' . $pdo->lastInsertId() . ')';
 }
 
+// ── Article 18 ────────────────────────────────────────────────────────────────
+$title18 = 'How Outsourcing Digitizing Increases Daily Machine Run Time';
+$exists18 = $pdo->prepare("SELECT COUNT(*) FROM blogs WHERE title = ?");
+$exists18->execute([$title18]);
+if ((int) $exists18->fetchColumn() > 0) {
+    $results[] = 'Article 18: already exists — skipped.';
+} else {
+    $content18 = <<<'HTML'
+<p>The most expensive thing in an embroidery shop isn't thread or hoops or even the machines themselves. It's a machine sitting still.</p>
+
+<p>When a 15-head isn't running, you're losing somewhere between $40 and $70 per head per hour depending on what you're decorating. Real money leaving the table every time a needle stops moving — and it happens more often than most shop owners realize until they actually sit down and track it.</p>
+
+<p>This is about where that idle time really comes from, and why outsourcing digitizing fixes more of it than most people expect.</p>
+
+<h2>What Your Machines Are Doing When They're Not Running</h2>
+
+<p>Ask most shop owners what's causing their downtime and they'll say changeovers, staffing, scheduling. Those are real. But spend a day watching the production floor and you'll see a different list.</p>
+
+<p>Thread break. Operator walks over. Rethread. Find where it broke. Re-hoop if needed. Restart. That's 5 to 10 minutes gone. On a busy day it happens six, eight, ten times. Per head.</p>
+
+<p>Trim buildup from a file with sloppy pathing, so somebody has to stand there babysitting the machine between elements instead of loading the next frame on a different head.</p>
+
+<p>The morning wait — digitizing isn't done yet, so nothing starts at shift open. Maybe 30 minutes. Maybe an hour. Every day.</p>
+
+<p>The end-of-day wall — tomorrow's jobs aren't prepped because your digitizer was also managing production and ran out of hours.</p>
+
+<p>None of that makes the headline cost list. It doesn't show up as a line item. It just quietly eats your machine capacity day after day.</p>
+
+<h2>The In-House Digitizing Math Most Shops Don't Run</h2>
+
+<p>In-house digitizing looks cheap because the obvious costs are low — software, maybe a course, and the time of someone already on payroll. But that calculation misses the real number, which is what that person isn't doing while they're digitizing.</p>
+
+<p>If your lead operator or production manager spends two hours a day at the computer, and your machines run at $45 per head per hour on a 10-head, you're looking at $900 in potential machine revenue that never got captured. Every single day. Five days a week: $4,500. Per month: $18,000. Not as a hard loss — as capacity that never got used.</p>
+
+<p>And that's before quality enters the picture.</p>
+
+<p>In-house digitizers — even experienced ones — aren't touching hundreds of designs a month the way a specialist service does. That skill gap shows up in production: more thread breaks, more trimming problems, more re-runs on difficult fabrics. A 50-piece re-run because the file didn't hold on the customer's fleece isn't just a materials problem. It's 50 pieces of machine time that got consumed twice.</p>
+
+<h2>How Cleaner Files Change What Your Machines Can Actually Do</h2>
+
+<p>The clearest place to see this is operator-to-head ratio.</p>
+
+<p>When a file throws frequent thread breaks and generates trim buildup, one operator can realistically manage maybe 4 to 6 heads before something gets missed or a piece gets damaged. The other heads are either waiting or running unsupervised in ways that create quality problems down the line.</p>
+
+<p>When a file runs cleanly — well-pathed, minimal jumps, density that suits the fabric — one operator can manage 10, 12, sometimes 15 heads. Loading finished pieces on one end, staying ahead of the queue on the other. The machine isn't waiting for the operator. The operator is staying ahead of the machine.</p>
+
+<p>On a 15-head running an 8-hour shift, the gap between 5-head and 12-head effective utilization is somewhere around 400 to 500 machine hours per month. At even modest decoration values, that's not a rounding error.</p>
+
+<p>Thread break reduction alone is worth putting into numbers. Cutting from 6 breaks per day down to 2 — on a 10-head, at 5 to 8 minutes per break — recovers 200 to 400 minutes of run time daily. That's 3 to 6 extra production hours without changing anything else.</p>
+
+<h2>Tracking What You're Actually Losing</h2>
+
+<p>Before assuming outsourced digitizing will help, spend a week recording what your machines are actually doing. Not what they're scheduled to do — what they're doing.</p>
+
+<p>Track how many hours per day the needles are actually moving. Most shops, when they do this honestly for the first time, find their real utilization somewhere between 50% and 65% of available shift hours. Well-run operations hit 80% to 90%.</p>
+
+<p>Then break down what's eating the gap. Changeovers are expected and don't compress much. But digitizing waits, thread break recovery, and trim-related operator attention are all compressible. In most shops, somewhere between 30% and 50% of non-changeover idle time has some connection to digitizing quality or availability.</p>
+
+<p>Once you have that number, compare it against what professional outsourced digitizing actually costs at your volume. In nearly every case, the recovered machine time is worth significantly more than the digitizing cost — often by a factor of 5 to 10 or more.</p>
+
+<h2>Making the Transition Work</h2>
+
+<p>The workflow shift isn't complicated, but it needs some consistency to stick.</p>
+
+<p>Get all new digitizing requests to your service by end of business each day, with files returned before the next morning's shift starts. That one change — files ready before production begins rather than during it — eliminates the reactive wait completely. Machines start running when the shift starts, not when the digitizing catches up.</p>
+
+<p>Build a file library as designs come back. Most jobs get rerun. An organized archive by client and design name means you're paying for digitizing once per design, not every time the client reorders.</p>
+
+<p>The hours that used to go toward in-house digitizing don't disappear — they go somewhere else. More floor time, more heads per operator, better attention on complex jobs. That reallocation is usually where shops feel the biggest difference day to day.</p>
+
+<p>Your machines are what the whole business runs on. Finding more capacity doesn't always mean buying another one. Sometimes it means looking at what's stopping the ones you have from running at what they're actually capable of.</p>
+HTML;
+
+    $slug18 = 'how-outsourcing-digitizing-increases-daily-machine-run-time';
+    $slugCheck3 = $pdo->prepare("SELECT COUNT(*) FROM blogs WHERE slug = ?");
+    $slugCheck3->execute([$slug18]);
+    if ((int) $slugCheck3->fetchColumn() > 0) {
+        $slug18 .= '-2';
+    }
+
+    $stmt3 = $pdo->prepare("INSERT INTO blogs
+        (title, slug, excerpt, content, hero_image, hero_image_alt, author_name, category, tags, status,
+         meta_title, meta_description, og_image, published_at, date, description, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt3->execute([
+        $title18,
+        $slug18,
+        'A machine sitting still is the most expensive thing in your shop. This article breaks down where idle time actually comes from — and how outsourcing digitizing fixes more of it than most shop owners expect.',
+        $content18,
+        '',
+        'Embroidery machine run time and production efficiency through outsourced digitizing',
+        '1 Dollar Digitizing',
+        'Business Tips',
+        'outsourcing, digitizing, machine run time, production efficiency, embroidery business',
+        'draft',
+        'How Outsourcing Digitizing Increases Machine Run Time',
+        'A stopped machine is your biggest cost. Learn how outsourcing digitizing cuts idle time, thread breaks, and morning waits to maximize your daily machine capacity.',
+        null,
+        null,
+        $today,
+        'A machine sitting still is the most expensive thing in your shop. Learn how outsourcing digitizing recovers lost machine capacity.',
+        $now,
+        $now,
+    ]);
+    $results[] = 'Article 18: inserted (ID ' . $pdo->lastInsertId() . ')';
+}
+
 // Self-delete
 @unlink(__FILE__);
 
