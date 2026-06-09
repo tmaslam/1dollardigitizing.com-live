@@ -218,7 +218,7 @@ class TeamOrderDetailController extends Controller
 
             $original = $this->cleanFileName($file->getClientOriginalName());
             $storedName = $prefix.'_(('.$order->order_id.'))_'.$original;
-            $displayName = '('.$order->order_id.') '.$original;
+            $displayName = '('.$order->order_num.') '.$original;
 
             $storedPath = SharedUploads::storeUploadedFile($file, 'team', $storedName, $submittedAt);
 
@@ -327,7 +327,7 @@ class TeamOrderDetailController extends Controller
         abort_if($order->order_type === 'qquote', 404);
 
         $content = [];
-        $content[] = 'Design ID: '.$order->order_id;
+        $content[] = 'Design ID: '.($order->order_num ?: $order->order_id);
         $content[] = '';
         $content[] = 'Design Name: '.$order->design_name;
         $content[] = '';
@@ -370,7 +370,7 @@ class TeamOrderDetailController extends Controller
 
         return response()->streamDownload(function () use ($content) {
             echo implode("\r\n", $content);
-        }, $order->order_id.'.txt', [
+        }, ($order->order_num ?: $order->order_id).'.txt', [
             'Content-Type' => 'text/plain; charset=utf-8',
         ]);
     }

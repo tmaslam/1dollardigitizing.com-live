@@ -1496,10 +1496,11 @@ class CustomerPortalController extends Controller
         $status = e((string) ($order->status ?? ''));
         $subjectLabel = e($subject);
         $commentHtml = trim($comment) !== '' ? '<p><strong>Customer Notes:</strong> '.e($comment).'</p>' : '';
+        $orderRef = e((string) ($order->order_num ?: $order->order_id));
 
         $body = <<<HTML
 <p>{$subjectLabel} on {$site->displayLabel()}.</p>
-<p><strong>Order ID:</strong> {$order->order_id}</p>
+<p><strong>Order #:</strong> {$orderRef}</p>
 <p><strong>Design Name:</strong> {$designName}</p>
 <p><strong>Customer:</strong> {$customerLabel}</p>
 <p><strong>Email:</strong> {$customerEmail}</p>

@@ -163,13 +163,13 @@
                             @else
                             @foreach ($sharedAttachments as $attachment)
                                 <tr>
-                                    <td><a href="{{ url('/team/attachments/'.$attachment->id.'/download') }}">{{ $attachment->file_name_with_order_id ?: $attachment->file_name }}</a></td>
+                                    <td><a href="{{ url('/team/attachments/'.$attachment->id.'/download') }}">{{ str_replace('('.$order->order_id.')', '('.$order->order_num.')', $attachment->file_name_with_order_id ?: $attachment->file_name) }}</a></td>
                                     <td>{{ $attachment->file_source }}</td>
                                     <td>{{ $attachment->date_added ?: '-' }}</td>
                                     <td>
                                         <div class="action-row">
                                             @php
-                                                $sharedDisplayName = (string) ($attachment->file_name_with_order_id ?: $attachment->file_name);
+                                                $sharedDisplayName = str_replace('('.$order->order_id.')', '('.$order->order_num.')', (string) ($attachment->file_name_with_order_id ?: $attachment->file_name));
                                             @endphp
                                             @if (\App\Support\AttachmentPreview::isSupported($sharedDisplayName))
                                                 <button
@@ -231,7 +231,7 @@
                                     <td>
                                         <div class="action-row">
                                             @php
-                                                $teamDisplayName = (string) ($attachment->file_name_with_order_id ?: $attachment->file_name);
+                                                $teamDisplayName = str_replace('('.$order->order_id.')', '('.$order->order_num.')', (string) ($attachment->file_name_with_order_id ?: $attachment->file_name));
                                             @endphp
                                             @if (\App\Support\AttachmentPreview::isSupported($teamDisplayName))
                                                 <button

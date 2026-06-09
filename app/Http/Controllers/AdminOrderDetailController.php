@@ -392,6 +392,8 @@ class AdminOrderDetailController extends Controller
         $resolvedSource = $this->resolvedUploadSource((string) $validated['source'], $page);
         $folder = $this->uploadFolderForSource($resolvedSource);
 
+        $orderNum = \App\Models\Order::find((int) $validated['order_id'])?->order_num ?: (string) $validated['order_id'];
+
         foreach ($files as $file) {
             if (! $file) {
                 continue;
@@ -399,7 +401,7 @@ class AdminOrderDetailController extends Controller
 
             $original = $this->cleanFileName($file->getClientOriginalName());
             $storedName = $prefix.'_(('.$validated['order_id'].'))_'.$original;
-            $displayName = '('.$validated['order_id'].') '.$original;
+            $displayName = '('.$orderNum.') '.$original;
 
             $storedPath = SharedUploads::storeUploadedFile($file, $folder, $storedName, $submittedAt);
 

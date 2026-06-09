@@ -669,7 +669,7 @@ class CustomerOrderEntryController extends Controller
                 'order_id' => $order->order_id,
                 'file_name' => $originalName,
                 'file_name_with_date' => $storedPath,
-                'file_name_with_order_id' => '('.$order->order_id.') '.$originalName,
+                'file_name_with_order_id' => '('.$order->order_num.') '.$originalName,
                 'file_source' => $fileSource,
                 'date_added' => $timestamp,
             ]);
