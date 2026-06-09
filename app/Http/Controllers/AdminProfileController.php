@@ -868,7 +868,7 @@ class AdminProfileController extends Controller
                 ->delete();
         }
 
-        $nextStatus = $requestedStatus === 'disapproved' ? 'disapprove' : 'Underprocess';
+        $nextStatus = in_array($requestedStatus, ['disapprove', 'disapproved'], true) ? 'disapprove' : 'Underprocess';
 
         $order->update([
             'assign_to'             => 0,

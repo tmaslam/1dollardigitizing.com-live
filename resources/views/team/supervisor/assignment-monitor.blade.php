@@ -78,7 +78,7 @@
                             $isPool = (int) $order->assign_to === 0 || $order->assign_to === null || $order->assign_to === '';
                         @endphp
                         <tr>
-                            <td><a href="{{ $detailUrl($order) }}" class="badge">{{ $order->order_id }}</a></td>
+                            <td><a href="{{ $detailUrl($order) }}" class="badge">{{ $order->order_num ?: $order->order_id }}</a></td>
                             <td>
                                 @if ($isFreelance)
                                     <span class="badge" style="background:rgba(234,132,36,0.12);color:#a35a0d;border-color:rgba(234,132,36,0.22);">Freelance</span>

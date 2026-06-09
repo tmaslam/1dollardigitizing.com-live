@@ -73,7 +73,7 @@
                                     @endif
                                 </div>
                             </td>
-                            <td>{{ $order->user_id }}-{{ $order->order_id }}</td>
+                            <td>{{ $order->order_num ?: ($order->user_id.'-'.$order->order_id) }}</td>
                             @if ($teamUser->is_supervisor ?? false)
                                 <td>
                                 @if ($order->assign_to && (int) $order->assign_to !== 0)

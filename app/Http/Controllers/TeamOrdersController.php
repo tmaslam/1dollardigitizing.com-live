@@ -296,7 +296,7 @@ class TeamOrdersController extends Controller
         array_push($headers, 'Turnaround', 'Schedule', 'Time Left', 'Work Type');
 
         $rows = $orders->map(function (Order $order) use ($includeAssignee) {
-            $row = [(string) $order->user_id.'-'.(string) $order->order_id];
+            $row = [(string) ($order->order_num ?: ($order->user_id.'-'.$order->order_id))];
 
             if ($includeAssignee) {
                 if ($order->assign_to && (int) $order->assign_to !== 0) {
